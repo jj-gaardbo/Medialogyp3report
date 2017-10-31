@@ -122,19 +122,19 @@
 				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
 				
 				There are however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
-				\begin{itemize}
-				\item[1.] the false positive rate,
-				\item[2.] the intermarker confusion rate,
-				\item[3.] the false negative rate,
-				\item[4.] the minimal marker size,
-				\item[5.] the vertex jitter characteristics,
-				\item[6.] the marker library size,
-				\item[7.] immunity to lighting conditions,
-				\item[8.] immunity to occlusion,
-				\item[9.] perspective support,
-				\item[10.] immunity to photometric calibration, and
-				\item[11.] the speed performance.\\
-				\end{itemize}
+				\begin{enumerate}
+					\item the false positive rate,
+					\item the intermarker confusion rate,
+					\item the false negative rate,
+					\item the minimal marker size,
+					\item the vertex jitter characteristics,
+					\item the marker library size,
+					\item immunity to lighting conditions,
+					\item immunity to occlusion,
+					\item perspective support,
+					\item immunity to photometric calibration, and
+					\item the speed performance.\\
+				\end{enumerate}
 				
 				Failing to properly address these criteria will reduce the usability of a marker system remarkably\cite{fiducialMarkers}. All of the numbers have a valid reason for them to be announced; The false positive rate is falsely reporting the presence of a marker when none is present. The intermarker confusion rate is when one marker is mistaken for another. The false negative rate is when the marker can be seen on an image, but not reported. The minimal marker size is the size of the pixels required for the system to detect the marker. The vertex jitter is the noise in the marker corner positions. The library size is the number of unique markers the system is capable of storing. Two important things from the list is immunity to lightning conditions and immunity to occlusion, for a fiducial marker system it is crucial that the system is able to detect and recognize the markers despite the ambient lighting and partial covering of the pattern.\\
 				Last is to mention the practical issue of speed performance. A vision-based fiducial marker tracking system must function in real time, using a low cost computing power, for it to be considered useful.\\
@@ -148,10 +148,6 @@
 				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
 				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
 				
-				
-				
-				
->>>>>>> 2f08c54f8d70ac7f1dcb826f460d6460e9be3dbb
 
 		\subsection{Image Processing}
 			\subsubsection{Color detection}
