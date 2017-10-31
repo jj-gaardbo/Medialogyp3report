@@ -141,9 +141,17 @@
 				
 				All these criteria can be highly fulfilled using a system called ARTag \cite{fiducialARTag}. ARTag consists of a library of patterns with a square border and unique interior digital signature, along with the possibility to detect algorithms found in imagery \cite{fiducialMarkers}.\\
 				
-				It is important to state here, that not every kind of pattern in a marker is suitable when it comes to fiducial markers\cite{fiducialMarkers}. As an example it is worth mentioning bar codes, these are not suitable as fiducial markers, because they are made to be read by a laser scanner.\\
+				It is important to state here, that not every kind of pattern in a marker is suitable when it comes to fiducial markers\cite{fiducialMarkers}. As an example it is worth mentioning bar codes as seen in \autoref{fig:fiducialmarkers}, these are not suitable as fiducial markers, because they are made to be read by a laser scanner.\\
 				Alongside bar codes follows QR. There are two reasons for this; in fiducial marker systems a large field of view is usually preferred. therefore QR is not suitable for this, mainly because they are not intended for this kind of system.This will cause perspective distortion and they will not provide enough image points for 3D pose calculation.The second reason that QR is not suitable is because they require a large area in the image, this will limit the range as to where the markers can be used.\\ 
 				
+				
+					\begin{figure}[H]
+						\centering
+						\includegraphics[width=0.9\linewidth]{figure/Analysis/fiducialmarkers.png}
+						\caption{Different markers, not suitable for a fiducial marker system.}
+						\label{fig:fiducialmarkers}
+					\end{figure}
+					
 				
 				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
 				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
