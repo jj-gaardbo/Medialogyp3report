@@ -2,8 +2,11 @@
 	
 	
 	\section{Verification of a problem}\label{sec:verification}
-		\subsection{Why a problem?}
 		
+ 		\subsection{Why a problem?}
+ 		The design process of landscape architects has been more influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualisation in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualisations.\cite{landscapeVisual}
+ 		
+
 		\subsection{Who says so?}
 		
 		\subsection{Why does it matter?}
@@ -111,7 +114,44 @@
 				\label{fig:telesphere}
 			\end{figure}
 			Even though it was a step in the direction of a functioning virtual reality headset, it was still only a display showing a movie, it didn't have any motion tracking, or interaction between the user and the movie being watched. There was a sore lack of immersion, which is what makes the virtual reality headsets of today what they are.\\\\
+
 			In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.
+
+			
+			\subsection{Fiducial markers}
+				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
+				
+				There are however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
+				\begin{itemize}
+				\item[1.] the false positive rate,
+				\item[2.] the intermarker confusion rate,
+				\item[3.] the false negative rate,
+				\item[4.] the minimal marker size,
+				\item[5.] the vertex jitter characteristics,
+				\item[6.] the marker library size,
+				\item[7.] immunity to lighting conditions,
+				\item[8.] immunity to occlusion,
+				\item[9.] perspective support,
+				\item[10.] immunity to photometric calibration, and
+				\item[11.] the speed performance.\\
+				\end{itemize}
+				
+				Failing to properly address these criteria will reduce the usability of a marker system remarkably\cite{fiducialMarkers}. All of the numbers have a valid reason for them to be announced; The false positive rate is falsely reporting the presence of a marker when none is present. The intermarker confusion rate is when one marker is mistaken for another. The false negative rate is when the marker can be seen on an image, but not reported. The minimal marker size is the size of the pixels required for the system to detect the marker. The vertex jitter is the noise in the marker corner positions. The library size is the number of unique markers the system is capable of storing. Two important things from the list is immunity to lightning conditions and immunity to occlusion, for a fiducial marker system it is crucial that the system is able to detect and recognize the markers despite the ambient lighting and partial covering of the pattern.\\
+				Last is to mention the practical issue of speed performance. A vision-based fiducial marker tracking system must function in real time, using a low cost computing power, for it to be considered useful.\\
+				
+				All these criteria can be highly fulfilled using a system called ARTag \cite{fiducialARTag}. ARTag consists of a library of patterns with a square border and unique interior digital signature, along with the possibility to detect algorithms found in imagery \cite{fiducialMarkers}.\\
+				
+				It is important to state here, that not every kind of pattern in a marker is suitable when it comes to fiducial markers\cite{fiducialMarkers}. As an example it is worth mentioning bar codes, these are not suitable as fiducial markers, because they are made to be read by a laser scanner.\\
+				Alongside bar codes follows QR. There are two reasons for this; in fiducial marker systems a large field of view is usually preferred. therefore QR is not suitable for this, mainly because they are not intended for this kind of system.This will cause perspective distortion and they will not provide enough image points for 3D pose calculation.The second reason that QR is not suitable is because they require a large area in the image, this will limit the range as to where the markers can be used.\\ 
+				
+				
+				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
+				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
+				
+				
+				
+				
+>>>>>>> 2f08c54f8d70ac7f1dcb826f460d6460e9be3dbb
 
 		\subsection{Image Processing}
 			\subsubsection{Color detection}
@@ -125,7 +165,28 @@
     \section{State of the art}\label{sec:SOTA}
 		\subsection{Other vr applications}
 		
-		\subsection{Some sketching tools maybe}
+		\subsection{Sketching}
+		 \subsubsection{Mental Canvas}
+			A software system that combines 2D draw-and-paint with 3D which enables a user to quickly create a 3D environment from sketches. %todo: Write some more text about this
+			
+           \begin{multicols}{2}
+				\begin{figure}[H]
+					\centering
+					\includegraphics[width=0.6\linewidth]{figure/Analysis/mentalCanvas.png}
+					\caption{Mental Canvas combines 2D sketching systems with 3D computer systems.}
+					\label{fig:mentalCanvas}
+				\end{figure}
+				\columnbreak
+				%\begin{figure}[H]
+				%	\centering
+				%	\includegraphics[width=1\linewidth]{}
+				%	\caption{Another image}
+				%	\label{fig:figName}
+				%\end{figure}
+			\end{multicols}
+			
+			\cite{sotaMentalCanvas}
+
 		
 		\subsection{Reactivision applications for reference}
 		
