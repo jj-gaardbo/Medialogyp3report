@@ -118,7 +118,7 @@
 			In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.
 
 			
-			\subsection{Fiducial markers}
+			\subsection{Fiducial markers}\label{sec:fiducialMarkers}
 				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
 				
 				There are however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
@@ -159,10 +159,11 @@
 			\subsubsection{Object recognition}
 
     \section{State of the art}\label{sec:SOTA}
-		\subsection{AlohaVR}
-			AlohaVR by One Caring team is an immersive virtual reality application designed to seize the physiological issues elders could be having in their age. Instead of using pharmaceutical solutions to take away pain, anxiety, issues with relaxation etc. the product takes a neurological approach to solve the potential issues. They created immersive virtual reality landscapes, with the purpose to bring happiness and good memories to life for the elders whilst escaping their reality, which includes the aforementioned issues. One Caring team have monitored some of their users, to research how their virtual reality worlds affects the brain of the user, to further develop and create more effective experiences for the users.
 		
 		\subsection{Other vr applications}
+		
+			\subsubsection{AlohaVR}
+				AlohaVR by One Caring team is an immersive virtual reality application designed to seize the physiological issues elders could be having in their age\footnote{AlohaVR: \url{https://onecaringteam.com/}}. Instead of using pharmaceutical solutions to take away pain, anxiety, issues with relaxation etc. the product takes a neurological approach to solve the potential issues. They created immersive virtual reality landscapes, with the purpose to bring happiness and good memories to life for the elders whilst escaping their reality, which includes the aforementioned issues. One Caring team have monitored some of their users, to research how their virtual reality worlds affects the brain of the user, to further develop and create more effective experiences for the users.
 			
 		\subsection{Mental Canvas}
 			A software system that combines 2D draw-and-paint with 3D\footnote{Mental Canvas: \url{https://www.mentalcanvas.com}} which enables a user to create a 3D environment from sketches, supporting conceptual architectural design and analysis. It has been created for Microsoft's Surface technologies\footnote{Microsoft Surface: \url{https://www.microsoft.com/en-us/surface}} and is compatible with the Surface Dial. The system allows for the user to place 2D surfaces, or \textit{canvases} in a 3D space using traditional CAD(Computer-Aided Design) tools of positioning, scaling, rotating on XYZ-coordinate axes.\cite{sotaMentalCanvas}
@@ -175,7 +176,17 @@
 				\end{figure}
 
 		
-		\subsection{Reactivision applications for reference}
+		\subsection{Reactable}
+			Reactivision\footnote{reacTIVision: \url{http://reactivision.sourceforge.net/}} is a framework for developing computervision applications and interfaces. It uses fiducial markers as seen in  \autoref{sec:fiducialMarkers} to sense objects and movement, which allows for more extended interaction. \\
+			
+			Reactable\footnote{reactable: \url{http://reactable.com/}} is a musical instrument that uses the reactivision framework, to map different controllers on a tabletop interface. The different types of fiducial markers displayed on cubes or small figures work as knobs, buttons and the like to imitate an analog synthesizer, but with different more visual interactions. It enhances the musician's or sound engineer's chance to be more visually creative with their music. The table itself consists of a camera at the bottom pointing upwards to the tabletop. The camera detects interactions made by the user and how the fiducial markers are altered, which results in a musical sound space.
+				\begin{figure}[H]
+					\centering
+					\includegraphics[width=0.6\linewidth]{figure/Analysis/reactable}
+					\caption{The reactable table synthesizer used by multiple users.}
+					\label{fig:reactable}
+				\end{figure} 
+			
 		
 		\subsection{AR garden things maybe}
 		
