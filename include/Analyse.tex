@@ -222,8 +222,7 @@
 				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
 				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
 				
-				
-				To test the pattern, six parameters are still necessary. The perspective projection has to be approximated by a parallel one. For this, a first stage must find candidate regions by locating one or more relatively unique features of the marker this is because the space og possible homographies or parallel transforms is too large to test an image for valid patterns by exhaustive search.
+				To test the pattern, six parameters are still necessary. The perspective projection has to be approximated by a parallel one. For this, a first stage must find candidate regions by locating one or more relatively unique features of the marker this is because the space of possible homographies or parallel transforms is too large to test an image for valid patterns by exhaustive search \cite{fiducialMarkers}.
 				A geometric shape or shapes, such as a dot, bar, ellipse, triangle, square, etc., provides an anchor to form a marker detection hypothesis.\\
 				
 				Moving on to second stage, but with some important notes from stage one, such as; homography or parallel parameters, which checks if the region is actually a marker or just an object in the environment. As prior mentioned regarding coded dot systems, a parallel warp can be calculated on the ellipses major and minor axes.
@@ -235,6 +234,12 @@
 						\caption{Different markers, suitable for a fiducial marker system.}
 						\label{fig:fiducialworking}
 					\end{figure}
+					
+				It is unlikely to find a marker system that does not use any kind of thresholding, connectivity or blob analyses/detection, this is due to details. Though using thresholding and connectivity does not come without some error modes. How well the first stage is implemented affects the false negative detection rate. this is due to incorrect thresholding, which leads to markers that will be missed. Minimal marker size, vertex jitter characteristics, and especially immunity to
+				lighting conditions\cite{fidOcclusion} are also something that has to be considered.\\
+				
+				A system using only parallel mappings will have trouble with larger markers as well as cameras with a small focal length; for example Webcams(in laptops or portable ones) and cameras built into portable devices.
+				 
 				
 				
 				
