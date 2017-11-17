@@ -174,18 +174,23 @@
 					\end{figure}
 					
 				
-				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, as seen in \autoref{fig:fiducialworking}, depending on what kind of system will be used.
+				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
 				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
 				
-				\begin{figure}[H]
-					\centering
-					\includegraphics[width=0.9\linewidth]{figure/Analysis/fiducialworking.png}
-					\caption{Different markers, suitable for a fiducial marker system.}
-					\label{fig:fiducialworking}
-				\end{figure}
 				
 				To test the pattern, six parameters are still necessary. The perspective projection has to be approximated by a parallel one. For this, a first stage must find candidate regions by locating one or more relatively unique features of the marker this is because the space og possible homographies or parallel transforms is too large to test an image for valid patterns by exhaustive search.
-				A geometric shape or shapes, such as a dot, bar, ellipse, triangle, square, etc., provides an anchor to form a marker detection hypothesis.
+				A geometric shape or shapes, such as a dot, bar, ellipse, triangle, square, etc., provides an anchor to form a marker detection hypothesis.\\
+				
+				Moving on to second stage, but with some important notes from stage one, such as; homography or parallel parameters, which checks if the region is actually a marker or just an object in the environment. As prior mentioned regarding coded dot systems, a parallel warp can be calculated on the ellipses major and minor axes.
+				as seen in \autoref{fig:fiducialworking}, several marker systems is shown and they all presume planarity and use a parallel or homography mapping.
+				
+					\begin{figure}[H]
+						\centering
+						\includegraphics[width=0.9\linewidth]{figure/Analysis/fiducialworking.png}
+						\caption{Different markers, suitable for a fiducial marker system.}
+						\label{fig:fiducialworking}
+					\end{figure}
+				
 				
 				
 		\subsection{Image Processing}
