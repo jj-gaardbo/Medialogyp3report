@@ -2,40 +2,48 @@
 	
 	
 	\section{Verification of problem}\label{sec:verification}
-		In order to narrow down the scale of the problem area, \\
+		In order to narrow down the scale of the problem area, an initial brainstorm session was done. This session concluded with the following mind-map (\autoref{fig:brainstorm})\\
+		\begin{figure}[H]
+		\centering
+			\begin{tikzpicture}
 		
-		\begin{tikzpicture}
-		\path[mindmap,
-		every node/.style=concept,
-		concept color=black,
-		scale=0.5,
-		text=white,
-		text width=2cm,
-		grow cyclic,
-		level 1/.append style={level distance=8.5cm,sibling angle=70},
-		level 2/.append style={level distance=6cm,sibling angle=45}]
-		node[concept] {Simple sketch to virtual world}
-		[clockwise from=-20]
-		child[concept color=green!50!black] {
-			node[concept] {Building}
+		
+			\path[mindmap,
+			every node/.style=concept,
+			concept color=black,
+			scale=0.5,
+			text=white,
+			text width=2cm,
+			grow cyclic,
+			level 1/.append style={level distance=8.5cm,sibling angle=70},
+			level 2/.append style={level distance=6cm,sibling angle=45}]
+			node[concept] {Simple sketch to virtual world}
 			[clockwise from=-20]
-			child { node[concept] {Over construction} }
-			child { node[concept] {Overuse of materials} }
-		}  
-		child[concept color=black!20!blue] {
-			node[concept] {Architecture}
-			[clockwise from=-70]
-			child { node[concept] {Sketching} }
-			child { node[concept] {3D modeling} }
-		}
-		child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
-			child { node[concept] {Teachers}}
-			child { node[concept] {Students}}
-		};
-		\end{tikzpicture}
+			child[concept color=green!50!black] {
+				node[concept] {Building}
+				[clockwise from=-20]
+				child { node[concept] {Over construction} }
+				child { node[concept] {Overuse of materials} }
+			}  
+			child[concept color=black!20!blue] {
+				node[concept] {Architecture}
+				[clockwise from=-67]
+				child { node[concept] {Sketching} }
+				child { node[concept] {3D modeling} }
+			}
+			child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
+				child { node[concept] {Teachers}}
+				child { node[concept] {Students}}
+			};
+			\end{tikzpicture}
+		\captionof{figure}{Brainstorm}
+		\label{fig:brainstorm}
+	\end{figure}
 		\textsl{}
  	\subsection{Why a problem?}
-	 	The design process of landscape architects has been more influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
+	 	The design process of landscape architects has been more influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. \\
+	 	\\
+	 	A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
  	
  	
  	\subsection{Who says so?}
