@@ -1,3 +1,39 @@
+\section*{Brainstorm}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+	\path[mindmap,
+	every node/.style=concept,
+	concept color=black,
+	scale=0.5,
+	text=white,
+	text width=2cm,
+	grow cyclic,
+	level 1/.append style={level distance=8.5cm,sibling angle=70},
+	level 2/.append style={level distance=6cm,sibling angle=45}]
+	node[concept] {Simple sketch to virtual world}
+	[clockwise from=-20]
+	child[concept color=green!50!black] {
+		node[concept] {Building}
+		[clockwise from=-20]
+		child { node[concept] {Over construction} }
+		child { node[concept] {Overuse of materials} }
+	}  
+	child[concept color=black!20!blue] {
+		node[concept] {Architecture}
+		[clockwise from=-67]
+		child { node[concept] {Sketching} }
+		child { node[concept] {3D modeling} }
+	}
+	child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
+		child { node[concept] {Teachers}}
+		child { node[concept] {Students}}
+	};
+	\end{tikzpicture}
+	\captionof{figure}{The outcome of the intitial brainstorm}
+	\label{fig:brainstorm}
+\end{figure}
+
 \section*{Interview Questions for experts}\label{sec:interviewQuestionsExperts}
 
 Target group questions:
