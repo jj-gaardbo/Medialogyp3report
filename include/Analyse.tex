@@ -60,12 +60,12 @@
 		List of questions for experts \\
 		Target group questions:
 		\begin{itemize}
-			\item[-] Which people usually adresses you?
+			\item[-] Which people usually addresses you?
 			\item[-] What is the most usual demography?
 			\item[-] Do people need designing for all or just parts of their garden?
-			\item[-] Who makes the 3D visualisation of the garden? Is it something you create internally in the company, or does it come from outside cooperators? 
+			\item[-] Who makes the 3D visualization of the garden? Is it something you create internally in the company, or does it come from outside cooperators? 
 			\item[-] How does this process function?
-			\item[-] Do people take the offer on 3D visualisation of their garden?
+			\item[-] Do people take the offer on 3D visualization of their garden?
 			\item[-] What about development over time? Does it mean that growth can be followed year by year, or does it concern seasons?
 			\item[-] Is it something people make use of? \\
 		\end{itemize}
@@ -73,7 +73,7 @@
 		Technology questions:
 		\begin{itemize}
 			\item[-] How do you think a Virtual Reality experience in the 3D environment would be received?
-			\item[-] If a customer could design their own garden in a gardening center and instantly visualise it in Virtual Reality, do you think it would be a popular choice? \\
+			\item[-] If a customer could design their own garden in a gardening center and instantly visualize it in Virtual Reality, do you think it would be a popular choice? \\
 		\end{itemize}
 		
 		Design questions:
@@ -109,7 +109,8 @@
 				\caption{The Sensorama made by Morton Heilig in the 1950s. Fully featured first step at virtual reality.}
 				\label{fig:sensorama}
 			\end{figure}
-			There were a couple of short movies made for the Sensorama, but these were all produced and edited by Morton Heilig himself. The whole setup was stationary, and didn't feature any Head Mounted Display (HMD), so the user had to sit in the vibrating chair and look straight at the display for the duration of the movie. The more modern versions do not include features like smell and fans, but are also geared more towards mobility and full body immersion, and having a vibrating chair doesn't promote that idea.\\\\\texttt{}
+			There were a couple of short movies made for the Sensorama, but these were all produced and edited by Morton Heilig himself. The whole setup was stationary, and didn't feature any Head Mounted Display (HMD), so the user had to sit in the vibrating chair and look straight at the display for the duration of the movie. The more modern versions do not include features like smell and fans, but are also geared more towards mobility and full body immersion, and having a vibrating chair doesn't promote that idea.\\
+			
 			Morton Heilig later went on to further develop the idea of virtual reality, by making the first HMD in form of the Telesphere Mask\cite{VRS} in 1960. This took the immersive nature of his first product to a more personal level, even though it still just were a simple stereoscopic 3D wide view, with stereo sound. It did however look more like the virtual reality headsets of the modern day as seen in \autoref{fig:telesphere}.
 			\begin{figure}[H]
 				\centering
@@ -119,11 +120,12 @@
 			\end{figure}
 			Even though it was a step in the direction of a functioning virtual reality headset, it was still only a display showing a movie, it didn't have any motion tracking, or interaction between the user and the movie being watched. There was a sore lack of immersion, which is what makes the virtual reality headsets of today what they are.\\\\
 
-			In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.
-
+			In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.\\
+			
+			After the initial hype for virtual reality died down with the invent of the world wide web in the mid 90's, the industry waited patiently for hardware that could provide the immersion that tied the experience as a whole together. All of the early attempts had one flaw in common; the hardware couldn't provide close to realistic or good looking graphics at a frame rate that wouldn't induce motion sickness in the user, at a price that a normal consumer could afford\cite{vergeVR}. And hence the virtual reality industry laid dormant until 2013 when a certain Palmer Luckey, made a kickstarter for a virtual reality headset called Oculus Rift\cite{createOculus}. This headset kick started (No pun intended) the hype and interest in virtual reality as a medium.
 			
 			\subsubsection{The essence of VR}
-				
+				Virtual reality is a medium\cite{definingVirtualReality}, a medium that has been a long time underway. Starting in the sixties, and being reborn in 2013 by Luckey Palmer, this medium is usually defined by a set of hardware implementations of 
 			
 			\subsection{Fiducial markers}\label{sec:fiducialMarkers}
 				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
@@ -149,7 +151,7 @@
 				All these criteria can be highly fulfilled using a system called ARTag \cite{fiducialARTag}. ARTag consists of a library of patterns with a square border and unique interior digital signature, along with the possibility to detect algorithms found in imagery \cite{fiducialMarkers}.\\
 				
 				It is important to state here, that not every kind of pattern in a marker is suitable when it comes to fiducial markers\cite{fiducialMarkers}. As an example it is worth mentioning bar codes as seen in \autoref{fig:fiducialmarkers}, these are not suitable as fiducial markers, because they are made to be read by a laser scanner.\\
-				Alongside bar codes follows QR. There are two reasons for this; in fiducial marker systems a large field of view is usually preferred. therefore QR is not suitable for this, mainly because they are not intended for this kind of system.This will cause perspective distortion and they will not provide enough image points for 3D pose calculation.The second reason that QR is not suitable is because they require a large area in the image, this will limit the range as to where the markers can be used, as well as QR is made for being scanned when a phone camera is being held in front of it.\\ 
+				Alongside bar codes follows QR. There are two reasons for this; in fiducial marker systems a large field of view is usually preferred. therefore QR is not suitable for this, mainly because they are not intended for this kind of system.This will cause perspective distortion and they will not provide enough image points for 3D pose calculation.The second reason that QR is not suitable is because they require a large area in the image, this will limit the range as to where the markers can be used.\\ 
 				
 				
 					\begin{figure}[H]
@@ -160,23 +162,9 @@
 					\end{figure}
 					
 				
-				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, as seen in \autoref{fig:fiducialworking}, depending on what kind of system will be used.
+				As stated above, there are a lot of different markers that can be used for a fiducial marker system, but some are more efficient than others, depending on what kind of system will be used.
 				Fiducial marker systems is usually functioning in two different stages; hypothesis generation and verification/identification.\\
 				
-				
-				
-				\begin{figure}[H]
-					\centering
-					\includegraphics[width=0.9\linewidth]{figure/Analysis/fiducialworking.png}
-					\caption{Different markers, suitable for a fiducial marker system.}
-					\label{fig:fiducialworking}
-				\end{figure}
-				
-			
-				
-			If the perspective projection is approximated by a parallel one, six parameters are still necessary to test the pattern. The space of possible homographies or parallel transforms is too large to test an image for valid patterns by exhaustive search. Therefore, a first stage must find candidate regions by locating one or more relatively unique features of the marker. A geometric shape or shapes, such as a dot, bar, ellipse, triangle, square, etc., provides an anchor to form a marker detection hypothesis.	
-
-
 		\subsection{Image Processing}
 			\subsubsection{Color detection}
 			
