@@ -1,3 +1,73 @@
+
+\section*{Brainstorm}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+	\path[mindmap,
+	every node/.style=concept,
+	concept color=black,
+	scale=0.5,
+	text=white,
+	text width=2cm,
+	grow cyclic,
+	level 1/.append style={level distance=8.5cm,sibling angle=70},
+	level 2/.append style={level distance=6cm,sibling angle=45}]
+	node[concept] {Simple sketch to virtual world}
+	[clockwise from=-20]
+	child[concept color=green!50!black] {
+		node[concept] {Building}
+		[clockwise from=-20]
+		child { node[concept] {Over construction} }
+		child { node[concept] {Overuse of materials} }
+	}  
+	child[concept color=black!20!blue] {
+		node[concept] {Architecture}
+		[clockwise from=-67]
+		child { node[concept] {Sketching} }
+		child { node[concept] {3D modeling} }
+	}
+	child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
+		child { node[concept] {Teachers}}
+		child { node[concept] {Students}}
+	};
+	\end{tikzpicture}
+	\captionof{figure}{The outcome of the intitial brainstorm}
+	\label{fig:brainstorm}
+\end{figure}
+\section*{Interview Questions for plant center customers}\label{sec:interviewQuestionsCustomer}
+% when and where
+% what does location and time mean for the data
+List of questions for target group
+\begin{itemize}
+	\item[-] Have you ever used a garden designer?
+	\item[-] What was your experience?
+	\item[-] What are you planning to buy?
+	\item[-] What are you plan/thoughts for when you buy a new plant?
+	\item[-] What do you consider when you buy a new item for your garden?
+	\item[-] How often do you make major changes to your garden?
+	\item[-] For which reasons did you decide to purchase this item?
+	\item[-] What was the latest item you bought that you were not satisfied with?
+	\item[-] Do you have a garden?
+	\item[-] How did you start the design process?
+	\item[-] What tools did you use, if any?
+	\item[-] When did you make changes to your garden?
+	\item[-] What big changes would you like to make?
+	\item[-] Are you retired?
+	\item[-] If you had all the time in the world, what would you change about your garden?
+	\item[-] Do you enter the garden center with a budget in mind?
+	\item[-] Why are you here? \\
+\end{itemize}
+
+\paragraph*{Demographic information}
+\begin{itemize}
+	\item[-] Sex
+	\item[-] Age
+	\item[-] Job
+	\item[-] Marital Status
+	\item[-] Level of education
+\end{itemize}
+
+
 \section*{Interview Questions for experts}\label{sec:interviewQuestionsExperts}
 
 Target group questions:
