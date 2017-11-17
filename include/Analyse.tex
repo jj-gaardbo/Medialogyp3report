@@ -2,9 +2,48 @@
 	
 	
 	\section{Verification of problem}\label{sec:verification}
+		In order to narrow down the scale of the problem area, an initial brainstorm session was done. This session concluded with the following mind-map (\autoref{fig:brainstorm})\\
+		\begin{figure}[H]
+		\centering
+			\begin{tikzpicture}
 		
+		
+			\path[mindmap,
+			every node/.style=concept,
+			concept color=black,
+			scale=0.5,
+			text=white,
+			text width=2cm,
+			grow cyclic,
+			level 1/.append style={level distance=8.5cm,sibling angle=70},
+			level 2/.append style={level distance=6cm,sibling angle=45}]
+			node[concept] {Simple sketch to virtual world}
+			[clockwise from=-20]
+			child[concept color=green!50!black] {
+				node[concept] {Building}
+				[clockwise from=-20]
+				child { node[concept] {Over construction} }
+				child { node[concept] {Overuse of materials} }
+			}  
+			child[concept color=black!20!blue] {
+				node[concept] {Architecture}
+				[clockwise from=-67]
+				child { node[concept] {Sketching} }
+				child { node[concept] {3D modeling} }
+			}
+			child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
+				child { node[concept] {Teachers}}
+				child { node[concept] {Students}}
+			};
+			\end{tikzpicture}
+		\captionof{figure}{Brainstorm}
+		\label{fig:brainstorm}
+	\end{figure}
+		\textsl{}
  	\subsection{Why a problem?}
- 	The design process of landscape architects has been more influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
+	 	The design process of landscape architects has been more influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. \\
+	 	\\
+	 	A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
  	
  	
  	\subsection{Who says so?}
@@ -12,7 +51,7 @@
  	\subsection{Why does it matter?}
  	
  	\subsection{Elderly people's approach to technology}
- 	Old people typically will not seek out to use state of the art technology, despite its ability to enable experiences that their age would otherwise prevent. As the elderly retire, they have more time on their hands to do whatever they feel like, and for some of these people gardening could be a very possible interest. But often, age lead to a loss of mobility, limiting old people's ability to garden and their enjoyment thereof, leading to a decrease in life quality. Professional teams have created immersive virtual reality applications like AlohaVR \cite{elderlyVRScout} to help people within the elderly age group seize their issues with chronic pain, relaxation, anxiety, and to provide general entertainment.
+	 	Old people typically will not seek out to use state of the art technology, despite its ability to enable experiences that their age would otherwise prevent. As the elderly retire, they have more time on their hands to do whatever they feel like, and for some of these people gardening could be a very possible interest. But often, age lead to a loss of mobility, limiting old people's ability to garden and their enjoyment thereof, leading to a decrease in life quality. Professional teams have created immersive virtual reality applications like AlohaVR \cite{elderlyVRScout} to help people within the elderly age group seize their issues with chronic pain, relaxation, anxiety, and to provide general entertainment.
  	%How does the below sentence relate to the above at all? Surely their lack of mobility has nothing to do with their ability to *design* a garden.
  	So the question could be raised, would it be necessary to have a product that would function for garden designers to work with the elderly and including them in the technological experience? \\
  	
@@ -203,7 +242,6 @@
 			\subsubsection{Object recognition}
 
     \section{State of the art}\label{sec:SOTA}
-		
 		\subsection{VR Gardens}
 			VR Gardens is a mobile application for designing and planning your own garden. It contains a variety of different 3D models of trees, bushes, outdoor furniture, tiles and the like, to help visualize any garden idea one might have. The design can then be reviewed using the Google Cardboard or similar simple Virtual Reality boxes to be immersed in a close-up edition of the design.
 			\begin{figure}[H]
@@ -237,7 +275,7 @@
 			
 		
 		\subsection{SketchUp}
-			SketchUp\footnote{SketchUp: \url{https://www.sketchup.com/}} is a 3D modeling tool that allows for a user to create 2D lines and shapes, which can be manipulated through vertex editing turning it into 3D models in a simplistic fashion. When the 3D models are created SketchUp offers different functionalities for bringing details to the product, and then creating layout drawings from the final	model e.g. to show customers a house drawing or even landscape architecture. The software has it strengths and weaknesses in its simplicity, since it allows for intuitive modelling, but falls off on immersion making the designs seem stale. All though that could be seen as a weakness, it enables minimal memory usage to allow for a highly effortless experience. \\
+			SketchUp\footnote{SketchUp: \url{https://www.sketchup.com/}} is a 3D modeling tool that allows for a user to create 2D lines and shapes, which can be manipulated through vertex editing turning it into 3D models in a simplistic fashion. When the 3D models are created SketchUp offers different functionalities for bringing details to the product, and then creating layout drawings from the final	model e.g. to show customers a house drawing or even landscape architecture. The software has it strengths and weaknesses in its simplicity, since it allows for intuitive modeling, but falls off on immersion making the designs seem stale. All though that could be seen as a weakness, it enables minimal memory usage to allow for a highly effortless experience. \\
 			
 			SketchUp exists in various versions for different professions like architecture, construction, engineering, landscape architecture and the like. Creators are enabled to share their models with the community, or save them for their own later use, to implement in bigger structure planning eg. a tree could be saved as an asset to use for a complete garden design.
 				\begin{figure}[H]
