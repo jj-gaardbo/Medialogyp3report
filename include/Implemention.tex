@@ -10,7 +10,7 @@
 	extern "C" __declspec( dllexport ) int MyFunc(long parm1);
 	\end{minted}
 \end{listing}
-Extern "C" tell the compiler that the function name should not be changed when it is compiled, so that its name is known when it is being imported into unity. \_\_declspec(), tells the linker to do something. In this case dllexport, which tells it that it should export a function to a dll. Corespondingly \_\_declspec(dllimport) will be used to import the function in Unity. A sample call might look like this\\
+Extern "C" tell the compiler that the function name should not be changed when it is compiled, so that its name is known when it is being imported into unity. \_\_declspec(), tells the linker to do something. In this case dllexport, which tells it that it should export a function to a dll. Correspondingly \_\_declspec(dllimport) will be used to import the function in Unity. A sample call might look like this\\
 \begin{listing}[H]
 	\caption{How to: declare a function for dll import}
 	\label{listing:dllImport}
