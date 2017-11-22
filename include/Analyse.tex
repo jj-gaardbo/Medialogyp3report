@@ -200,11 +200,22 @@
 		
 			\subsubsection{Edge detection}
 			
-			
+			Edge detection is performed by applying a variety of mathematical methods. Simply put, the algorithm will find points in a digital image in which the brightness changes abruptly. 
 			
 			\subsubsection{Blob detection}
 			
+			A BLOB, or "Binary Large OBject", refers to a group of connected pixels in a binary image. Detecting BLOBs in an image must be done before we can start analyzing and comparing their features. Examples of such features could be area, compactness, circularity, or center of mass.
+			
+			In order to make an image binary (each pixel being either completely black or completely white), a thresholding operation must be performed. The parameters of this function will greatly affect the resulting image to be processed. 
+			
+			Defining destinct BLOBs in a binary image is accomplished by going through the image one pixel at a time until a non-zero (foreground) pixel is found. One method is to now check the pixel's neighbors for connected foreground pixels, and so recursively check every neighbor's neighbor until the entire collection of pixels are assigned to the same object. This is called the grass-fire algorithm. Another method doesn't check recursively, instead requiring a second pass to correct certain BLOBs being classified as multiple objects.
+			
+			
 			\subsubsection{Object recognition}
+
+			Having extracted features from the detected objects, those features can be compared to those of pre-defined objects to determine if they match. A simple implementation might compare the color and circularity of an object to that of a perfectly round, red circle. 
+			
+			More advanced object recognition relies on deep learning algorithms, in which the program analyzes a digital catalog of object examples in order to define which paramaters best define a particular type of object.
 
     \section{State of the art}\label{sec:SOTA}
 		\subsection{VR Gardens}
