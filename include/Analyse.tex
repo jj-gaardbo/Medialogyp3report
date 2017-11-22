@@ -195,7 +195,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.2\linewidth]{figure/Analysis/leukocytes.jpg}
-				\caption{White blood cells}
+				\caption{White blood cells (Purple cells in image)}
 				\label{fig:leukocytes}
 			\end{figure}
 			
@@ -277,6 +277,39 @@
 				
 			\section{Design Requirements}
 			%Some design requirements.
+			I'm just going to vomit out some words here and hopefully get it sorted into correct categories before moving on to something else
+			\begin{itemize}
+			\item Must be able to add a reasonably large number of items to the garden without the program crashing
+			\item Must be able to move tokens and have the virtual objects move with them in real time
+			\item Virtual objects must not exhibit a noticable jitter
+			\item Virtual object's position must correspond exactly to that of their physical token
+			\item The application must include the most common plants found in a Danish garden in order to be functional
+			\begin{itemize}
+				\item Roses
+				\item Rhododendron
+				\item Apple trees
+				\item Hydrangea
+				\item Tulips
+				\item Lilacs
+				\item Strawberries
+				\item Beech
+				\item ... and more. How many? Who knows!
+			\end{itemize}
+			\item Rotation of token must rotate virtual object.
+			\item (maybe?) Must be able to adjust size of virtual objects (how?)
+			\item Object recognition may not fail more than x\% of the time.
+			\item Physical construction of our prototype must be able to be easily taken apart and reconstructed, or simply be collapsible. Must also be lightweight. Otherwise we can't bring it anywhere yo
+			\item Prototype must be able to function in most natural and artificial lighting conditions. It's okay if it can't operate in \textit{lightning} conditions... would be dope though.
+			\item User must be able to walk around and look around in the virtual environment.
+			\item Virtual environment must ideally run at like 90fps, but you know at LEAST 60fps or we're just being rude to the user.
+			\item The program must run smoothly on a powerful laptop. (define smooth, define poweful)
+			\item Environment should be pretty and detailed enough that it isn't distracting the user. 
+			\item Program should be compatible with (Vive, GearVR, Rift... probably gon' be vive)
+			\item Virtual garden should support garden sizes under 50 m$^2$ and like way over 800 m$^2$ because half our respondents had a garden larger than 800 m$^2$ so probably a good portion of them have gardens a lot bigger than that. Bastards.
+			
+			
+			\end{itemize}
+			
 				\subsection{Functional requirements - TODO}
 					What it should do\\
 					\begin{itemize}
