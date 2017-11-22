@@ -109,7 +109,9 @@
 				\end{quote}
 				 
 			\subsection{Fiducial markers}\label{sec:fiducialMarkers}
-				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
+				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds 
+				
+				 points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
 				
 				There are however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
 				\begin{enumerate}
@@ -168,9 +170,37 @@
 				
 				
 		\subsection{Image Processing}
+		
+		Image processing is the act of enhancing, or extracting information from, a digital image using certain operations. It will take as input a photograph, computer generated image, or even a video feed, and return an output depending on the operations performed. Visual enhancements could be brightening a scene, increasing color saturation, or resizing, flipping, twisting and turning the image. Information extracted from the frame could be  in the form of counting objects or identifying objects, even complicated ones like faces. 
+		
 			\subsubsection{Color detection}
 			
+			One of the simpler things to extract from an image is color. A simple program may count the number of pixels with the RGB color code (255,0,0), which we know as "red". A slightly more sophisticated program will have some leniency built in, counting red-ish colors as being red. This is useful since in a real life scenario, neither the camera nor the light is going to be perfect, and therefore some inaccuracies must be accounted for. 
+			
+			The ideal color space to use for color detection depends on the specific case. 
+			%insert pictures of color spaces
+			For example, given the below image of leukocytes (white blood cells) surrounded by other blood cells, which color space would be most suitable for extracting the leukocytes?
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.2\linewidth]{figure/Analysis/leukocytes.jpg}
+				\caption{White blood cells}
+				\label{fig:leukocytes}
+			\end{figure}
+			
+			By converting the image to different color spaces and seperating each space into its components, we can see in which channel of which color space the desired objects stand out the most. 
+			
+					\begin{figure}[H]
+				\centering
+				\includegraphics[width=\linewidth]{figure/Analysis/differences.jpg}
+				\caption{Color space differences}
+				\label{fig:differences}
+			\end{figure}
+		%Images from https://stackoverflow.com/questions/30022377/should-i-use-hsv-hsb-or-rgb-and-why
+		Here we see that the leukocytes stand out the most in the saturation channel of the HSV color space. But they are also quite noticable in the green channel of RGB space. It would likely be the best option to use HSV in this case. 
+		
 			\subsubsection{Edge detection}
+			
+			
 			
 			\subsubsection{Blob detection}
 			
