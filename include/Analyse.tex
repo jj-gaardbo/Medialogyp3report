@@ -73,9 +73,61 @@
 		\subsection{Who are the target }
 		
 	\section{Technologies}\label{sec:technologies}
+<<<<<<< HEAD
 		
+=======
+		\subsection{Virtual Reality}
+			The earliest attempts at a VR experience was in the 1950s\cite{VRS} by Morton Heilig who made the Sensorama\ref{fig:sensorama}; an arcade-style theater cabinet, that featured stereo speakers, stereoscopic 3D display, smell generators, fans and a vibrating chair.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.4\linewidth]{figure/Analysis/sensorama2}
+				\caption{The Sensorama made by Morton Heilig in the 1950s. Fully featured first step at virtual reality.}
+				\label{fig:sensorama}
+			\end{figure}
+			There were a couple of short movies made for the Sensorama, but these were all produced and edited by Morton Heilig himself. The whole setup was stationary, and didn't feature any Head Mounted Display (HMD), so the user had to sit in the vibrating chair and look straight at the display for the duration of the movie. The more modern versions do not include features like smell and fans, but are also geared more towards mobility and full body immersion, and having a vibrating chair doesn't promote that idea.\\
+			
+			Morton Heilig later went on to further develop the idea of virtual reality, by making the first HMD in form of the Telesphere Mask\cite{VRS} in 1960. This took the immersive nature of his first product to a more personal level, even though it still just were a simple stereoscopic 3D wide view, with stereo sound. It did however look more like the virtual reality headsets of the modern day as seen in \autoref{fig:telesphere}.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.25\linewidth]{figure/Analysis/TelesphereMask}
+				\caption{The first attempt at HMD virtual reality headset, made by Morton Heilig in 1960. It worked by having stereoscopic 3D vision and stereo sound.}
+				\label{fig:telesphere}
+			\end{figure}
+			Even though it was a step in the direction of a functioning virtual reality headset, it was still only a display showing a movie, it didn't have any motion tracking, or interaction between the user and the movie being watched. There was a sore lack of immersion, which is what makes the virtual reality headsets of today what they are.\\\\
+
+			In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.\\
+			
+			After the initial excitement for virtual reality died down with the invent of the world wide web in the mid 90's, the industry waited patiently for hardware that could provide the immersion that tied the experience as a whole together. All of the early attempts had one flaw in common; the hardware couldn't provide close to realistic or good looking graphics at a frame rate that wouldn't induce motion sickness in the user, at a price that a normal consumer could afford\cite{vergeVR}. And hence the virtual reality industry laid dormant until 2013 when a young man called Palmer Luckey created a kickstarter page for a virtual reality headset called Oculus Rift\cite{createOculus}. This headset sparked a wide public interest in virtual reality as a medium, and lead to the development of the current selection of VR headsets available today. The most current iteration of the Oculus Rift is the CV1 - Consumer Version 1. Its biggest competitor is the HTC Vive, a VR headset with similar hardware specifications. \todo{sauce on vive}
+			\subsubsection{Standalone VR}
+			Oculus Go\footnote{Oculus Go: \url{https://www.oculus.com/go/}} is a virtual reality headset set to launch in the first quarter of 2018. Developed by the firm behind Oculus Rift, the Go shares many features with the Rift. It is designed for virtual reality games, social applications and different kinds of 360 degree experiences. Furthermore, the Go is lightweight with fabrics which increase comfort during long sessions. Unlike the Rift, Oculus Go does not need to be connected to a computer to function, enabling it to be used in new contexts such as outdoors and while traveling. It utilizes a simple controller for navigation and action to allow complex interaction within the featured applications, although it does not feature fully tracked motion control. Another strength the Go brings is the built in spatial audio, which alongside the 2560x1440 pixel display makes the Oculus Go a serious competitor to current mobile VR headsets.   \\
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1.0\linewidth]{figure/Analysis/oculusgo}
+				\caption{The Oculus Go concept preview}
+				\label{fig:Oculus}
+			\end{figure}
+			
+			At the time this report is written, the product is not yet commercially available. Organizations developing for the headset may apply for an early version of the hardware to develop on. It is however possible to develop an application for the Go without owning one, as the Go is directly compatible with applications designed for GearVR. 
+			
+			Oculus Go is not the only standalone VR headset in the works. Google is working with Lenovo on Daydream, and HTC is developing the Vive Focus, a portable alternative to the HTC Vive. Little information is avaiable about the release date of either product, and the latter is set for a China-exclusive launch. As such, GearVR and Oculus Go are the only current options for portable VR development. \todo{do we need sources here?}
+						
+			\subsubsection{The essence of VR}
+				Virtual reality is a medium\cite{definingVirtualReality}, a medium that has been a long time underway. Starting in the sixties, and being reborn in 2013 by Luckey Palmer, this medium is usually defined by a set of hardware implementations. These hardware implementations range a lot in price and devices, but a broad definition of the medium is:\\
+
+					\begin{quote}
+						\textit{Virtual Reality is electronic simulations of environments experienced via head-mounted eye goggles and wired clothing enabling the end user to interact in realistic three-dimensional situations}\cite{coates1992}.\\
+					\end{quote}
+
+				This definition is however quite old, being from 1992, but it does still apply to a certain degree to the current state of virtual reality as a device specific medium. Even though the devices, and their capabilities have changed, the way of interaction with the medium is largely the same; Put on a head mounted display, grab the controllers, and explore the 3D world you put yourself into. The rest of the paper will assume the definition of virtual reality as being:\\
+				\begin{quote}
+					\textit{Virtual Reality is electronic real time simulations of environments experienced via head-mounted eye goggles and one or more controllers enabling the end user to interact in realistic three-dimensional situations}\label{def:virtualRealityDefinition}.\\
+				\end{quote}
+				 
+>>>>>>> 36f5b5592895860bea69328e3771985c081ffa82
 			\subsection{Fiducial markers}\label{sec:fiducialMarkers}
-				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds image points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
+				By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds 
+				
+				 points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
 				
 				There are however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
 				\begin{enumerate}
@@ -134,11 +186,46 @@
 				
 				
 		\subsection{Image Processing}
+		
+		Image processing is the act of enhancing, or extracting information from, a digital image using certain operations. It will take as input a photograph, computer generated image, or even a video feed, and return an output depending on the operations performed. Visual enhancements could be brightening a scene, increasing color saturation, or resizing, flipping, twisting and turning the image. Information extracted from the frame could be  in the form of counting objects or identifying objects, even complicated ones like faces. 
+		
 			\subsubsection{Color detection}
 			
+			One of the simpler things to extract from an image is color. A simple program may count the number of pixels with the RGB color code (255,0,0), which we know as "red". A slightly more sophisticated program will have some leniency built in, counting red-ish colors as being red. This is useful since in a real life scenario, neither the camera nor the light is going to be perfect, and therefore some inaccuracies must be accounted for. 
+			
+			The ideal color space to use for color detection depends on the specific case. 
+			%insert pictures of color spaces
+			For example, given the below image of leukocytes (white blood cells) surrounded by other blood cells, which color space would be most suitable for extracting the leukocytes?
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.2\linewidth]{figure/Analysis/leukocytes.jpg}
+				\caption{White blood cells (Purple cells in image)}
+				\label{fig:leukocytes}
+			\end{figure}
+			
+			By converting the image to different color spaces and seperating each space into its components, we can see in which channel of which color space the desired objects stand out the most. 
+			
+					\begin{figure}[H]
+				\centering
+				\includegraphics[width=\linewidth]{figure/Analysis/differences.jpg}
+				\caption{Color space differences}
+				\label{fig:differences}
+			\end{figure}
+		%Images from https://stackoverflow.com/questions/30022377/should-i-use-hsv-hsb-or-rgb-and-why
+		Here we see that the leukocytes stand out the most in the saturation channel of the HSV color space. But they are also quite noticable in the green channel of RGB space. It would likely be the best option to use HSV in this case. 
+		
 			\subsubsection{Edge detection}
 			
+			Edge detection is performed by applying a variety of mathematical methods. Simply put, the algorithm will find points in a digital image in which the brightness changes abruptly. 
+			
 			\subsubsection{Blob detection}
+			
+			A BLOB, or "Binary Large OBject", refers to a group of connected pixels in a binary image. Detecting BLOBs in an image must be done before we can start analyzing and comparing their features. Examples of such features could be area, compactness, circularity, or center of mass.
+			
+			In order to make an image binary (each pixel being either completely black or completely white), a thresholding operation must be performed. The parameters of this function will greatly affect the resulting image to be processed. 
+			
+			Defining destinct BLOBs in a binary image is accomplished by going through the image one pixel at a time until a non-zero (foreground) pixel is found. One method is to now check the pixel's neighbors for connected foreground pixels, and so recursively check every neighbor's neighbor until the entire collection of pixels are assigned to the same object. This is called the grass-fire algorithm. Another method doesn't check recursively, instead requiring a second pass to correct certain BLOBs being classified as multiple objects.
+			
 			
 			\subsubsection{Object recognition}
 			
@@ -177,6 +264,10 @@
 			\textit{Virtual Reality is electronic real time simulations of environments experienced via head-mounted eye goggles and one or more controllers enabling the end user to interact in realistic three-dimensional situations}\label{def:virtualRealityDefinition}.\\
 		\end{quote}
 		
+
+			Having extracted features from the detected objects, those features can be compared to those of pre-defined objects to determine if they match. A simple implementation might compare the color and circularity of an object to that of a perfectly round, red circle. 
+			
+			More advanced object recognition relies on deep learning algorithms, in which the program analyzes a digital catalog of object examples in order to define which paramaters best define a particular type of object.
 
     \section{State of the art}\label{sec:SOTA}
 	    \subsection{Oculus Go}
@@ -226,6 +317,7 @@
 			SketchUp\footnote{SketchUp: \url{https://www.sketchup.com/}} is a 3D modeling tool that allows for a user to create 2D lines and shapes, which can be manipulated through vertex editing turning it into 3D models in a simplistic fashion. When the 3D models are created SketchUp offers different functionalities for bringing details to the product, and then creating layout drawings from the final	model e.g. to show customers a house drawing or even landscape architecture. The software has it strengths and weaknesses in its simplicity, since it allows for intuitive modeling, but falls off on immersion making the designs seem stale. All though that could be seen as a weakness, it enables minimal memory usage to allow for a highly effortless experience. \\
 			
 			SketchUp exists in various versions for different professions like architecture, construction, engineering, landscape architecture and the like. Creators are enabled to share their models with the community, or save them for their own later use, to implement in bigger structure planning eg. a tree could be saved as an asset to use for a complete garden design.
+			
 				\begin{figure}[H]
 					\centering
 					\includegraphics[width=0.6\linewidth]{figure/Analysis/sketchupgarden}
@@ -233,9 +325,41 @@
 					\label{fig:sketchupgarden}
 				\end{figure}
 			
-			
 			\section{Design Requirements}
 			%Some design requirements.
+			I'm just going to vomit out some words here and hopefully get it sorted into correct categories before moving on to something else
+			\begin{itemize}
+			\item Must be able to add a reasonably large number of items to the garden without the program crashing
+			\item Must be able to move tokens and have the virtual objects move with them in real time
+			\item Virtual objects must not exhibit a noticable jitter
+			\item Virtual object's position must correspond exactly to that of their physical token
+			\item The application must include the most common plants found in a Danish garden in order to be functional
+			\begin{itemize}
+				\item Roses
+				\item Rhododendron
+				\item Apple trees
+				\item Hydrangea
+				\item Tulips
+				\item Lilacs
+				\item Strawberries
+				\item Beech
+				\item ... and more. How many? Who knows!
+			\end{itemize}
+			\item Rotation of token must rotate virtual object.
+			\item (maybe?) Must be able to adjust size of virtual objects (how?)
+			\item Object recognition may not fail more than x\% of the time.
+			\item Physical construction of our prototype must be able to be easily taken apart and reconstructed, or simply be collapsible. Must also be lightweight. Otherwise we can't bring it anywhere yo
+			\item Prototype must be able to function in most natural and artificial lighting conditions. It's okay if it can't operate in \textit{lightning} conditions... would be dope though.
+			\item User must be able to walk around and look around in the virtual environment.
+			\item Virtual environment must ideally run at like 90fps, but you know at LEAST 60fps or we're just being rude to the user.
+			\item The program must run smoothly on a powerful laptop. (define smooth, define poweful)
+			\item Environment should be pretty and detailed enough that it isn't distracting the user. 
+			\item Program should be compatible with (Vive, GearVR, Rift... probably gon' be vive)
+			\item Virtual garden should support garden sizes under 50 m$^2$ and like way over 800 m$^2$ because half our respondents had a garden larger than 800 m$^2$ so probably a good portion of them have gardens a lot bigger than that. Bastards.
+			
+			
+			\end{itemize}
+			
 				\subsection{Functional requirements - TODO}
 					What it should do\\
 					\begin{itemize}
