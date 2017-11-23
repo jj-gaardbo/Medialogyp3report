@@ -334,52 +334,47 @@
 			
 			\section{Design Requirements}
 			%Some design requirements.
-			I'm just going to vomit out some words here and hopefully get it sorted into correct categories before moving on to something else
-			\begin{itemize}
-			\item Must be able to add a reasonably large number of items to the garden without the program crashing
-			\item Must be able to move tokens and have the virtual objects move with them in real time
-			\item Virtual objects must not exhibit a noticable jitter
-			\item Virtual object's position must correspond exactly to that of their physical token
-			\item The application must include the most common plants found in a Danish garden in order to be functional
-			\begin{itemize}
-				\item Roses
-				\item Rhododendron
-				\item Apple trees
-				\item Hydrangea
-				\item Tulips
-				\item Lilacs
-				\item Strawberries
-				\item Beech
-				\item ... and more. How many? Who knows!
-			\end{itemize}
-			\item Rotation of token must rotate virtual object.
-			\item (maybe?) Must be able to adjust size of virtual objects (how?)
-			\item Object recognition may not fail more than x\% of the time.
-			\item Physical construction of our prototype must be able to be easily taken apart and reconstructed, or simply be collapsible. Must also be lightweight. Otherwise we can't bring it anywhere yo
-			\item Prototype must be able to function in most natural and artificial lighting conditions. It's okay if it can't operate in \textit{lightning} conditions... would be dope though.
-			\item User must be able to walk around and look around in the virtual environment.
-			\item Virtual environment must ideally run at like 90fps, but you know at LEAST 60fps or we're just being rude to the user.
-			\item The program must run smoothly on a powerful laptop. (define smooth, define poweful)
-			\item Environment should be pretty and detailed enough that it isn't distracting the user. 
-			\item Program should be compatible with (Vive, GearVR, Rift... probably gon' be vive)
-			\item Virtual garden should support garden sizes under 50 m$^2$ and like way over 800 m$^2$ because half our respondents had a garden larger than 800 m$^2$ so probably a good portion of them have gardens a lot bigger than that. Bastards.
 			
-			
-			\end{itemize}
-			
-				\subsection{Functional requirements - TODO}
+				\subsection{Functional requirements}
 					What it should do\\
 					\begin{itemize}
-						\item It should be pleasurable to use by the end user.
-						\item It should be useful, usable and accessible for the end user.
-						\item It should not require a lot of effort from the end user to use.
-						\item It should be easy to add objects to the virtual garden.
+						\item User must be able to enter virtual representation of their garden using a VR headset
+						\item User must be able to walk around and look around in the virtual environment.
+						\item The assistant to the user must be able to change the environment while the user is in it using physical tokens.
+						\item The application must include the most common plants found in a Danish garden in order to be functional:
+						\begin{itemize}
+							\item Roses
+							\item Rhododendron
+							\item Apple trees
+							\item Hydrangea
+							\item Tulips
+							\item Lilacs
+							\item Strawberries
+							\item Beech
+						\end{itemize}
+						\item Rotation of token must rotate virtual object.
+						\item (maybe?) Must be able to adjust size of virtual objects (how?)
 					\end{itemize}
 					
-				\subsection{Non-functional requirements - TODO}
+				\subsection{Non-functional requirements}
 					How it should do it\\
 					\begin{itemize}
-						\item It should incorporate physical, easy to distinguish tokens.
-						\item It should make use of a virtual reality headset, to immerse the user.
+						\item The product should be pleasurable to use by the end user.
+						\item The product should be useful, usable and accessible for the end user.
+						\item The product should require only little effort from the end user.
+						\item It should be easy to add objects to the virtual garden.
+						\item Program should be compatible with the HTC Vive.
+						\item Prototype must be able to function in most natural and artificial lighting conditions.
+						\item Physical construction of our prototype must lightweight and easily transportable.
+						\item The program must run at between 60 and 90 frames per seconds on a powerful laptop.
+						\item Environment should be pretty enough that it isn't distracting the user. 
+						\item Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasable when considering size of tokens and size of acrylic surface?}
+						\item Object recognition may not fail more than 1 out of 20 times.\todo{What is the actual rate at which a product is considered bad?}
+						\item Physical tokens must be easy to match to their virtual counterpart.
+						\item VR headset must immerse the user.
+						\item One must be able to add up to 100 items\todo{How many do we actually need? Maybe as many tokens as will fit on the board?} to the garden without the program crashing
+						\item Virtual objects must move in real time as physical tokens are moved.
+						\item Virtual objects must not exhibit a noticable jitter
+						\item Virtual object's position must correspond exactly to that of their physical token
 					\end{itemize}
 			
