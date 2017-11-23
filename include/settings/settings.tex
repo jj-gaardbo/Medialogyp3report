@@ -23,6 +23,10 @@
 \numberwithin{figure}{chapter}						% Numbering order for figures
 \numberwithin{table}{chapter}						% Numbering order for tables
 \usepackage{listings}								% Enables source code listings
+\usepackage{xparse}								% Enables in-line code
+\NewDocumentCommand{\codeword}{v}{ % Enables in-line code
+	\texttt{\textcolor{blue}{#1}}
+}
 \usepackage{chemfig}								% Chemical structures
 \usepackage[top=3cm, bottom=3cm,
 			inner=3cm, outer=3cm]{geometry}			% Page margin lengths			
