@@ -11,3 +11,5 @@ Main.pdf
 *.tex~
 .DS_Store
 .idea/
+_minted-Main/*
+
