@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{extern} \PYG{l+s}{\PYGZdq{}C\PYGZdq{}} \PYG{k+kr}{\PYGZus{}\PYGZus{}declspec}\PYG{p}{(} \PYG{n}{dllexport} \PYG{p}{)} \PYG{k+kt}{int} \PYG{n}{MyFunc}\PYG{p}{(}\PYG{k+kt}{long} \PYG{n}{parm1}\PYG{p}{);}
+\end{Verbatim}
