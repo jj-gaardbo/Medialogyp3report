@@ -152,7 +152,7 @@
 
 		\paragraph*{Resources:}
 
-		Even though some of the experts are spending time on creating 3D visualisations for their customers they could all agree that it is expensive.
+		Even though some of the experts are spending time on creating 3D visualizations for their customers they could all agree that it is expensive.
 		\begin{quote}
 			\textit{If we have 80 on a year in total, then it is around 15 who get 3D. 15 out of 80}\label{quote:expertRessources1}.\\
 		\end{quote}
@@ -171,7 +171,7 @@
 		
 		\paragraph*{Ideas:}
 		\begin{quote}
-			\textit{Because, I already made the drawing. But could I have a 3D version made, that could be done so fast that I just made the finished sketch in 3D, then I think maybe it would be an upgrade, but then it doesn't have a plantlist, then it is just the drawing in 3D. But that is the price range that I think could be interesting for me to work with}\label{quote:expertIdeas1}.\\
+			\textit{Because, I already made the drawing. But could I have a 3D version made, that could be done so fast that I just made the finished sketch in 3D, then I think maybe it would be an upgrade, but then it doesn't have a plant list, then it is just the drawing in 3D. But that is the price range that I think could be interesting for me to work with}\label{quote:expertIdeas1}.\\
 		\end{quote}
 		
 		\begin{quote}
@@ -283,7 +283,7 @@
 				\label{fig:differences}
 			\end{figure}
 		%Images from https://stackoverflow.com/questions/30022377/should-i-use-hsv-hsb-or-rgb-and-why
-		Here we see that the leukocytes stand out the most in the saturation channel of the HSV color space. But they are also quite noticable in the green channel of RGB space. It would likely be the best option to use HSV in this case. 
+		Here we see that the leukocytes stand out the most in the saturation channel of the HSV color space. But they are also quite noticeable in the green channel of RGB space. It would likely be the best option to use HSV in this case. 
 		
 			\subsubsection{Edge detection}
 			
@@ -295,13 +295,13 @@
 			
 			In order to make an image binary (each pixel being either completely black or completely white), a thresholding operation must be performed. The parameters of this function will greatly affect the resulting image to be processed. 
 			
-			Defining destinct BLOBs in a binary image is accomplished by going through the image one pixel at a time until a non-zero (foreground) pixel is found. One method is to now check the pixel's neighbors for connected foreground pixels, and so recursively check every neighbor's neighbor until the entire collection of pixels are assigned to the same object. This is called the grass-fire algorithm. Another method doesn't check recursively, instead requiring a second pass to correct certain BLOBs being classified as multiple objects.
+			Defining distinct BLOBs in a binary image is accomplished by going through the image one pixel at a time until a non-zero (foreground) pixel is found. One method is to now check the pixel's neighbors for connected foreground pixels, and so recursively check every neighbor's neighbor until the entire collection of pixels are assigned to the same object. This is called the grass-fire algorithm. Another method doesn't check recursively, instead requiring a second pass to correct certain BLOBs being classified as multiple objects.
 			
 			
 			\subsubsection{Object recognition}
 				Having extracted features from the detected objects, those features can be compared to those of pre-defined objects to determine if they match. A simple implementation might compare the color and circularity of an object to that of a perfectly round, red circle. 
 				
-				More advanced object recognition relies on deep learning algorithms, in which the program analyzes a digital catalog of object examples in order to define which paramaters best define a particular type of object.
+				More advanced object recognition relies on deep learning algorithms, in which the program analyzes a digital catalog of object examples in order to define which parameters best define a particular type of object.
 			
 		\subsection{Virtual Reality}
 		The earliest attempts at a VR experience was in the 1950s\cite{VRS} by Morton Heilig who made the Sensorama\ref{fig:sensorama}; an arcade-style theater cabinet, that featured stereo speakers, stereoscopic 3D display, smell generators, fans and a vibrating chair.
@@ -340,7 +340,7 @@
 		
 		At the time this report is written, the product is not yet commercially available. Organizations developing for the headset may apply for an early version of the hardware to develop on. It is however possible to develop an application for the Go without owning one, as the Go is directly compatible with applications designed for GearVR. 
 		
-		Oculus Go is not the only standalone VR headset in the works. Google is working with Lenovo on Daydream, and HTC is developing the Vive Focus, a portable alternative to the HTC Vive. Little information is avaiable about the release date of either product, and the latter is set for a China-exclusive launch. As such, GearVR and Oculus Go are the only current options for portable VR development. \todo{do we need sources here?}
+		Oculus Go is not the only standalone VR headset in the works. Google is working with Lenovo on Daydream, and HTC is developing the Vive Focus, a portable alternative to the HTC Vive. Little information is available about the release date of either product, and the latter is set for a China-exclusive launch. As such, GearVR and Oculus Go are the only current options for portable VR development. \todo{do we need sources here?}
 		
 		
 		\subsubsection{The essence of VR}
@@ -367,6 +367,13 @@
 				\label{fig:vrgardens}
 			\end{figure}
 			Although, because of the many functions of the application, it is also quite complex, and seems to have a rather steep learning curve. It is almost focused entirely on mobile as well, the web application implementation is just a ported version of the mobile application. Doing it exclusively on mobile is helping make it more mobile, but is also limiting the capabilities of both interface and hardware. The limited screen space has made the interface very compact and the controls feels clunky with touch. The effort can be noticed throughout the use, but ultimately the experience falls short due to the 	platform choice.
+			
+		\subsection{Invita kitchen VR}
+			The danish kitchen interior design business Invita, has made it possible for their costumers to experience their new kitchen in 3D with a set of VR goggles \footnote{Invita VR kitchen: \url{http://www.invita.dk/kampagne/virtual-reality/}}. This gives the customer the option to see their new kitchen "in real life" before they go ahead and buy it. To ensure that the customer picks out the perfect kitchen for them, they now have the opportunity to se multiple kitchens before making a final decision.\\
+			To get an idea of how it works, and how the interior designers make this happen, one must make an appointment with their designers before it is possible to see the process and outcome.
+			
+			
+			
 		\subsection{Mental Canvas}
 			A software system that combines 2D draw-and-paint with 3D\footnote{Mental Canvas: \url{https://www.mentalcanvas.com}} which enables a user to create a 3D environment from sketches, supporting conceptual architectural design and analysis. It has been created for Microsoft's Surface technologies\footnote{Microsoft Surface: \url{https://www.microsoft.com/en-us/surface}} and is compatible with the Surface Dial. The system allows for the user to place 2D surfaces, or \textit{canvases} in a 3D space using traditional CAD(Computer-Aided Design) tools of positioning, scaling, rotating on XYZ-coordinate axes.\cite{sotaMentalCanvas}
 			
@@ -405,7 +412,7 @@
 				\section{Initial Survey}
 			%Plantorama surveyllama
 			
-			To get an initial direction which could inform further development of the project, a survey was conducted in Plantorama Hillerød, a garden centre. Of 35 respondents, 33 answered the question: How comfortable would you be trying a program utilizing "Virtual Reality"?
+			To get an initial direction which could inform further development of the project, a survey was conducted in Plantorama Hillerød, a garden center. Of 35 respondents, 33 answered the question: How comfortable would you be trying a program utilizing "Virtual Reality"?
 			
 			\begin{figure}[H]
 				\centering
@@ -494,13 +501,13 @@
 						\item Physical construction of our prototype must lightweight and easily transportable.
 						\item The program must run at between 60 and 90 frames per seconds on a powerful laptop.
 						\item Environment should be pretty enough that it isn't distracting the user. 
-						\item Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasable when considering size of tokens and size of acrylic surface?}
+						\item Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasible when considering size of tokens and size of acrylic surface?}
 						\item Object recognition may not fail more than 1 out of 20 times.\todo{What is the actual rate at which a product is considered bad?}
 						\item Physical tokens must be easy to match to their virtual counterpart.
 						\item VR headset must immerse the user.
 						\item The program must be able to handle up to 100 items \todo{How many do we actually need? Maybe as many tokens as will fit on the board?}in the virtual garden without crashing
 						\item Virtual objects must move in real time as physical tokens are moved.
-						\item Virtual objects must not exhibit a noticable jitter
+						\item Virtual objects must not exhibit a noticeable jitter
 						\item Virtual object's position must correspond exactly to that of their physical token
 					\end{itemize}
 			
