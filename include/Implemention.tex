@@ -54,5 +54,30 @@ unsafe{
 }
 \end{minted}
 \end{listing}
+
+\section{BGR to RG chromaticity conversion}
+Its was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromatic space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
+\subsection{Theory of RG} \todo{maybe move to analysis}
+The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
+\[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
+where x represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that color. However, since floats are operationally slow it is advised to scale the value to 8bits by multiplying by 255. If one where to convert all three, with capital letter representing the RG chromaticity, the channels can be found as.
+\[ RED = \frac{red}{red + blue + green} * 255\]
+\[ BLUE = \frac{blue}{red + blue + green} * 255\]
+\[ GREEN = \frac{green}{red + blue + green} * 255\]
+This means that in RG the sum of all channels must be 255.
+\[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
+It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small value as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
+\[ BLUE = 255 - RED - GREEN\]
+So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. for example two colors (0,10,50) and (0,50,250) will produce exactly similar value when converted to RG. 
+\[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.499 = 212 \]
+\[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.499 = 212 \]
+The same is true for any two color that are proportionately similar.\\
+In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
+
+\subsection{rg chomaticity in code}
+
+
+
+
 \section{Limitations}
 Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
