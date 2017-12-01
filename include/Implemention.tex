@@ -24,7 +24,7 @@ extern "C" __declspec( dllexport ) int MyFunc(long parm1);
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given as the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". It is important that the function name is not changed when exporting, or this process will fail. In line 2 a function is declared that will call the imported function. It is important to note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit more tricky. It requires the declaration of similar objects in both languages, with variables in the same order. Otherwise the data will not make sense when returned. As an example, we need to return the markers found after image processing. They are represented in a structure: 
+The name of the DLL file "unityOpencvPlugin" is given as the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". It is important that the function name is not changed when exporting, or this process will fail. In line 2; a function is declared that will call the imported function. It is important to note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit more tricky. It requires the declaration of similar objects in both languages, with variables in the same order. Otherwise the data will not make sense when returned. As an example, we need to return the markers found after image processing. They are represented in a structure: 
 \begin{listing}[H]
 	\caption{Objects in C\# and C++}
 	\label{listing:objects}
@@ -142,6 +142,7 @@ Now that the table has been made all we have to do, is pass it to a function so 
 
 \subsubsection{Suming rgb channels and looking up results}
 The is point processing and as such it calls for a double for loop to ensure we visit each pixel. Before the loop we instantiate a few variables to so we don't have to create them for all the iterations. We have three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. Now we wont have to jump as far in memory every time we use the look up table. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
+
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
