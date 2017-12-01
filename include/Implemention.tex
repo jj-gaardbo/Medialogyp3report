@@ -24,7 +24,7 @@ extern "C" __declspec( dllexport ) int MyFunc(long parm1);
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given as the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". It is important that the function name is not changed when exporting, or this process will fail. In line 2 a function is declared that will call the imported function. It is important to note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit more tricky. It requires the declaration of similar objects in both languages, with variables in the same order. Otherwise the data will not make sense when returned. As an example, we need to return the markers found after image processing. They are represented in a structure: 
+The name of the DLL file "unityOpencvPlugin" is given as the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". It is important that the function name is not changed when exporting, or this process will fail. In line 2; a function is declared that will call the imported function. It is important to note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit more tricky. It requires the declaration of similar objects in both languages, with variables in the same order. Otherwise the data will not make sense when returned. As an example, we need to return the markers found after image processing. They are represented in a structure: 
 \begin{listing}[H]
 	\caption{Objects in C\# and C++}
 	\label{listing:objects}
@@ -130,7 +130,7 @@ Creating a look up table is straight forward. We know from the theory section th
 The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). If it is we set the index to zero. Otherwise we calculate the value that would result from the color(j) and sum(i).
 Now that the table has been made all we have to do is pass it to a function so it can use it.
 
-\subsubsection{Suming rgb channels}
+\subsubsection{Summing RGB channels}
 
 Really this is quiet simple and the code we use can be seen in listing \ref{listing:sum}. it should be mentioned that the image is loaded so that it has a uchar for each chanel. These are laid out continuously, so blue for the first pixel is right next to green for the first pixel. Before the loop we created an integer to hold the value. In the loop we get a pointer to the first pixel, the blue one. We add the value of it and the next two positions to sum. If the sum is below a certain threshold, the overall image is dark. This is bad in RG chromaticity, and so its red green and blue is set to zero. We then continue to the next pixel.
 \begin{listing}[H]
