@@ -95,6 +95,14 @@ The process of converting an rgb image described above is a matter of simple poi
 
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. The concept is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes that a webcam often has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a lookuptable and increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
 \begin{center}
+	\begin{multicols}{2}
+
+
+	\begin{multicols}{2}
+		\includegraphics[width=1\linewidth]{figure/Analysis/city.jpg}
+		\includegraphics[width=1\linewidth]{figure/Analysis/cityNorm.jpg}
+	\end{multicols}
+
 	\begin{table}[H]
 		\centering
 		\label{rgConvSpeed}
@@ -105,9 +113,11 @@ Really the only big change is the decision to use a look up table. A look up tab
 			Look up table always& .0007741 sec\\
 			\hline 
 		\end{tabular}
-	\caption{Time taken to run the function. It can be seen that the more of the data that is precomputed into a lookup table, the faster the function executes. Due to the number of repetitions even something as basic as a "if smaller than" statement can massively increase the time taken to run. The times were based the average times after 100000 runs on a test image with the dimensions 540 * 720}
+	\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as a "if smaller than" statement can significantly increase the speed. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
 	\end{table}
-\end{center}\todo{show the normalized image}
+	\end{multicols}
+
+\end{center}
 Creating a look up table is straight forward. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There is two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. We then loop through it, assigning values based on the two inputs, as can be seen listing \ref{listing:lutTable}.\\
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
@@ -128,38 +138,33 @@ Creating a look up table is straight forward. We know from the theory section th
 \end{minted}
 \end{listing}
 The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). If it is we set the index to zero. Otherwise we calculate the value that would result from the color(j) and sum(i).
-Now that the table has been made all we have to do is pass it to a function so it can use it.
+Now that the table has been made all we have to do, is pass it to a function so it can use it. First though we need to figure out the inputs. Consisting of the RG values and the Sum 
 
-\subsubsection{Suming rgb channels}
-
-Really this is quiet simple and the code we use can be seen in listing \ref{listing:sum}. it should be mentioned that the image is loaded so that it has a uchar for each chanel. These are laid out continuously, so blue for the first pixel is right next to green for the first pixel. Before the loop we created an integer to hold the value. In the loop we get a pointer to the first pixel, the blue one. We add the value of it and the next two positions to sum. If the sum is below a certain threshold, the overall image is dark. This is bad in RG chromaticity, and so its red green and blue is set to zero. We then continue to the next pixel.
+\subsubsection{Suming rgb channels and looking up results}
+The is point processing and as such it calls for a double for loop to ensure we visit each pixel. Before the loop we instantiate a few variables to so we don't have to create them for all the iterations. We have three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. Now we wont have to jump as far in memory every time we use the look up table. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
 \begin{listing}[H]
-	\caption{How to sum value in BGR using pointer}
+	\caption{RG conversion code}
 	\label{listing:sum}
 	\begin{minted}[frame=lines,
 		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-	sum = p[j] + p[j + 1] + p[j + 2];
-	if (sum < rgConvThreshold) {
-		cp[j] = 0;
-		cp[j + 1] = 0;
-		cp[j + 2] = 0;
-		continue;
+for (int i = 0; i < nRows; i += GRIDSIZE) {
+	p = in.ptr<uchar>(i);
+	cp = out.ptr<uchar>(i);
+	
+	for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
+		blue = p[j];
+		green = p[j+1];
+		red = p[j+2];
+		sum = blue + green + red;
+		lutptr = divLUT[sum];
+		cp[j] = *(lutptr + blue);
+		cp[j + 1] = *(lutptr + green);
+		cp[j + 2] = *(lutptr + red);
 	}
+}
 	\end{minted}
 \end{listing}
-\subsubsection{Assigning values in output using look up}
-I mean this part really is not  magic given the layout of the Look up table all we need to do is. cp is a pointer to the corresponding pixels blue value, in output.
-\begin{listing}[H]
-	\caption{Assigning values}
-	\label{listing:sum}
-	\begin{minted}[frame=lines,
-		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-		cp[j] = divLUT[sum][p[j]];
-		cp[j+1] = divLUT[sum][p[j+1]];
-		cp[j+2] = divLUT[sum][p[j+2]];
-	\end{minted}
-\end{listing}
-
+As can be seen in \ref{listing:sum}, the code starts by saving t
 
 \section{Limitations}
 Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
