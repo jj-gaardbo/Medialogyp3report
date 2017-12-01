@@ -69,14 +69,96 @@ This means that in RG the sum of all channels must be 255.
 It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small value as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
 \[ BLUE = 255 - RED - GREEN\]
 So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. for example two colors (0,10,50) and (0,50,250) will produce exactly similar value when converted to RG. 
-\[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.499 = 212 \]
-\[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.499 = 212 \]
+\[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
+\[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 \]
 The same is true for any two color that are proportionately similar.\\
+\todo{creat image showing (0,10,50) and the other, after conversion to (0,42,212)} 
 In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
 
+\subsection{Thresholding in RG}
+Because RG can be represented by two values it is possible to plot the color space using two axes. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion.}
+	\label{fig:rgbNorm}
+\end{figure}
+
+
+
 \subsection{rg chomaticity in code}
+The process of converting an rgb image described above is a matter of simple point processing . We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
+\begin{enumerate}
+	\item Find the sum of the rgb chanels.
+	\item Assign the corresponding pixel in the output to the value found in a look up table using the sum and value in the channel\\
+\end{enumerate}
 
+Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. The concept is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes that a webcam often has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a lookuptable and increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
+\begin{center}
+	\begin{table}[H]
+		\centering
+		\label{rgConvSpeed}
+		\begin{tabular}{ l | l }
+			\hline			
+			No lookup table & .0015028 sec\\
+			Look up if above threshold & .0010218 sec\\
+			Look up table always& .0007741 sec\\
+			\hline 
+		\end{tabular}
+	\caption{Time taken to run the function. It can be seen that the more of the data that is precomputed into a lookup table, the faster the function executes. Due to the number of repetitions even something as basic as a "if smaller than" statement can massively increase the time taken to run. The times were based the average times after 100000 runs on a test image with the dimensions 540 * 720}
+	\end{table}
+\end{center}\todo{show the normalized image}
+Creating a look up table is straight forward. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There is two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. We then loop through it, assigning values based on the two inputs, as can be seen listing \ref{listing:lutTable}.\\
+\begin{listing}[H]
+\caption{Instantiating our lookup table}
+\label{listing:lutTable}
+\begin{minted}[frame=lines,
+	framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+	int divLUT[766][256]; //division lookuptavle;
+	for (int i = 0; i < 766; i++) {
+		for (int j = 0; j < 256; j++) {
+			if (i < rgConvThreshold) { 
+				divLUT[i][j] = 0;
+			}
+			else {
+				divLUT[i][j] = (j * 255) / i;
+			}
+		}
+	}
+\end{minted}
+\end{listing}
+The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). If it is we set the index to zero. Otherwise we calculate the value that would result from the color(j) and sum(i).
+Now that the table has been made all we have to do is pass it to a function so it can use it.
 
+\subsubsection{Suming rgb channels}
+
+Really this is quiet simple and the code we use can be seen in listing \ref{listing:sum}. it should be mentioned that the image is loaded so that it has a uchar for each chanel. These are laid out continuously, so blue for the first pixel is right next to green for the first pixel. Before the loop we created an integer to hold the value. In the loop we get a pointer to the first pixel, the blue one. We add the value of it and the next two positions to sum. If the sum is below a certain threshold, the overall image is dark. This is bad in RG chromaticity, and so its red green and blue is set to zero. We then continue to the next pixel.
+\begin{listing}[H]
+	\caption{How to sum value in BGR using pointer}
+	\label{listing:sum}
+	\begin{minted}[frame=lines,
+		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+	sum = p[j] + p[j + 1] + p[j + 2];
+	if (sum < rgConvThreshold) {
+		cp[j] = 0;
+		cp[j + 1] = 0;
+		cp[j + 2] = 0;
+		continue;
+	}
+	\end{minted}
+\end{listing}
+\subsubsection{Assigning values in output using look up}
+I mean this part really is not  magic given the layout of the Look up table all we need to do is. cp is a pointer to the corresponding pixels blue value, in output.
+\begin{listing}[H]
+	\caption{Assigning values}
+	\label{listing:sum}
+	\begin{minted}[frame=lines,
+		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+		cp[j] = divLUT[sum][p[j]];
+		cp[j+1] = divLUT[sum][p[j+1]];
+		cp[j+2] = divLUT[sum][p[j+2]];
+	\end{minted}
+\end{listing}
 
 
 \section{Limitations}
