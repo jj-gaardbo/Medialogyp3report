@@ -5,10 +5,10 @@ This section aims to explain the strategy and methods employed in order to answe
 \section{Approach to Design and Implementation}
 
 %Why did we do tokens?
-The initial idea was for a camera to recognize colours, shapes, sizes, and symbols on a simple, user created sketch of a garden. This seemed to be the ideal prototype as it would give the user a lot of creative freedom in the creative process. However, the issue with sketching ended up being consistency. We wanted the structure to be simple, and the elements of the prototype to be controlled for consistent recognition. The use of tokens or fiducial markers was determined to be the best solution for achieving consistency. The tokens would be physical objects manipulated within the physical prototype.\\
+The initial idea was for a camera to recognize colours, shapes, sizes, and symbols on a simple, user created sketch of a garden. This seemed to be the ideal prototype as it would give the user a lot of creative freedom in the creative process. However, the issue with sketching ended up being consistency. We wanted the structure to be simple, and the elements of the prototype to be controlled for consistent recognition. The use of tokens also known as fiducial markers was determined to be the best solution for achieving consistency. The tokens would be physical objects manipulated within the physical side of the prototype.\\
 
 %Talk about demo day, vr and such.
-In order to be more informed going through the design and implementation phases, we had to get a grasp of how our prototype should work. We had ideas and an initial prototype to test at the midterm "Demo Day" on AAU CPH campus in the hopes of getting useful feedback. This informal test was conducted using convenience sampled test subjects, who had no garden of their own, nor any real need to design one, as they were exclusively students at AAU CPH. At this point in time, the prototype allowed only for the placement of either trees or bushes.\\
+In order to be more informed going through the design and implementation phases, we had to get a grasp of how our prototype should work. We had ideas and an initial prototype to test at the midterm "Demo Day" on AAU CPH campus in the hopes of receiving useful feedback and do early usability testing. This informal test was conducted using convenience sampled test subjects, who had no garden of their own, nor any real need to design one, as they were exclusively students at AAU CPH. At this point in time, the prototype allowed only for the placement of either trees or bushes.\\
 
 %Not very scientific.
 With the initial idea we did not have a specific, scientific approach to create an initial, mostly functional prototype. Preparing for the Demo Day involved rapid prototyping of the image processing algorithm and Unity integration leading up to the event.\\
@@ -44,63 +44,65 @@ The purpose of the survey was to learn the following:
 	\item Whether the customers' focus are on in- or outdoor plants
 	\item Whether or not our proposed product could alleviate problems with choosing plants to buy
 \end{itemize}
-A survey was created using google forms which would provide insight to answer these questions, and printed in 37 copies. The final survey and results are included in the appendices. The surveys were handed out to customers at Plantorama Hillerød who had their own garden. Two of the forms were discarded as they revealed the respondent had no garden. %tsk, tsk...
+A survey was created using Google forms which would provide insight to answer these questions, and printed in 37 copies. The final survey and results are included in the appendices. The surveys were handed out to customers at Plantorama Hillerød who had their own garden. Two of the forms were discarded as they revealed the respondent had no garden. %tsk, tsk...
+\todo{Should we discuss the failure to meet with the department manager?}
 
 \subsection{Expert Interviews}
 We also were interested in discovering how professional garden designers, or landscape architects some prefer to go by, work with their clients to create a plan from start to finish. We were particularly curious about their relationship with technology, and to what degree they used 3D visualizations in their work and presentation for the client. 
 
 In \autoref{sec:expertInterviews} it is described how the interviews with these experts were conducted over the phone and how they were recorded with permission. The transcribed versions are available in the appendices. 
 
+\todo{In this subsection we should have the details of how the expert interviews were planned and prepared for. Move from 2.1.5 to here}
+
 \section{User Testing}
-Draft, working on revision
 
-
+\todo{Introduction to user testing}
 
 \subsection{Usability test}
-This could be coupled with the expert landscape architect tests and/or be carried out on "normal" people around campus or alternatively in a garden center. Maybe all of the above. Need to test both the completely basic "can this product be used without being endlessly frustrating" aspect, and the "does this product help answer the problem statement" thing.
 
-Can it run on a normal computer? Should we be concerned with that at all? It could be ignored because ideally we can just put the program on a vive focus or oculus go, but then we would need to create a way for the webcam to transmit data to the headset. Presumably the headsets will have a wifi card. Bluetooth? Probably not. But no specs are available for any of the headsets which are not out yet. So it's a bit pointless to start speculating about how to implement it. 
+The usability test will be carried out on regular people, not necessarily ones that are part of the target group. The aim is to discover any general usability problems. 
 
 \subsubsection{Type of observation}
-What type of observation? Natural or artifical environment, participant or non-participant observation?
-Human or mechanical observation? Direct or indirect?
 
-Implementing a log of average framerates in the program would be very useful. If the user dislikes the product or has an uncomfortable experience, a possible cause could be the frame rate dropping below 60\footnote{VR Performance: \url{https://developer.oculus.com/distribute/latest/concepts/publish-mobile-req-performance/}} frames per second. Otherwise the product may be judged harshly when it merely needs optimization.\\
-Testing on people in their own garden would require a large amount of time and effort in order to test with a significant sample size. Having a natural testing environment is therefore unreasonably inconvenient. An artificial environment will be sufficient to test the product. This environment will be whereever test subjects are found. Convenience sampling will be used for the sake of convenience. 
-It would be advantageous to test users in both "designer" and "client" roles. It might be a good idea to have to test subjects doing one role each at the same time, as to minimize our (the observers) influence over the participants. If we participate in the test we might affect the actions of the participant. The actions performed by two test participants playing off each other may not necessarily represent realistic scenarios, but it's certainly possible, and it would be unfortunate to miss out on data. This would require the participants to be given some direction in advance, so they don't just resort to "playing", which is a risk since VR is a fun technology. We could utilize the think-out-loud technique, where the participants say what they're thinking and feeling as they interact with the product, or they may simply be interviewed afterwards.   
-The positive aspects of a think-out-loud technique are that the subject will be more aware of their actions and their thoughts and feelings are immediately noted. However, it may be awkard for some people, the subject will be less immersed and may focus entirely on the short term experience as they try to communicate their actions and feelings. Doing a post-test interview instead would allow time for reflection and let the subject experience the program as they would normally. With an unguided test we do risk the subject not paying proper attention to what they're experiencing, or simply forgetting to bring points up during the interview if we do not specifically ask. We will have members of the project group taking notes on paper, observing actions of the subject. The guide will make an effort to help the subject while still letting the subject have the freedom to use the program as they will.
+Implementing a log of average frame rates in the program would be very useful. If the user dislikes the product or has an uncomfortable experience, a possible cause could be the frame rate dropping below 60\footnote{VR Performance: \url{https://developer.oculus.com/distribute/latest/concepts/publish-mobile-req-performance/}} frames per second. Otherwise the product may be judged harshly when it merely needs optimization.\\
+Testing on people in their own garden would require a large amount of time and effort in order to test with a significant sample size. Having a natural testing environment is therefore unreasonably inconvenient. An artificial environment will be sufficient to test the product. This environment will be wherever test subjects are found. Convenience sampling will be used for the sake of convenience.
+It would be advantageous to test users in both "designer" and "client" roles. It might be a good idea to have to test subjects doing one role each at the same time, as to minimize our (the observers) influence over the participants. If we participate in the test we might affect the actions of the participant. The actions performed by two test participants playing off each other may not necessarily represent realistic scenarios, but it is certainly possible, and it would be unfortunate to miss out on data. This would require the participants to be given some direction in advance, so they do not just resort to "playing", which is a risk since VR is a fun technology. We could utilize the think-out-loud technique, where the participants say what they are thinking and feeling as they interact with the product, or they may simply be interviewed afterwards.   
+The positive aspects of a think-out-loud technique are that the subject will be more aware of their actions, and their thoughts and feelings are immediately noted. However, it may be awkward for some people, the subject will be less immersed and may focus entirely on the short term experience as they try to communicate their actions and feelings. Doing a post-test interview instead would allow time for reflection and let the subject experience the program as they would normally. With an unguided test we do risk the subject not paying proper attention to what they're experiencing, or simply forgetting to bring points up during the interview if we do not specifically ask. We will have members of the project group taking notes on paper, observing actions of the subject. The guide will make an effort to help the subject while still letting the subject have the freedom to use the program as they will.
+\todo{update the above as we figure out exactly how the test will go down}
 
 \subsubsection{Strategy for observation}
-What strategy for conducting observation? What's the research question and will this test answer it? Outline what will observed and why. Consider time of day / day of week, position of cameras/observers and participants. How will you be taking notes? What in particular will you be paying attention to? What precautions will you take to prevent bias? How will the observation, the participant, the observer, and the environment impact the test? 
-How will the data collected be analyzed?
 
-One person will be directing the test subject, answering questions and act as a guide in the likely unfamiliar world of virtual reality. Another person will be taking notes on the behavior and statements of the subject. It would be useful to have two observing parties, as differing perspectives will lead to different observations. 
+One person will be directing the test subject, answering questions and act as a guide in the likely unfamiliar world of virtual reality.   person will be taking notes on the behaviour and statements of the subject. It would be useful to have two observing parties, as differing perspectives will lead to different observations. 
 
 Initial tests will reveal whether a video recording of the remaining tests will be necessary. Likely it will not reveal anything which the observation notes do not. Testing will take place in the campus' cafeteria for reasons of convenience. Testing is set to start early in the day and last throughout the school day, ending as the flow of people dies out at around 4 pm.
 
+Each test will take around 16 minutes. Set-up and introduction to VR will take about two minutes, and the participant gets a minute to walk around the virtual environment and get used to this new experience. A five minute demonstration of the product is conducted by the guide, and the participant then gets three minutes to explore further own their own. The test ends with a five minute round of questions about the experience. 
+
+\todo{How will we prevent bias? How will we analyse the data? What will we pay particular attention to during observation?}
+
+
 \subsubsection{Interview method}
-The post-test interview will start with \todo{add questions}
+The first question of the post-test interview will be whether or not the participant was uncomfortable at any point during the test. If they answer yes, the follow-up question will be when and why.
+The participant is then asked if they tried to perform an action they expected to be able to do, but couldn't. They are asked whether they enjoyed the product as a whole, and to list specific aspects they did and did not enjoy. The interviewer asks if the environment looked good, if the participant was bored, and if the product was easy to use and understand. 
 
 \subsection{Expert test}
-To determine the usability of the product, an expert's opinion is needed. The questions needing to be answered are whether it is well designed, easy to use, whether a typical client will be comfortable using it, if it takes up too much space in a normal space, and whether or not the setup is easy enough for anyone to do.
+To determine the usability of the product, an expert's opinion is needed. The questions needing to be answered are whether it is well designed, easy to use, whether a typical client will be comfortable using it, if it takes up too much space in a normal space, and whether or not the set-up is easy enough for anyone to do.
 \subsubsection{Type of observation}
-What type of observation? Natural or artifical environment, participant or non-participant observation?
-Human or mechanical observation? Direct or indirect?
 
-While it could provide useful insight to test in a natural environment, the natural environment is in this case the client's home. And acquiring a home with a garden seems excessive when we might as well conduct the test in the expert's office or at our own school facilities. So it will probably be an artificial or make-shift artificial environment. To get proper knowledge of how shit is gonna go down, we need to place a group member as a participant in the test. The group member will act as the client looking for a new design of their garden. The expert will carry out their job as usual, except they will now utilize our product to help the "client" visualize the garden design.\\
+While it could provide useful insight to test in a natural environment, the natural environment is in this case the client's home. And acquiring a home with a garden seems excessive when we might as well conduct the test in the expert's office or at our own school facilities. So it will probably be an artificial or make-shift artificial environment. To get proper knowledge of a real scenario would take place, we need to place a group member as a participant in the test. The group member will act as the client looking for a new design of their garden. The expert will carry out their job as usual, except they will now utilize our product to help the "client" visualize the garden design.\\
 As with the usability test, a log of average frame rates will be useful as they greatly affect the test subject's experience. 
 
 \subsubsection{Strategy for observation}
-\todo{what's out research question? "How to improve the garden design process?" Or is it "How to help visualize the newly designed garden for the client"?}
+\todo{what's our research question? "How to improve the garden design process?" Or is it "How to help visualize the newly designed garden for the client"?}
 The test of the product will be as close a simulation of a real life scenario as possible, and as such most problems that would show up during normal use would show up in the test. Still, it is good to have questions prepared to examine the test subject's experience with the product. The expert will likely offer suggestions of their own, likely starting with simple things such as the specific plants chosen for the prototype. 
-One thing which may prove difficult in this test is that the roles concerning virtual reality are reversed. In a normal scenario, the landscape architect brings the VR headset to the client and instructs them how to use it. But in the test, it is us, acting as the client, who will be instructing the expert in how to use it. It's important we're aware that the test will not perfectly emulate a typical expert-client meeting. 
+One thing which may prove difficult in this test, is that the roles concerning virtual reality are reversed. In a normal scenario, the landscape architect brings the VR headset to the client and instructs them how to use it. But in the test, it is us, acting as the client, who will be instructing the expert in how to use it. It is important we're aware that the test will not perfectly emulate a typical expert-client meeting. 
 
-Different expert-client scenarios will be tested: One where the client wants just a small, simple garden, a more complicated one, and a large garden with a ton of objects. It's important to learn how the product performs in different situations. 
+Different expert-client scenarios will be tested: One where the client wants just a small, simple garden, a more complicated one, and a large garden with a ton of objects. It is important to learn how the product performs in different situations. 
 
-The environment we're testing in will not have a large impact on the test, given that the expert is willing to "roleplay" and act as if we're a real client - at least to an extent where the product will be used as if it was a real scenario. 
+The environment we are testing in will not have a large impact on the test, given that the expert is willing to "roleplay" and act as if we are a real client - at least to an extent where the product will be used as if it was a real scenario. 
 
 %I'm actually disappointed latex doesn't support emojis
 
 \subsubsection{Interview method}
-What interview method? (Expert interview / in depth?)
+\todo{How will the expert test go down?}
 
