@@ -93,7 +93,9 @@ The process of converting an rgb image described above is a matter of simple poi
 	\item Assign the corresponding pixel in the output to the value found in a look up table using the sum and value in the channel\\
 \end{enumerate}
 
-Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. The concept is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes that a webcam often has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a lookuptable and increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
+Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
+\subsection{Creating a lookup tabel}
+The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
 \begin{center}
 	\begin{multicols}{2}
 
@@ -118,7 +120,7 @@ Really the only big change is the decision to use a look up table. A look up tab
 	\end{multicols}
 
 \end{center}
-Creating a look up table is straight forward. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There is two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. We then loop through it, assigning values based on the two inputs, as can be seen listing \ref{listing:lutTable}.\\
+Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in listing \ref{listing:lutTable}.
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
 \label{listing:lutTable}
@@ -137,9 +139,8 @@ Creating a look up table is straight forward. We know from the theory section th
 	}
 \end{minted}
 \end{listing}
-The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). If it is we set the index to zero. Otherwise we calculate the value that would result from the color(j) and sum(i).
-Now that the table has been made all we have to do, is pass it to a function so it can use it. First though we need to figure out the inputs. Consisting of the RG values and the Sum 
-
+The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). In that case  set the index to zero. Otherwise calculate the value that would result from the color(j) divided by sum(i) and multiplied by 255.
+The tabel is now made and can be passed to a function. 
 \subsubsection{Suming rgb channels and looking up results}
 The is point processing and as such it calls for a double for loop to ensure we visit each pixel. Before the loop we instantiate a few variables to so we don't have to create them for all the iterations. We have three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. Now we wont have to jump as far in memory every time we use the look up table. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
 
@@ -165,7 +166,7 @@ for (int i = 0; i < nRows; i += GRIDSIZE) {
 }
 	\end{minted}
 \end{listing}
-As can be seen in \ref{listing:sum}, the code starts by saving t
-
+As can be seen in \ref{listing:sum}, the code starts by saving the
+values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the therory section blue is useful data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted
 \section{Limitations}
 Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
