@@ -43,6 +43,16 @@ These each represent a bit, black indicating a 1 and white indicating a 0. They 
 
 This allows us to print a marker representing any one of 255 items. More could be added later, but for testing the prototype there is no need for more combinations as we are limited by the number of unique digital models.
 
+A program was made to automatically generate markers as needed. It takes an array of integers and creates sheets of markers corresponding to the array. For the input \codeword{int[] markers = {1, 2, 4, 8, 16, 32, 64, 128, 100, 3, 9};} it returns the following image:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/result}
+	\caption{Automatically generated markers}
+	\label{fig:result}
+\end{figure}
+
+
 \section{The Virtual Environment}
 
 \subsection{The UI}
