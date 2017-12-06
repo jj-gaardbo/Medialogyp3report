@@ -101,6 +101,7 @@ The process of converting an rgb image described above is a matter of simple poi
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Creating a lookup tabel}
 The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
+\todo{Fix the position of below images: They currently end up beyond the bottom of the page}
 \begin{center}
 	\begin{multicols}{2}
 
