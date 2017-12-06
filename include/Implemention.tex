@@ -54,9 +54,12 @@ unsafe{
 }
 \end{minted}
 \end{listing}
+\section{Implications of working in vr}
+Virtual reality is computationally demanding. In 2016 Nvidia estimated that an imersive VR experience was seven times more demanding than PC gaming\footnote{\url{goo.gl/AFsBGs}}\footnote{\url{https://www.pcgamesn.com/eve-valkyrie/vr-requires-a-pc-7-times-more-powerful-than-1080p-gaming-say-nvidia}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
+For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm. In the following sections there will at be times when the algorithm might go about finding objects in a way that is less straight forward, but faster at run time.
 
 \section{BGR to RG chromaticity conversion}
-Its was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromatic space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
+Its was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticx  space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
 \subsection{Theory of RG} \todo{maybe move to analysis}
 The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
@@ -75,6 +78,8 @@ The same is true for any two color that are proportionately similar.\\
 \todo{creat image showing (0,10,50) and the other, after conversion to (0,42,212)} 
 In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
 
+\subsection{Differences with HSV}
+\todo{write this section}
 \subsection{Thresholding in RG}
 \todo{write a bit more about the implication of each threshold}
 Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}
@@ -180,18 +185,47 @@ void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
 	\end{minted}
 \end{listing}
 As can be seen in listing \ref{listing:sum},inside the for loop, the code starts by saving the values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is usefulness data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted.
-
+\subsection{Thresholding implementation}
+So like the conversion this operation involves  visiting each pixel once, performing an operation uses its color value as inputs Ohh you feel that, that is my look-up-table-senses tingeling.  Since we are doing distance based lookup, turning the equation in code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.
+\begin{listing}[H]
+	\caption{Instantiating the Distance threshold look up table}
+	\label{listing:thresholdDist}
+	\begin{minted}[frame=lines,
+		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+		int theLut[256][256];
+		for (int i = 0; i < 256; i++) {
+			for (int j = 0; j < 256; j++) {
+				if (((i - g)*(i - g) + (j - r)*(j - r)) < 3600) {
+					theLut[i][j] = 255;
+				}
+				else {
+					theLut[i][j] = 0;
+				}
+			}
+		}
+	\end{minted}
+\end{listing}
+Inside the double for loop there is an if statement that test the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This saves us having to use a square root. Although the table is instantiated once and does not have to be computationally speedy it is just less confusing. So we test if the distance is smaller than 60. If true make the index white, otherwise make it black. 
+In terms of implementations using the lookup table, it is very similar to the rg conversion and as such it not worth mentioning.\\
+The algorithm has now, all things going well, produced a binary thresholded image with value that are either 255 or 0. The next thing it does is separate the image into blobs. But how? and why? those things are coming up in the next section. 
 \section{Blob detection}
-
+See, what did i tell you. Blob detection used to segment a picture into individual blobs. If you need to deal with multiple object in a image, it is worth investigating. 
 \subsection{What is a blob, and why detect them}
-\subsection{Blobdetection algorithms}
-\subsection{Grassfire blob detection}
-
+Blob stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest(ROI) in a image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob, like size, and bounding box, and a host of others. Imagine a program is trying to find real life objects. Knowing the range of features that the object normally produces, can help it determine if a blob is that object. Generally these features are calculated from a list of pixels in the blob.\\
+\todo{maybe an image here, maybe a thresholded image}
+There is staggeringly large amount of features that could be calculated on a blobs. But our job is made \textbf{A LOT} easier by three factors. First, our marker are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. There are many things to love bout circle, their heigth/with relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest. Meaning our blob detection has to do less work in discriminating the blobs.
+\subsection{Blob Extraction by recursion}
+All features of a blob are calculated from a list of pixels included in the it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this one can get from any pixel in the blob to any other by taking a path through white pixel to it, and any pixel in the blob must therefore be connected to any other though a string of white pixels.\\
+Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that you don't add the same  many times, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
+This is a recursive implantation. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixel, which might cause the function to call itself again. This recursive function calling is very easy to implement but it also mean that the call stack in the program could fill up and crash it.  \todo{what is a call stack}
+Because of the relatively small blobs in our program, usually somewhere between 150 and 16000 pixels, all we had to to prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions cause significantly bigger issues. If we double the nr of pixel in each axis all we get a 4 times larger blob. At large camera sizes, the stack has to be massive to accommodate the recursive function.
+\todo{Intoduce gridSIze and the non recurrsive version}
+\subsection{Implementation}
 \section{Blob analysis}
 \subsection{Parameter overview, and flow }
 \subsection{Bounding box and Center}
 \subsection{Rotation}
-\subsection{Vectors to find points}
+\subsection{Vectors to find sample points}
 
 
 \section{Limitations}
