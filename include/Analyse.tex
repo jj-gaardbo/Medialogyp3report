@@ -229,7 +229,7 @@
 			
 			
 			\subsection{Fiducial markers}\label{sec:fiducialMarkers}
-			Fiducial markers are objects that are placed in the field of view in an imaging system as a reference point or a measure. They are commonly used in computer-vision and can have different patterns that are recognized using image processing. By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
+			Fiducial markers are objects that are placed in the field of view in an imaging system as a reference point or a measure\footnote{Definition from the Fiducial marker WikiPedia page: \url{https://en.wikipedia.org/wiki/Fiducial_marker}}. They are commonly used in computer-vision and can have different patterns that are recognized using image processing. By measuring fiducial marker systems, regarding their performance, it is possible to rate the markers by how reliably it finds points matching physical points on the markers. There can be several reasons to why a fiducial marker system would have problems working or live up to the desired performance. This is typically; poor tolerance to lightning conditions and cluttered scenes causing similar markers to be mistaken by each other\cite{fiducialMarkers}. These problems may complicate the system design.\\
 			
 			There is however a way to figure out if the fiducial marker system is useful and reliable. This can be characterized by some numerical metrics and some qualitative observations, made with carefulness;\\
 			\begin{enumerate}
@@ -283,23 +283,7 @@
 			lighting conditions\cite{fidOcclusion} are also something that has to be considered.\\
 			
 			A system using only parallel mappings will have trouble with larger markers as well as cameras with a small focal length; for example Webcams(in laptops or portable ones) and cameras built into portable devices.
-			
-			
-
-		\subsection{Assessment of Virtual Reality software in engineering}
-		\todo{Modify this text and title to connect VR with Image Processing}
-		Human-Computer interfaces are traditionally known to be controlled using devices like the mouse and keyboard, while actions are monitored on computer monitors, which could be perceived as unnatural in a regard, as it does not act well with the human senses as they are used. However, with the development over time of modern technology, it has come across Virtual Reality (VR). \\
-		
-		Virtual reality uses what is known from the human-computer interface and implements it in a structure that activates and increases the users human senses. A typical virtual reality device uses a Head Mounted Display with a stereoscopic display and can eventually feature audio. Furthermore, it sets the user in a place that gives them the sense of actual presence in the environment they are put into. The display is split into right-eye and left-eye views to mock the feeling of stereoscopic human vision while wearing the display. 
-		
-		Another issue with virtual reality and the immersion of actual reality, how force feedback is processed enable the user to actually feel if they e.g. touch something, hear anything etc. This issue is resolved through the use of Haptic feedback e.g. bHaptics TactSuit\footnote{bHaptics TactSuit: \url{http://www.bhaptics.com/tactsuit.html}} \\
-		
-		In engineering VR software was developed using existing libraries most commonly from C or C++. The libraries were designed with functions to track data coming from the user input e.g. rotation. With these libraries engineers in history built toolkits to make virtual reality engineering accessible for development in regard to actual requirements of the single user. \cite{engineeringVR}
-		In modern engineering engines like Unity using C\# scripts and custom plug-ins allows for fast visualization of models or environments in virtual reality. With the use of Unity and the virtual machine C\# uses, more users have access to experiencing virtual reality applications made in the engine. With the high accessibility engineering works in virtual reality, it has become more natural, in the aspect that an engineer could be present in a virtual space, whilst designing, shaping or in anyway creating physical objects but in virtual space. The major benefit of this is the cost, it is not very expensive, as the software provides materials, tools and all the things usually needed to be bought from hardware stores etc. before creating actual designs. \\ 
-		
-		Virtual reality allows for early and precise visualizations of conceptual designs, which could be for any sort of profession e.g. architecture, plumbing, carpentry and the like. Besides conceptual design, it has also been used for manufacturing planning where one could track the process of assembling objects, machines etc. to plan what effort goes into the process of manufacturing. It can be understood as a Computer Aided Design (CAD) software, but as mentioned in \cite{engineeringVR} with the immersive feel. This means that the user actually activates and uses several human senses in the process of any of the aforementioned situations. As engineers have been using regular CAD software for decades, most of them are familiar with the interface, and that should not be much of a concern when developing VR CAD software.
-
-									
+												
 		\subsection{Virtual Reality}
 		The earliest attempts at a VR experience was in the 1950s\cite{VRS} by Morton Heilig who made the Sensorama\ref{fig:sensorama}; an arcade-style theater cabinet, that featured stereo speakers, stereoscopic 3D display, smell generators, fans and a vibrating chair.
 		\begin{figure}[H]
@@ -324,22 +308,7 @@
 	
 	
 		After the initial excitement for virtual reality died down with the invent of the world wide web in the mid 90's, the industry waited patiently for hardware that could provide the immersion that tied the experience as a whole together. All of the early attempts had one flaw in common; the hardware couldn't provide close to realistic or good looking graphics at a frame rate that wouldn't induce motion sickness in the user, at a price that a normal consumer could afford\cite{vergeVR}. And hence the virtual reality industry laid dormant until 2013 when Palmer Luckey created a kickstarter page for a virtual reality headset called Oculus Rift\cite{createOculus}. This headset sparked a wide public interest in virtual reality as a medium, and lead to the development of the current selection of VR headsets available today. The most current iteration of the Oculus Rift is the CV1 - Consumer Version 1. Its biggest competitor is the HTC Vive, a VR headset with similar hardware specifications\footnote{Vive™: \url{https://www.vive.com/us/}}.
-	
-		
-		\subsubsection{Standalone VR}
-		Oculus Go\footnote{Oculus Go: \url{https://www.oculus.com/go/}} is a virtual reality headset set to launch in the first quarter of 2018. Developed by the firm behind Oculus Rift, the Go shares many features with the Rift. It is designed for virtual reality games, social applications and different kinds of 360 degree experiences. Furthermore, the Go is constructed of lightweight fabrics which increase comfort during long sessions of use. Unlike the Rift, Oculus Go does not need to be connected to a computer in order to function, enabling it to be used in new contexts such as outdoors and while traveling. It utilizes a simple controller for navigation and action to allow complex interaction within the featured applications, although it does not feature fully tracked motion control. Another strength the Go brings is the built in spatial audio, which alongside the 2560x1440 pixel display makes the Oculus Go a serious competitor to current mobile VR headsets.  \\
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=1.0\linewidth]{figure/Analysis/oculusgo}
-			\caption{The Oculus Go concept preview}
-			\label{fig:Oculus}
-		\end{figure}
-		
-		At the time this report is written, the product is not yet commercially available. Organizations developing for the headset may apply for an early version of the hardware to develop on. It is however possible to develop an application for the Go without owning one, as the Go is directly compatible with applications designed for GearVR. 
-		
-		Oculus Go is not the only standalone VR headset in the works. Google is working with Lenovo on Daydream, and HTC is developing the Vive Focus, a portable alternative to the HTC Vive. Little information is available about the release date of either product, and the latter is set for a China-exclusive launch. As such, GearVR and Oculus Go are the only current options for portable VR development. \todo{do we need sources here?}
-		
-		
+			
 		\subsubsection{The essence of VR}
 		Virtual reality is a medium\cite{definingVirtualReality} that has been a long time underway. Starting in the sixties, and reemerging as a popular technology 2013, this medium is usually defined by a set of hardware implementations. These hardware implementations range a lot in price and devices, but a broad definition of the medium is:\\
 		
@@ -351,8 +320,35 @@
 		\begin{quote}
 			\textit{Virtual Reality is electronic real time simulations of environments experienced via head-mounted eye goggles and one or more controllers enabling the end user to interact in realistic three-dimensional situations}\label{def:virtualRealityDefinition}.\\
 		\end{quote}
+	
+	
+	\subsection{Assessment of Virtual Reality software in engineering}
+	\todo{Modify this text and title to connect VR with Image Processing}
+	Human-Computer interfaces are traditionally known to be controlled using devices like the mouse and keyboard, while actions are monitored on computer monitors, which could be perceived as unnatural in a regard, as it does not act well with the human senses as they are used. However, with the development over time of modern technology, it has come across Virtual Reality (VR). \\
+	
+	Virtual reality uses what is known from the human-computer interface and implements it in a structure that activates and increases the users human senses. A typical virtual reality device uses a Head Mounted Display with a stereoscopic display and can eventually feature audio. Furthermore, it sets the user in a place that gives them the sense of actual presence in the environment they are put into. The display is split into right-eye and left-eye views to mock the feeling of stereoscopic human vision while wearing the display. 
+	
+	Another issue with virtual reality and the immersion of actual reality, how force feedback is processed enable the user to actually feel if they e.g. touch something, hear anything etc. This issue is resolved through the use of Haptic feedback e.g. bHaptics TactSuit\footnote{bHaptics TactSuit: \url{http://www.bhaptics.com/tactsuit.html}} \\
+	
+	In engineering VR software was developed using existing libraries most commonly from C or C++. The libraries were designed with functions to track data coming from the user input e.g. rotation. With these libraries engineers in history built toolkits to make virtual reality engineering accessible for development in regard to actual requirements of the single user. \cite{engineeringVR}
+	In modern engineering engines like Unity using C\# scripts and custom plug-ins allows for fast visualization of models or environments in virtual reality. With the use of Unity and the virtual machine C\# uses, more users have access to experiencing virtual reality applications made in the engine. With the high accessibility engineering works in virtual reality, it has become more natural, in the aspect that an engineer could be present in a virtual space, whilst designing, shaping or in anyway creating physical objects but in virtual space. The major benefit of this is the cost, it is not very expensive, as the software provides materials, tools and all the things usually needed to be bought from hardware stores etc. before creating actual designs. \\ 
+	
+	Virtual reality allows for early and precise visualizations of conceptual designs, which could be for any sort of profession e.g. architecture, plumbing, carpentry and the like. Besides conceptual design, it has also been used for manufacturing planning where one could track the process of assembling objects, machines etc. to plan what effort goes into the process of manufacturing. It can be understood as a Computer Aided Design (CAD) software, but as mentioned in \cite{engineeringVR} with the immersive feel. This means that the user actually activates and uses several human senses in the process of any of the aforementioned situations. As engineers have been using regular CAD software for decades, most of them are familiar with the interface, and that should not be much of a concern when developing VR CAD software.
 
     \section{State of the art}\label{sec:SOTA}
+	  
+	  	\subsection{Standalone VR}
+	  	Oculus Go\footnote{Oculus Go: \url{https://www.oculus.com/go/}} is a virtual reality headset set to launch in the first quarter of 2018. Developed by the firm behind Oculus Rift, the Go shares many features with the Rift. It is designed for virtual reality games, social applications and different kinds of 360 degree experiences. Furthermore, the Go is constructed of lightweight fabrics which increase comfort during long sessions of use. Unlike the Rift, Oculus Go does not need to be connected to a computer in order to function, enabling it to be used in new contexts such as outdoors and while traveling. It utilizes a simple controller for navigation and action to allow complex interaction within the featured applications, although it does not feature fully tracked motion control. Another strength the Go brings is the built in spatial audio, which alongside the 2560x1440 pixel display makes the Oculus Go a serious competitor to current mobile VR headsets.  \\
+	  	\begin{figure}[H]
+	  		\centering
+	  		\includegraphics[width=1.0\linewidth]{figure/Analysis/oculusgo}
+	  		\caption{The Oculus Go concept preview}
+	  		\label{fig:Oculus}
+	  	\end{figure}
+	  	
+	  	At the time this report is written, the product is not yet commercially available. Organizations developing for the headset may apply for an early version of the hardware to develop on. It is however possible to develop an application for the Go without owning one, as the Go is directly compatible with applications designed for GearVR. 
+	  	
+	  	Oculus Go is not the only standalone VR headset in the works. Google is working with Lenovo on Daydream, and HTC is developing the Vive Focus, a portable alternative to the HTC Vive. Little information is available about the release date of either product, and the latter is set for a China-exclusive launch. As such, GearVR and Oculus Go are the only current options for portable VR development. \todo{do we need sources here?}
 	  
 		\subsection{VR Gardens}
 			VR Gardens is a mobile application for designing and planning your own garden. It contains a variety of different 3D models of trees, bushes, outdoor furniture, tiles and the like, to help visualize any garden idea one might have. The design can then be reviewed using the Google Cardboard\footnote{Google Cardboard: \url{https://vr.google.com/cardboard/}} or similar simple Virtual Reality boxes to be immersed in a close-up edition of the design.
@@ -380,6 +376,19 @@
 					\label{fig:mentalCanvas}
 				\end{figure}
 
+			\subsection{SketchUp}
+			SketchUp\footnote{SketchUp: \url{https://www.sketchup.com/}} is a 3D modeling tool that allows for a user to create 2D lines and shapes, which can be manipulated through vertex editing turning it into 3D models in a simplistic fashion. When the 3D models are created SketchUp offers different functionalities for bringing details to the product, and then creating layout drawings from the final	model e.g. to show customers a house drawing or even landscape architecture. The software has it strengths and weaknesses in its simplicity, since it allows for intuitive modeling, but falls off on immersion making the designs seem stale. All though that could be seen as a weakness, it enables minimal memory usage to allow for a highly effortless experience. \\
+			
+			SketchUp exists in various versions for different professions like architecture, construction, engineering, landscape architecture and the like. Creators are enabled to share their models with the community, or save them for their own later use, to implement in bigger structure planning eg. a tree could be saved as an asset to use for a complete garden design.
+			
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\linewidth]{figure/Analysis/sketchupgarden}
+				\caption{A garden designed in SketchUp}
+				\label{fig:sketchupgarden}
+			\end{figure}
+
+
 		\subsection{Reactable}
 			reacTIVision\footnote{reacTIVision: \url{http://reacTIVision.sourceforge.net/}} is a framework for developing computervision applications and interfaces. It uses fiducial markers as seen in  \autoref{sec:fiducialMarkers} to sense objects and movement, which allows for more extended interaction. It also makes use of the TUIO protocol, which is a protocol used for tangible multitouch surfaces, this means that it is enabled to take input from multiple tagged objects through a sensor, and send messages from the tracker to the client application. \\
 			
@@ -392,18 +401,7 @@
 					\label{fig:reactable}
 				\end{figure} 
 		
-		\subsection{SketchUp}
-			SketchUp\footnote{SketchUp: \url{https://www.sketchup.com/}} is a 3D modeling tool that allows for a user to create 2D lines and shapes, which can be manipulated through vertex editing turning it into 3D models in a simplistic fashion. When the 3D models are created SketchUp offers different functionalities for bringing details to the product, and then creating layout drawings from the final	model e.g. to show customers a house drawing or even landscape architecture. The software has it strengths and weaknesses in its simplicity, since it allows for intuitive modeling, but falls off on immersion making the designs seem stale. All though that could be seen as a weakness, it enables minimal memory usage to allow for a highly effortless experience. \\
-			
-			SketchUp exists in various versions for different professions like architecture, construction, engineering, landscape architecture and the like. Creators are enabled to share their models with the community, or save them for their own later use, to implement in bigger structure planning eg. a tree could be saved as an asset to use for a complete garden design.
-			
-				\begin{figure}[H]
-					\centering
-					\includegraphics[width=0.6\linewidth]{figure/Analysis/sketchupgarden}
-					\caption{A garden designed in SketchUp}
-					\label{fig:sketchupgarden}
-				\end{figure}
-			
+		
 				\section{Initial Survey}
 			%Plantorama surveyllama
 			
