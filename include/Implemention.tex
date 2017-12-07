@@ -60,7 +60,7 @@ For this reason the algorithm should be fairly quick to execute, because there i
 
 \section{BGR to RG chromaticity conversion}
 Its was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticx  space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
-\subsection{Theory of RG} \todo{maybe move to analysis}
+\subsection{Theory of RG} 
 The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
 where x represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that color. However, since floats are operationally slow it is advised to scale the value to 8bits by multiplying by 255. If one where to convert all three, with capital letter representing the RG chromaticity, the channels can be found as.
@@ -91,8 +91,27 @@ Because RG can be represented by two values it is possible to plot the  chromati
 \end{figure}
 There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented values is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
  or 0.\\
-\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. \todo{create img}\\
+\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines.\\
+\
+\begin{multicols}{2}
+	\begin{figure}[H]
+		\centering
+		\label{thresholdintrange}
+		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
+		\caption{in range threshold in rg space}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\label{thresholdbelowline}
+		
+		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
+		\caption{below line threshold in rg space}
+	\end{figure}
 
+\end{multicols}
+
+\todo{we are now using below line and distance make accoridng changes}
 \textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $ y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero.\\
 
 \textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces a the following threshold.\\
@@ -187,6 +206,7 @@ void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
 \end{listing}
 As can be seen in listing \ref{listing:sum},inside the for loop, the code starts by saving the values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is usefulness data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted.
 \subsection{Thresholding implementation}
+\todo{We are now using both below the line thresholding and distance make according chagnes}
 So like the conversion this operation involves  visiting each pixel once, performing an operation uses its color value as inputs Ohh you feel that, that is my look-up-table-senses tingeling.  Since we are doing distance based lookup, turning the equation in code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.
 \begin{listing}[H]
 	\caption{Instantiating the Distance threshold look up table}
