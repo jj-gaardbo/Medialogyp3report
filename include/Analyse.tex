@@ -466,49 +466,54 @@
 				\subsection{Functional requirements}
 					What it should do\\
 					\begin{itemize}
-						\item The product should be pleasurable to use by the end user.
-						\item The product should be useful, usable and accessible for the end user.
-						\item The product should require only little effort from the end user's clients.
-						\item It should be easy to add objects to the virtual representation of the proposed garden.
-						\item The virtual environment should be pleasant to be in.
-						\item the virtual environment should strive to feel immersive and realistic to the client inside it.
-						
-						\item The program should have enough variety in it's selection of plants to satisfy the architect's creative needs for a standard danish garden.				
-						\item The architect must have control over the virtual objects' position and rotation using the physical tokens.
+						\item[-] The product should be able to visualize a conceptual design of a garden in a 3D Virtual Environment
+						\item[-] The product should be efficient and effective
+						\item[-] Creating a 3D environment using the system should not be too time consuming
+						\item[-] The product should require only little effort from the end user's clients.
+						\item[-] It should be easy to do alterations, add and remove objects to the virtual representation of the proposed garden.
+						\item[-] The virtual environment should be pleasant to be in.
+						\item[-] The virtual environment should strive to feel immersive and realistic to the client inside it.
+						\item[-] The program should have enough variety in the provided materials, in this case it's selection of garden elements to satisfy the architect's creative needs.
+						\item[-] The architect must have control over the virtual objects' position and rotation using the physical tokens.
 					\end{itemize}
 					
 				\subsection{Non-functional requirements}
 					How it should do it\\
 					\begin{itemize}
-						\item User must be able to enter a virtual environment with a representation of the proposed garden using a VR headset.
-						\item User must be able to walk and look around in the virtual environment.
-						\item The application should include the most common plants found in a Danish garden:
+						\item[-] The program should implement computer-vision, and translate marker data into a 3D Virtual using Image Processing
+						\item[-] The written code should be optimized to reduce delay
+						\item[-] Materials and models should be premade and appear whenever patterns on the markers show up in the field of view
+						\item[-] User must be able to enter a virtual environment with a representation of the proposed garden using a VR headset.
+						\item[-] User must be able to walk and look around in the virtual environment.
+						\item[-] The application should include the most common plants found in a Danish garden:
 						\begin{itemize}
-							\item Roses
-							\item Rhododendron
-							\item Apple trees
-							\item Hydrangea
-							\item Tulips
-							\item Lilacs
-							\item Strawberries
-							\item Beech
+							\item[-] Roses
+							\item[-] Rhododendron
+							\item[-] Apple trees
+							\item[-] Hydrangea
+							\item[-] Tulips
+							\item[-] Lilacs
+							\item[-] Strawberries
+							\item[-] Beech
 						\end{itemize}
-						\item The above plants' should be easily identifiable by the architect using it, both the physical tokens, and the virtual representations.
-						\item The program should be compatible with the HTC Vive.
-						\item The architect must be able to use physical tokens, to create and modify the virtual representations of the corresponding objects, while the client is in the virtual environment.
-						\item Prototype must be able to function in most natural and artificial lighting conditions.
-						\item Physical construction of our prototype must lightweight and easily transportable. \todo{Should strive to be? Also, if this is going to stay, then make corresponding functional requirement that calls for it}
-						\item Rotation of token must rotate virtual object.
-						\item The program must run at between 60 and 90 frames per seconds on a powerful laptop.
+						\item[-] The above plants' should be easily identifiable by the architect using it, both the physical tokens, and the virtual representations.
+						\item[-] The program should be compatible with the HTC Vive.
+						\item[-] The architect must be able to use physical tokens, to create and modify the virtual representations of the corresponding objects, while the client is in the virtual environment.
+						\item[-] Prototype must be able to function in most natural and artificial lighting conditions.
+						\item[-] Physical construction of our prototype must lightweight and easily transportable. \todo{Should strive to be? Also, if this is going to stay, then make corresponding functional requirement that calls for it}
+						\item[-] Rotation of token must rotate virtual object.
+						\item[-] The program must run at between 60 and 90 frames per seconds on a powerful laptop.
 
-						\item Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasable when considering size of tokens and size of acrylic surface?}
+						\item[-] Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasable when considering size of tokens and size of acrylic surface?}
 
-						\item Object recognition may not fail more than 1 out of 20 times.\todo{What is the actual rate at which our product is considered bad?}
-						\item Physical tokens must be easy to match to their virtual counterpart.
-						\item The program must be able to handle up to 100 items \todo{How many do we actually need? Maybe as many tokens as will fit on the board?}in the virtual garden without crashing
+						\item[-] Object recognition may not fail more than 1 out of 20 times.\todo{What is the actual rate at which our product is considered bad?}
+						\item[-] Physical tokens must be easy to match to their virtual counterpart.
+						\item[-] The program must be able to handle up to 100 items \todo{How many do we actually need? Maybe as many tokens as will fit on the board?}in the virtual garden without crashing
 						
-						\item Virtual objects must move in real time as physical tokens are moved.
-						\item Virtual objects must not exhibit a noticeable jitter
-						\item Virtual object's position must correspond exactly to that of their physical token
+						\item[-] Virtual objects must move in real time as physical tokens are moved.
+						\item[-] Virtual objects must not exhibit a noticeable jitter
+						\item[-] Virtual object's position must correspond exactly to that of their physical token
 					\end{itemize}
 			
+\section{Final Problem statement}
+\todo{End analysis with a sub conclusion/wrap up and add the final problem statement HERE}
