@@ -130,5 +130,63 @@ Due to the large number of pages these transcriptions have not been included in 
 \end{comment}
 \section*{Marker auto-generating program}
 The following is the code used to generate markers given just an integer array as input. The program was developed using Processing.
-\includepdf[pages=-]{figure/Appendices/autogen.pdf}
+
+\begin{listing}[H]
+	\caption{Code for the marker auto-generating program}
+	\label{listing:lutTable}
+	\begin{minted}[frame=lines,
+		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{java}
+int[] markers = {1, 2, 4, 8,16,32,64,128,100,3,9};
+int spacing = 800;
+PImage circle;
+PImage values[] = new PImage[8];
+void setup() {
+	circle = loadImage("circle.png");
+	for (int i = 0; i<values.length; i++) {
+		values[i] = loadImage(""+int(pow(2, i))+".png");
+	}
+	size(3508, 4961);
+	surface.setVisible(false);
+	background(255);
+	//4x6 markers on a3 paper
+	int x = 0;
+	int y = 0;
+	int counter=0;
+	for (int i = 0; i<markers.length; i++) {
+		drawMarker(markers[i], x, y);
+		x++;
+		if (x>3) {
+			x = 0;
+			y++;
+			if(y>4){
+				save("result"+counter+".png");
+				counter++;
+				x=0;
+				y=0;
+				
+			}
+		}
+	}
+	save("result"+counter+".png");
+	exit();
+}
+
+void drawMarker(int num, int xpos, int ypos) {
+	int x = spacing/2+xpos*spacing;
+	int y = spacing/2+ypos*spacing;
+	String str = binary(num, 8).toString();
+	int s = int(circle.width*1.5);
+	image(circle, x, y,s,s);
+	
+	for (int i = 0; i<8; i++) {
+		if (str.charAt(i)=='1') {
+			tint(0,255);
+			image(values[7-i], x, y,s,s);
+			tint(255);
+		}
+	}
+	
+}
+	\end{minted}
+\end{listing}
 
