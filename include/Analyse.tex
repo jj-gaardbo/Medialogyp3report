@@ -406,7 +406,7 @@
 				\end{figure} 
 		
 		
-				\section{Initial Survey}\label{sec:initialSurvey}
+			\section{Initial Survey}\label{sec:initialSurvey}
 			%Plantorama surveyllama
 			
 			To get an initial direction which could inform further development of the project, a survey was conducted in Plantorama Hillerød, a garden centre. Of 35 respondents, 33 answered the question: How comfortable would you be trying a program utilizing "Virtual Reality"?
@@ -414,7 +414,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/comfort.png}
-				\caption{How comfortable respondents were with VR according to familiarity with the technology}
+				\caption{Stacked bar chart showing how comfortable respondents were with VR according to familiarity with the technology}
 				\label{fig:comfort}
 			\end{figure}
 			
@@ -423,7 +423,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/vrcomfort.png}
-				\caption{How comfortable respondents were with VR according to age}
+				\caption{Stacked bar chart showing how comfortable respondents were with VR according to their age}
 				\label{fig:vrcomfort}
 			\end{figure}
 			
@@ -432,7 +432,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/gardensize.png}
-				\caption{The size of respondents' gardens}
+				\caption{Pi chart showing the sizes of respondents' gardens}
 				\label{fig:gardensize}
 			\end{figure}
 			
@@ -455,11 +455,15 @@
 						Beech & 5  \\
 					\end{tabular}
 				\end{center}
-				\caption{Most common plants}
+				\caption{Table listing the most common plants found in the questionnaire respondents' gardens}
 				\label{fig:plantlist}
 			\end{figure}
 			
-			If the project ends up being limited in the number of models included, it would make sense to at least include these common garden plants.
+			\subsection{Sub-conslusion}
+			Most of the questionnaire respondents are familiar with VR and felt comfortable using it. The group that expressed most comfort in using it were aged 36-45, which is within the age group defined by the experts in \autoref{sec:expertInterviews}
+			The garden sizes vary quite a bit although the vast majority of the respondents' gardens were larger than 800m² and the second largest group were in between 500-800m².
+			If the project ends up being limited in the number of models included, it would make sense to at least include the common garden plants shown in \autoref{fig:plantlist}.
+			
 			\section{Design Requirements}
 			%Some design requirements.
 				\subsection{Functional requirements}
@@ -506,7 +510,7 @@
 						\item[-] The program should be compatible with the HTC Vive. A portable VR headset like the Oculus Go is the ideal choice as it is more, but is not yet available (See \autoref{sec:standaloneVR}).
 						\item[-] The program must run at between 60 and 90 frames per seconds on a powerful laptop.
 						\item[-] The written code should be optimized to reduce delay
-						\item[-] The application should include the most common plants found in a Danish garden (See \autoref{sec:initialSurvey}):
+						\item[-] The application should include the most common plants found in a Danish garden (See \autoref{fig:plantlist} in \autoref{sec:initialSurvey}):
 						\begin{itemize}
 							\item[-] Roses
 							\item[-] Rhododendron
@@ -518,7 +522,7 @@
 							\item[-] Beech
 						\end{itemize}
 						\item[-] The above plants' should be easily identifiable by the architect using it, both the physical markers, and the virtual representations.
-						\item[-] Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.(See \autoref{sec:initialSurvey}) \todo{Conclude that this was not done due to timeconstraints and the limitiations of the physical models construction}
+						\item[-] Virtual garden should support garden sizes over 500 m².(See \autoref{fig:gardensize} in \autoref{sec:initialSurvey}) \todo{Conclude that this was not done due to timeconstraints and the limitiations of the physical models construction}
 						
 						%Markers
 						\item[-] The program should implement computer-vision, and translate marker data into a 3D Virtual using Image Processing(See \autoref{sec:fiducialMarkers})
