@@ -146,7 +146,6 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 \todo{Fix the position of below images: They currently end up beyond the bottom of the page}
 
 
-\begin{center}
 	\begin{multicols}{2}
 
 	\begin{figure}[H]
@@ -170,7 +169,7 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 	\end{table}
 \end{multicols}
 
-\end{center}
+
 Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
 \todo{update to new threshold style}
 \begin{listing}[H]
