@@ -35,27 +35,6 @@
 	\subsection{Expert Interviews}\label{sec:expertInterviews}
 	For further knowledge gathering and validation of the problem, four phone interviews with landscape architects (Experts) were conducted. Two of the experts were actively using 3D technology for visualizing garden plans for their customers. These expert were Jens Peter Jacobsen from unikaHaver.dk\footnote{unikaHaver website: \url{http://unikahaver.dk/}} and Henriette Lyngsted\footnote{Lyngsted Landskab website: \url{http://lyngsted-landskab.dk/}}. The other two, Frank Kirkegaard Hansen\footnote{Frank Kirkegaard Hansen website: \url{http://www.frankkirkegaard.dk/}} and Karen Dahl\footnote{Havens Arkitekter website: \url{www.havens-arkitekter.dk}}, only used sketching by hand to visualize their design for the clients. Due to logistics the interviews were conducted over the phone as the experts had their practices at various locations throughout Denmark. The interviews were semi-structured to allow for new ideas and points to potentially surface. Some practical advantages of interviewing over the phone instead of face-to-face interviews were also considered. These were, amongst others, advantages like Time Efficiency, (Re)arrangement Flexibility and Geographical Reach\cite{telephoneInterview}.
 		
-		\subsubsection{Procedure:}
-		This subsection is a brief description of how the interview process was executed.
-		
-		\paragraph*{Locating experts:}
-		Through online research one project group representative found and e-mailed 12 landscape architects throughout the country and managed to make appointments with 4 of them. During the e-mail correspondence, the experts were informed, and gave their consent on the interviews being recorded and used in the report dependencies in transcribed form.
-		
-		\paragraph*{Preparation:}
-		Through further online research a list of approximately 15-30 questions was compiled. The number depended on whether or not the expert used 3D in his/her practice, as this opened up for further questioning. Here are some examples of the questions:(See appendix \ref{sec:interviewQuestionsExperts} for the full list)
-
-		\begin{itemize}
-			\item[-] Do people usually need plans for the entire garden or just parts of it?
-			\item[-] Who makes the 3D visualization of the garden? Is it something you create internally in the company, or does it come from outside cooperators? 
-			\item[-] How large of a garden area do you usually work with?
-			\item[-] Are your clients mostly private or do you also have municipal projects?
-		\end{itemize}
-		
-		\paragraph*{Location:}
-		As previously mentioned the interview were conducted over the phone. The interviewer was placed in a quiet room on campus at Aalborg University Copenhagen and made the phone calls to the experts at the agreed time.
-
-		\paragraph*{Post analysis:}The expert interviews were later transcribed (See appendix \ref{interviewTranscriptions}) and coded using traditional coding in order to identify patterns and categorize followed by further analysis of the qualitative data gathered.
-		
 		\subsubsection{Findings}
 		In this sub section the main categories from the previously mentioned coding process will be examined. In each category there will be translated quotes from the different interview, in no particular order. The list of categories is listed below:
 		\begin{enumerate}
@@ -284,6 +263,9 @@
 			lighting conditions\cite{fidOcclusion} are also something that has to be considered.\\
 			
 			A system using only parallel mappings will have trouble with larger markers as well as cameras with a small focal length; for example Webcams(in laptops or portable ones) and cameras built into portable devices.
+			
+		\subsection{Image Processing in relation to virtual reality}
+		It is likely that virtual reality seems like two examples of the same image displayed on to displays in a virtual reality headset. This could be the case, but to achieve a more realistic imitation of actual stereoscopic vision, as we know from human vision, image processing operations are needed in order to create a parallax difference. The parallax difference adds the appeals to the difference of eye position and allows for depth perception in virtual space.
 												
 		\subsection{Virtual Reality}\label{sec:virtualReality}
 		The earliest attempts at a VR experience was in the 1950s\cite{VRS} by Morton Heilig who made the Sensorama\ref{fig:sensorama}; an arcade-style theater cabinet, that featured stereo speakers, stereoscopic 3D display, smell generators, fans and a vibrating chair.
@@ -306,8 +288,6 @@
 		
 		In 1961 the first motion tracking HMD was developed\cite{VRS}, it was made for military purposes, and was focused on tracking the head movements to control a remote camera. This was to allow a soldier to view remote locations in a natural fashion, without risking the viewer to actually be physically present. It used magnets to accomplish the head motion tracking.\\
 		
-	
-	
 		After the initial excitement for virtual reality died down with the invent of the world wide web in the mid 90's, the industry waited patiently for hardware that could provide the immersion that tied the experience as a whole together. All of the early attempts had one flaw in common; the hardware couldn't provide close to realistic or good looking graphics at a frame rate that wouldn't induce motion sickness in the user, at a price that a normal consumer could afford\cite{vergeVR}. And hence the virtual reality industry laid dormant until 2013 when Palmer Luckey created a kickstarter page for a virtual reality headset called Oculus Rift\cite{createOculus}. This headset sparked a wide public interest in virtual reality as a medium, and lead to the development of the current selection of VR headsets available today. The most current iteration of the Oculus Rift is the CV1 - Consumer Version 1. Its biggest competitor is the HTC Vive, a VR headset with similar hardware specifications\footnote{Vive™: \url{https://www.vive.com/us/}}.
 			
 		\subsubsection{The essence of VR}
@@ -323,7 +303,7 @@
 		\end{quote}
 	
 	
-	\subsection{Assessment of Virtual Reality software in engineering}
+	\subsection{Benefits of Virtual Reality}\label{sec:assessmentOfVR}
 	Human-Computer interfaces are traditionally known to be controlled using devices like the mouse and keyboard, while actions are monitored on computer monitors, which could be perceived as unnatural in a regard, as it does not act well with the human senses as they are used. However, with the development over time of modern technology, it has come across VR. \\
 	
 	VR uses what is known from the human-computer interface and implements it in a structure that activates and increases the users human senses. A typical virtual reality device uses, as mentioned in \autoref{sec:virtualReality}, a Head Mounted Display with a stereoscopic display and can eventually feature audio. Furthermore, it sets the user in a place that gives them the sense of actual presence in the environment they are put into. The display is split into right-eye and left-eye views to mock the feeling of stereoscopic human vision while wearing the display. 
@@ -341,7 +321,7 @@
     \section{State of the art}\label{sec:SOTA}
     In order to gather more knowledge about how to potentially develop a CAD-style system, that helps visualize conceptual designs in an effective and efficient way, it is worth looking at similar or related products currently on the marked, that could be used for inspiration. Some of the products have already been mentioned above in the sections above.
 	  
-	  	\subsection{Standalone VR}
+	  	\subsection{Standalone VR}\label{sec:standaloneVR}
 	  	Oculus Go\footnote{Oculus Go: \url{https://www.oculus.com/go/}} is a virtual reality headset set to launch in the first quarter of 2018. Developed by the firm behind Oculus Rift, the Go shares many features with the Rift. It is designed for virtual reality games, social applications and different kinds of 360 degree experiences. Furthermore, the Go is constructed of lightweight fabrics which increase comfort during long sessions of use. Unlike the Rift, Oculus Go does not need to be connected to a computer in order to function, enabling it to be used in new contexts such as outdoors and while traveling. It utilizes a simple controller for navigation and action to allow complex interaction within the featured applications, although it does not feature fully tracked motion control. Another strength the Go brings is the built in spatial audio, which alongside the 2560x1440 pixel display makes the Oculus Go a serious competitor to current mobile VR headsets.  \\
 	  	\begin{figure}[H]
 	  		\centering
@@ -406,7 +386,7 @@
 				\end{figure} 
 		
 		
-				\section{Initial Survey}
+			\section{Initial Survey}\label{sec:initialSurvey}
 			%Plantorama surveyllama
 			
 			To get an initial direction which could inform further development of the project, a survey was conducted in Plantorama Hillerød, a garden centre. Of 35 respondents, 33 answered the question: How comfortable would you be trying a program utilizing "Virtual Reality"?
@@ -414,7 +394,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/comfort.png}
-				\caption{How comfortable respondents were with VR according to familiarity with the technology}
+				\caption{Stacked bar chart showing how comfortable respondents were with VR according to familiarity with the technology}
 				\label{fig:comfort}
 			\end{figure}
 			
@@ -423,7 +403,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/vrcomfort.png}
-				\caption{How comfortable respondents were with VR according to age}
+				\caption{Stacked bar chart showing how comfortable respondents were with VR according to their age}
 				\label{fig:vrcomfort}
 			\end{figure}
 			
@@ -432,7 +412,7 @@
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.6\linewidth]{figure/Analysis/gardensize.png}
-				\caption{The size of respondents' gardens}
+				\caption{Pi chart showing the sizes of respondents' gardens}
 				\label{fig:gardensize}
 			\end{figure}
 			
@@ -443,7 +423,6 @@
 				\begin{center}
 					\rowcolors{2}{light-gray}{white}
 					\begin{tabular}{  l  r }
-
 						Item & Occurences  \\ \hline
 						& \\
 						Roses & 15 \\ 
@@ -456,36 +435,62 @@
 						Beech & 5  \\
 					\end{tabular}
 				\end{center}
-				\caption{Most common plants}
+				\caption{Table listing the most common plants found in the questionnaire respondents' gardens}
 				\label{fig:plantlist}
 			\end{figure}
 			
-			If the project ends up being limited in the number of models included, it would make sense to at least include these common garden plants.
+			\subsection{Sub-conslusion}
+			Most of the questionnaire respondents are familiar with VR and felt comfortable using it. The group that expressed most comfort in using it were aged 36-45, which is within the age group defined by the experts in \autoref{sec:expertInterviews}
+			The garden sizes vary quite a bit although the vast majority of the respondents' gardens were larger than 800m² and the second largest group were in between 500-800m².
+			If the project ends up being limited in the number of models included, it would make sense to at least include the common garden plants shown in \autoref{fig:plantlist}.
+			
 			\section{Design Requirements}
 			%Some design requirements.
 				\subsection{Functional requirements}
 					What it should do\\
 					\begin{itemize}
-						\item[-] The product should be able to visualize a conceptual design of a garden in a 3D Virtual Environment
-						\item[-] The product should be efficient and effective
+						%Target Group
+						\item[-] The product should be aimed at landscape architects in their design process (See \autoref{sec:expertInterviews}).
 						\item[-] Creating a 3D environment using the system should not be too time consuming
-						\item[-] The product should require only little effort from the end user's clients.
-						\item[-] It should be easy to do alterations, add and remove objects to the virtual representation of the proposed garden.
+						\item[-] The product should require only little effort from the architects's clients.
+						\item[-] The program should have enough variety in the provided materials, in this case it's selection of garden elements to satisfy the architect's creative needs.
+						\item[-] The product should be able to visualize a conceptual design of a garden in a 3D Virtual Environment (See \autoref{sec:virtualReality}).
+						\item[-] The architect must have control over the virtual objects' position and rotation using the physical tokens.
+						
+						%Box
+						\item[-] The physical construction of the prototype should be as lightweight and easily transportable as possible.
+						
+						%Design
+						\item[-] It should be easy to do alterations, add and remove objects to the virtual representation of the proposed garden (See \autoref{sec:assessmentOfVR}).
+						\item[-] The product should be efficient and effective
 						\item[-] The virtual environment should be pleasant to be in.
 						\item[-] The virtual environment should strive to feel immersive and realistic to the client inside it.
-						\item[-] The program should have enough variety in the provided materials, in this case it's selection of garden elements to satisfy the architect's creative needs.
-						\item[-] The architect must have control over the virtual objects' position and rotation using the physical tokens.
+						
+						%Markers
+						\item[-] The markers rotation should correspond to the rotation of the object in the virtual environment.
+						\item[-] The program must be able to handle any number of items simultaneously
+						\item[-] Virtual objects must move in real time as physical markers are moved.
+						\item[-] Virtual objects must not exhibit a noticeable jitter
+						\item[-] Virtual object's position must correspond exactly to that of their physical token
 					\end{itemize}
 					
 				\subsection{Non-functional requirements}
 					How it should do it\\
 					\begin{itemize}
-						\item[-] The program should implement computer-vision, and translate marker data into a 3D Virtual using Image Processing
+						%Target Group
+						\item[-] The architect must be able to use physical tokens, to create and modify the virtual representations of the corresponding objects, while the client is in the virtual environment.
+						\item[-] The client must be able to enter a virtual environment with a representation of the proposed garden using a VR headset.
+						\item[-] The client must be able to walk and look around in the virtual environment.
+						
+						%Box
+						\item[-] The physical construction of the prototype should be built using only light materials and be compact.		
+						\item[-] Prototype must be able to function in most natural and artificial lighting conditions.
+						
+						%Design
+						\item[-] The program should be compatible with the HTC Vive. A portable VR headset like the Oculus Go is the ideal choice as it is more, but is not yet available (See \autoref{sec:standaloneVR}).
+						\item[-] The program must run at between 60 and 90 frames per seconds on a powerful laptop.
 						\item[-] The written code should be optimized to reduce delay
-						\item[-] Materials and models should be premade and appear whenever patterns on the markers show up in the field of view
-						\item[-] User must be able to enter a virtual environment with a representation of the proposed garden using a VR headset.
-						\item[-] User must be able to walk and look around in the virtual environment.
-						\item[-] The application should include the most common plants found in a Danish garden:
+						\item[-] The application should include the most common plants found in a Danish garden (See \autoref{fig:plantlist} in \autoref{sec:initialSurvey}):
 						\begin{itemize}
 							\item[-] Roses
 							\item[-] Rhododendron
@@ -496,23 +501,14 @@
 							\item[-] Strawberries
 							\item[-] Beech
 						\end{itemize}
-						\item[-] The above plants' should be easily identifiable by the architect using it, both the physical tokens, and the virtual representations.
-						\item[-] The program should be compatible with the HTC Vive.
-						\item[-] The architect must be able to use physical tokens, to create and modify the virtual representations of the corresponding objects, while the client is in the virtual environment.
-						\item[-] Prototype must be able to function in most natural and artificial lighting conditions.
-						\item[-] Physical construction of our prototype must lightweight and easily transportable. \todo{Should strive to be? Also, if this is going to stay, then make corresponding functional requirement that calls for it}
-						\item[-] Rotation of token must rotate virtual object.
-						\item[-] The program must run at between 60 and 90 frames per seconds on a powerful laptop.
-
-						\item[-] Virtual garden should support garden sizes under 50 m$^2$ and up to 1600 m$^2$.\todo{What's feasable when considering size of tokens and size of acrylic surface?}
-
-						\item[-] Object recognition may not fail more than 1 out of 20 times.\todo{What is the actual rate at which our product is considered bad?}
-						\item[-] Physical tokens must be easy to match to their virtual counterpart.
-						\item[-] The program must be able to handle up to 100 items \todo{How many do we actually need? Maybe as many tokens as will fit on the board?}in the virtual garden without crashing
+						\item[-] The above plants' should be easily identifiable by the architect using it, both the physical markers, and the virtual representations.
+						\item[-] Virtual garden should support garden sizes over 500 m².(See \autoref{fig:gardensize} in \autoref{sec:initialSurvey}) \todo{Conclude that this was not done due to timeconstraints and the limitiations of the physical models construction}
 						
-						\item[-] Virtual objects must move in real time as physical tokens are moved.
-						\item[-] Virtual objects must not exhibit a noticeable jitter
-						\item[-] Virtual object's position must correspond exactly to that of their physical token
+						%Markers
+						\item[-] The program should implement computer-vision, and translate marker data into a 3D Virtual using Image Processing(See \autoref{sec:fiducialMarkers})
+						\item[-] Materials and models should be premade and appear whenever patterns on the markers show up in the field of view
+						\item[-] The markers should be designed in such a way that the markers rotation can be read by the camera using image processing.
+						\item[-] By optimizing the code and reducing delay the program will be able to handle any number of items simultaneously as long as the physical prototype allows it.
 					\end{itemize}
 			
 \section{Final Problem statement}

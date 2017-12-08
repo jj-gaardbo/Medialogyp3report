@@ -87,38 +87,35 @@ In relation to image processing one has to be aware that noise, particularly in 
 \todo{write this section}
 \subsection{Thresholding in RG}
 \todo{write a bit more about the implication of each threshold}
-Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}
+Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}. The image contains a slightly modified RG space. Instead of 0 to 255, it is 0 to 1. Really it is just percentage based instead. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
-	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion.}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
 	\label{fig:rgbNorm}
 \end{figure}
-There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented values is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
+There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
  or 0.\\
-\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines.\\
-
+\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a fair bit bluer. You also cannot set it too wide, since doing so will cause with thing to also be segmented. There are ways the provide more control over the segmentation.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
-		\label{thresholdintrange}
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
 		\caption{in range threshold in rg space}
+		\label{thresholdintrange}
 	\end{figure}
 	\columnbreak
 	\begin{figure}[H]
 		\centering
-		\label{thresholdbelowline}
 		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
 		\caption{below line threshold in rg space}
+		\label{fig:thresholdbelowline}
 	\end{figure}
 
 \end{multicols}
 
 \todo{we are now using below line and distance make accoridng changes}
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $ y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero.\\
-
-
+\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
@@ -129,15 +126,14 @@ There are different ways to threshold in RG, and because of the two dimensionali
 	
 	\begin{figure}[H]
 		\centering
-		\label{threshold}
-		
 		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
 		\caption{combined threshold in rg space}
+		\label{fig:threshold}
 	\end{figure}
 	
 \end{multicols}
-\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces a the following threshold.\\
-In the end we decided to implement a distance based threshold because it allows for more lighting change resistant thresholding of the color red. Now that the reasons for our choices have been laid out, we might as well move into how these actually were implemented into our code.
+\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\
+\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the it as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top of the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. We found that this produces the most consistent threshold, and was the most resistant to lighting changes. It now time to look at how to actually implement all of the RG things.
 \subsection{rg chomaticity in code}
 The process of converting an rgb image described above is a matter of simple point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
 \begin{enumerate}
@@ -175,7 +171,8 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 \end{multicols}
 
 \end{center}
-Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in listing \ref{listing:lutTable}.
+Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
+\todo{update to new threshold style}
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
 \label{listing:lutTable}
@@ -254,16 +251,71 @@ The algorithm has now, all things going well, produced a binary thresholded imag
 \section{Blob detection}
 See, what did i tell you. Blob detection used to segment a picture into individual blobs. If you need to deal with multiple object in a image, it is worth investigating. 
 \subsection{What is a blob, and why detect them}
-Blob stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest(ROI) in a image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob, like size, and bounding box, and a host of others. Imagine a program is trying to find real life objects. Knowing the range of features that the object normally produces, can help it determine if a blob is that object. Generally these features are calculated from a list of pixels in the blob.\\
+Blob stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest(ROI) in a image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob, like size, and bounding box, and a host of others. For a program a program trying to recognize real life objects, Knowing the range of features that the object normally produces can help it determine if a blob is that object. Generally these features are calculated from a list of pixels in the blob.\\\\
 \todo{maybe an image here, maybe a thresholded image}
-There is staggeringly large amount of features that could be calculated on a blobs. But our job is made \textbf{A LOT} easier by three factors. First, our marker are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. There are many things to love bout circle, their heigth/with relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest. Meaning our blob detection has to do less work in discriminating the blobs.
+There is staggeringly large amount of features that could be calculated on a blob. But our job is made \textbf{A LOT} easier by three factors. First, our marker are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. There are many things to love about circle, their heigth/with relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest. Meaning our blob detection has to do less work in discriminating the blobs.
 \subsection{Blob Extraction by recursion}
-All features of a blob are calculated from a list of pixels included in the it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this one can get from any pixel in the blob to any other by taking a path through white pixel to it, and any pixel in the blob must therefore be connected to any other though a string of white pixels.\\
-Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that you don't add the same  many times, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
-This is a recursive implantation. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixel, which might cause the function to call itself again. This recursive function calling is very easy to implement but it also mean that the call stack in the program could fill up and crash it.  \todo{what is a call stack}
-Because of the relatively small blobs in our program, usually somewhere between 150 and 16000 pixels, all we had to to prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions cause significantly bigger issues. If we double the nr of pixel in each axis all we get a 4 times larger blob. At large camera sizes, the stack has to be massive to accommodate the recursive function.
-\todo{Intoduce gridSIze and the non recurrsive version}
+All features of a blob are calculated from a list of pixels included in the it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to each other pixel through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\
+Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
+This is called a Grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there is no more grass/pixels.
+It is a recursive algorithm. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixels, which might cause the function to call itself again. This recursive function calling is very easy to implement but means that the program's call stack might fill up and crash it.  \todo{what is a call stack}\\
+Because of the relatively small blobs in our program, usually somewhere between 150 and 16000 pixels, all we had to do prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large camera sizes, the stack has must be massive to accommodate the recursive function. While the webcam used in the prototype is tiny, early in the process it was thought that a larger resolution would be used in the final prototype. To anticipate this some options where added to the prototype. Namely the option to set a variable called \codeword{gridSize} which causes the algorithm to make jumps of size \codeword{gridSize} pixels instead of 1. Instead of checking the pixel to its right the algorithm will check the one \codeword{gridSize} to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, counteracting a larger camera resolution. Now the algorithms speed vs accuracy can be tailored to suit our specific need.
+\subsection{The blob object and parameters}
+The list of pixels and blob parameters are often held in an structure.
+We created one for this purpose. Our blob structure is called \codeword{gylphObj}, because the pattern underneath can resemble a glyph\footnote{\url{goo.gl/HkFksM}}. The structure is declared as shown in listing \ref{listing:glyph}
+\begin{listing}[H]
+	\caption{The declaration of glyph object, the structure that contain a blob, as well has the parameters about it}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+	struct glyphObj {
+		vector<cVector> list;
+		cVector bBoxStart;
+		cVector bBowEnd;
+		cVector center;
+		cVector rotation;
+		int nr;
+		bool returnable = false;
+	};
+	\end{minted}
+	\label{listing:glyph}
+\end{listing}
+cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box, not the center of mass. We found that the boundbox center was more reliable 
+\todo{visualisation of bounding box vs center of mass as, also explanation} 
+also explanation of how rotation and stuff, maybe put that in the design section.
+Finally, since we find way more blobs than there are actual circles the boolean \codeword{returnable} exists and returning all the blobs to . It is only set to true if the object is 
 \subsection{Implementation}
+First one loops through each pixel in the image and checks if it is white. Obviously this only works if the image is binary. In our case, the image is 8bit greyscale, mostly to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
+\begin{listing}[H]
+	\caption{"We didn't start the grassfire". This algorithm did. It scans for white pixels, creates blobs if it finds any, and then starts fires}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+	void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
+		int nRows = biImg.rows;
+		int nCols = biImg.cols;
+		int rowSize = nCols * GRIDSIZE;
+		uchar * p;
+		uchar * passer;
+		glyphObj currentBlob;
+		cVector assigner;
+		int col = 245;
+		for (int i = GRIDSIZE + 1; i < nRows - GRIDSIZE - 1; i += GRIDSIZE) {
+			p = biImg.ptr<uchar>(i);
+			
+			for (int j = GRIDSIZE + 1; j < nCols - GRIDSIZE - 1; j += GRIDSIZE) {
+				if (p[j] == 255) {
+					blobs.push_back(currentBlob);
+					blobs.back().nr = col;
+					passer = &p[j];
+					dropFire(passer, blobs.back(), rowSize, i-BORDER, j-BORDER, assigner);
+					col -= 10;
+					if (col < 20) {
+						col = 245;
+					}
+				}
+			}
+		}
+	}
+	\end{minted}
+	\label{listing:grassfire}
+\end{listing}
 \section{Blob analysis}
 \subsection{Parameter overview, and flow }
 \subsection{Bounding box and Center}
