@@ -87,36 +87,35 @@ In relation to image processing one has to be aware that noise, particularly in 
 \todo{write this section}
 \subsection{Thresholding in RG}
 \todo{write a bit more about the implication of each threshold}
-Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}
+Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}. The image contains a slightly modified 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
-	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion.}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
 	\label{fig:rgbNorm}
 \end{figure}
-There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented values is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
+There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
  or 0.\\
-\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines.\\
-
+\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The produces threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a fair bit bluer. You also cannot set it too wide, since doing so will cause with thing to also be segmented. There are ways the provide more control over the segmentation.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
-		\label{thresholdintrange}
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
 		\caption{in range threshold in rg space}
+		\label{thresholdintrange}
 	\end{figure}
 	\columnbreak
 	\begin{figure}[H]
 		\centering
-		\label{thresholdbelowline}
 		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
 		\caption{below line threshold in rg space}
+		\label{fig:thresholdbelowline}
 	\end{figure}
 
 \end{multicols}
 
 \todo{we are now using below line and distance make accoridng changes}
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $ y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero.\\
+\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
 
 
 \begin{multicols}{2}
@@ -129,15 +128,14 @@ There are different ways to threshold in RG, and because of the two dimensionali
 	
 	\begin{figure}[H]
 		\centering
-		\label{threshold}
-		
 		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
 		\caption{combined threshold in rg space}
+		\label{fig:threshold}
 	\end{figure}
 	
 \end{multicols}
-\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces a the following threshold.\\
-In the end we decided to implement a distance based threshold because it allows for more lighting change resistant thresholding of the color red. Now that the reasons for our choices have been laid out, we might as well move into how these actually were implemented into our code.
+\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\
+\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the it as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top if the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. 
 \subsection{rg chomaticity in code}
 The process of converting an rgb image described above is a matter of simple point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
 \begin{enumerate}
