@@ -74,8 +74,13 @@ It is observed that in RG the channel values are codependent. If the value of re
 So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. for example two colors (0,10,50) and (0,50,250) will produce exactly similar value when converted to RG. 
 \[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
 \[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 \]
-The same is true for any two color that are proportionately similar.\\
-\todo{creat image showing (0,10,50) and the other, after conversion to (0,42,212)} 
+The resultcolors can be seen in figure \ref{fig:conversion} The same is true for any two color that are proportionately similar.\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgconversion.png}
+	\caption{Two colors of very different intensity are identical when converted to RG because they have the same percentages of the different colors. This make the RG color space more resistant to different lighting condition}
+	\label{fig:conversion}
+\end{figure} 
 In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
 
 \subsection{Differences with HSV}
@@ -92,7 +97,7 @@ Because RG can be represented by two values it is possible to plot the  chromati
 There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented values is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
  or 0.\\
 \textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines.\\
-\
+
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
@@ -100,11 +105,10 @@ There are different ways to threshold in RG, and because of the two dimensionali
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
 		\caption{in range threshold in rg space}
 	\end{figure}
-	
+	\columnbreak
 	\begin{figure}[H]
 		\centering
 		\label{thresholdbelowline}
-		
 		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
 		\caption{below line threshold in rg space}
 	\end{figure}
@@ -114,6 +118,24 @@ There are different ways to threshold in RG, and because of the two dimensionali
 \todo{we are now using below line and distance make accoridng changes}
 \textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $ y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero.\\
 
+
+\begin{multicols}{2}
+	\begin{figure}[H]
+		\centering
+		\label{thresholddist}
+		\includegraphics[width=1\linewidth]{figure/Analysis/distthresholdcolor.png}
+		\caption{distance threshold in rg space}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\label{threshold}
+		
+		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
+		\caption{combined threshold in rg space}
+	\end{figure}
+	
+\end{multicols}
 \textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces a the following threshold.\\
 In the end we decided to implement a distance based threshold because it allows for more lighting change resistant thresholding of the color red. Now that the reasons for our choices have been laid out, we might as well move into how these actually were implemented into our code.
 \subsection{rg chomaticity in code}
@@ -124,20 +146,20 @@ The process of converting an rgb image described above is a matter of simple poi
 \end{enumerate}
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Creating a lookup tabel}
-The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in listing \ref{rgConvSpeed}. 
+The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
 \todo{Fix the position of below images: They currently end up beyond the bottom of the page}
+
+
 \begin{center}
 	\begin{multicols}{2}
 
+	\begin{figure}[H]
+	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
+	\label{rgConversion}
+	\caption{Test image used to test the speed of the BGR to RG conversion. Using a look up table halved it execution time}
+	\end{figure}
 
-	\begin{multicols}{2}
-		\includegraphics[width=1\linewidth]{figure/Analysis/city.jpg}
-	  \columnbreak
-		\includegraphics[width=1\linewidth]{figure/Analysis/cityNorm.jpg}
-	\end{multicols}
-    
     \columnbreak
-    
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{ l | l }
@@ -150,7 +172,7 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 	\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as a "if smaller than" statement can significantly increase the speed. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
 	\label{table:rgConvSpeed}
 	\end{table}
-	\end{multicols}
+\end{multicols}
 
 \end{center}
 Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in listing \ref{listing:lutTable}.
