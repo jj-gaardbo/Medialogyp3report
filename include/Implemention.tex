@@ -4,6 +4,7 @@
 	\subsection{VR}
 	Something about VR toolkit in Unity
 	\section{DLLs and Unity}
+	\todo{the object has new fields, a few places needs rewrites}
 		When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}, as it allows for high-level management of objects in space, and would reduce development time on the part of the implementation not concerned with image processing. Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
 		One issue is that Unity uses C\# and openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and are instead designed to be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. However, there are a number of disadvantages with this implementation that must be taken into consideration, and which have made the process of completing this project less smooth. As Unity and the plug-in do not have access to each other's code, passing an object between the two is difficult, for example. For the same reason, debugging crashes is tricky. During development of this project, one fatal bug consistently crashing the program happened in an unmanaged part of Unity, so Unity could not give an error message. The code was developed in C++ which had no console where a log could be printed. Therefore troubleshooting became the source of a lot of frustration.\\\\
 		Importing a function into DLL is simple, as seen in Listing \ref{listing:dllExport}.
@@ -194,8 +195,8 @@ Creating a look up table is straight forward. You take the operation that would 
 The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). In that case  set the index to zero. Otherwise calculate the value that would result from the color(j) divided by sum(i) and multiplied by 255.
 The tabel is now made and can be passed to a function. 
 \subsubsection{Suming rgb channels and looking up results}
-The is point processing and as such it calls for a double for loop to ensure each pixel is visited. Before the loop we instantiate a few variables to so we don't have to create them for all the iterations. There are three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. With the pointer one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
-
+The is point processing and as such it calls for a double for loop to ensure each pixel is visited. The function takes an input image assumed to be BGR, and an output image also amused to be BGR. The ampersand(\&) in the function signature indicates that the argument should be passed by reference. This allows for changes to the input arguments to be made. If not included we would be making changes copies instead.\\
+Before the loop we instantiate a few variables so we don't have to recreate them for each pixel. There are three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. With the pointer one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
@@ -278,44 +279,73 @@ We created one for this purpose. Our blob structure is called \codeword{gylphObj
 	\end{minted}
 	\label{listing:glyph}
 \end{listing}
-cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box, not the center of mass. We found that the boundbox center was more reliable 
-\todo{visualisation of bounding box vs center of mass as, also explanation} 
-also explanation of how rotation and stuff, maybe put that in the design section.
-Finally, since we find way more blobs than there are actual circles the boolean \codeword{returnable} exists and returning all the blobs to . It is only set to true if the object is 
-\subsection{Implementation}
-First one loops through each pixel in the image and checks if it is white. Obviously this only works if the image is binary. In our case, the image is 8bit greyscale, mostly to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
+cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box, not the center of mass. We found that the boundbox center was more reliable.
+\todo{visualisation of bounding box vs center of mass as, also explanation also explanation of how rotation and stuff, maybe put that in the design section} 
+The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker. This object is used to represent each blob and is used in the grassfire algorithm.
+\subsection{Grassfire implementation}
+Our implementation can be seen in listing \ref{listing:grassfireIm}. Due to its iterative nature, this method will be called many thousand times. So it is important to cut down on variable instantiation and general computation as much as possible. We have made attempts to do this in the function. Starting with the method signature where we pass by reference whenever possible. While there is very little difference between passing integers and references, you do not have to instantiate the reference every call, so it is slightly faster. Another thing to note is that the function does not make us of the very computationally expensive Mat.at<uchar>(y,x) function. Instead we use pointers 
+\begin{listing}[H]
+	\caption{The drop fire function starts from one pixel and recursively spreads until the entire blob has been consumed. It does this through connected component analysis, analyzing its connected pixels, and spreading to them if they are white.}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+void dropFire(uchar * pixel, glyphObj &store, int &width, int y, int x, cVector &from) {
+	*pixel = store.nr;
+	from.x = x;
+	from.y = y;
+	store.list.push_back(from);
+	if (*(pixel + GRIDSIZE) == 255) {
+		dropFire(pixel + GRIDSIZE, store, width, y, x + GRIDSIZE, from);
+	}
+	if (*(pixel + width) == 255) {
+		dropFire(pixel + width, store, width, y + GRIDSIZE, x, from);
+	}
+	
+	if (*(pixel - GRIDSIZE) == 255) {
+		dropFire(pixel - GRIDSIZE, store, width, y, x - GRIDSIZE, from);
+	}
+	
+	if (*(pixel - width) == 255) {
+		dropFire(pixel - width, store, width, y - GRIDSIZE, x, from);
+	}
+}
+	\end{minted}
+	\label{listing:grassfireIm}
+\end{listing}
+
+\subsection{Scanning for white pixel}
+First one loops through each pixel in the image and checks if it is white. Obviously this only works if the image is binary. In our case, the image is 8bit greyscale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
 \begin{listing}[H]
 	\caption{"We didn't start the grassfire". This algorithm did. It scans for white pixels, creates blobs if it finds any, and then starts fires}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-	void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
-		int nRows = biImg.rows;
-		int nCols = biImg.cols;
-		int rowSize = nCols * GRIDSIZE;
-		uchar * p;
-		uchar * passer;
-		glyphObj currentBlob;
-		cVector assigner;
-		int col = 245;
-		for (int i = GRIDSIZE + 1; i < nRows - GRIDSIZE - 1; i += GRIDSIZE) {
-			p = biImg.ptr<uchar>(i);
-			
-			for (int j = GRIDSIZE + 1; j < nCols - GRIDSIZE - 1; j += GRIDSIZE) {
-				if (p[j] == 255) {
-					blobs.push_back(currentBlob);
-					blobs.back().nr = col;
-					passer = &p[j];
-					dropFire(passer, blobs.back(), rowSize, i-BORDER, j-BORDER, assigner);
-					col -= 10;
-					if (col < 20) {
-						col = 245;
-					}
+void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
+	int nRows = biImg.rows;
+	int nCols = biImg.cols;
+	int rowSize = nCols * GRIDSIZE;
+	uchar * p;
+	uchar * passer;
+	glyphObj currentBlob;
+	cVector assigner;
+	int col = 245;
+	for (int i = GRIDSIZE + 1; i < nRows - GRIDSIZE - 1; i += GRIDSIZE) {
+		p = biImg.ptr<uchar>(i);
+		
+		for (int j = GRIDSIZE + 1; j < nCols - GRIDSIZE - 1; j += GRIDSIZE) {
+			if (p[j] == 255) {
+				blobs.push_back(currentBlob);
+				blobs.back().nr = col;
+				passer = &p[j];
+				dropFire(passer, blobs.back(), rowSize, i-BORDER, j-BORDER, assigner);
+				col -= 10;
+				if (col < 20) {
+					col = 245;
 				}
 			}
 		}
 	}
+}
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
+
 \section{Blob analysis}
 \subsection{Parameter overview, and flow }
 \subsection{Bounding box and Center}
