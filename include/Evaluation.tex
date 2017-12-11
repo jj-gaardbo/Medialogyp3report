@@ -41,8 +41,92 @@ Firstly, the participant was informed about the general purpose of the test, tas
 
 After the participants tried their different roles they where asked to fill out a questionnaire (see appendix ??) as their respective roles, so each participant had to fill out two questionnaires. The questionnaires contained questions regarding the experience as a client and an architect.
 
-\subsection{Result}
-In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test. The results is as follows:
+\subsection{Results}
+In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test. The questionnaires was not 100\% Likert scale questions, but we took those out and put them in a box plot. Some of the questions will be picked out and shown in a bar chart.
+The questions is as follows:\\
+
+Client Questions:\\
+Rate the amount of discomfort tou experienced during the test\\
+Was the framerate (the frequency at which the screen updates) tolerable?\\
+How engaged did you feel with the program?\\
+How good did the environment and objects look?\\
+Did you feel you had enough space to move around?\\
+Could you easily communicate with the other participant?\\
+
+\begin{tikzpicture}
+\begin{axis}
+[
+boxplot/draw direction=y,
+height=10cm,
+width=15cm,
+enlargelimits=0.03,
+ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
+xtick={1,2,3,4,5,6},
+xlabel=Questions,
+ylabel={Level of agreement},
+xticklabels={
+	1,2,3,4,5,6}
+]
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 1\\ 1\\ 1\\ 2\\ 2\\ 2\\ 3\\ 4\\
+};
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 2\\ 2\\ 2\\ 3\\ 4\\ 5\\ 5\\ 5\\
+};   
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 4\\ 4\\ 4\\ 4\\ 4\\ 4\\ 4\\ 5\\ 
+};   
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 2\\ 3\\ 4\\ 4\\ 4\\ 5\\ 5\\ 5\\
+};  
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 2\\ 2\\ 3\\ 3\\ 3\\ 5\\ 5\\ 5\\
+};  
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 1\\ 1\\ 4\\ 5\\ 5\\ 5\\ 5\\ 5\\
+};  
+ 
+\end{axis}
+\end{tikzpicture}
+
+Architect questions:\\
+How easy was the product to use?\\
+How easy was it to tell what the garden looked while you were building it?\\
+
+
+\begin{tikzpicture}
+\begin{axis}
+[
+boxplot/draw direction=y,
+height=10cm,
+width=15cm,
+enlargelimits=0.03,
+ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
+xtick={1,2},
+xlabel=Questions,
+ylabel={Level of agreement},
+xticklabels={
+	1,2}
+]
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 1\\ 3\\ 3\\ 4\\ 4\\ 5\\ 5\\ 5\\
+};
+\addplot+[boxplot]
+table[row sep=\\,y index=0] {
+	data\\ 1\\ 1\\ 2\\ 2\\ 2\\ 3\\ 3\\ 3\\
+};   
+
+
+\end{axis}
+\end{tikzpicture}
+
 
 \subsection{Findings}
 conclusion from the results goes here
@@ -56,6 +140,7 @@ This user experience test was conducted to make a proof of concept, to make sure
 \subsection{Sampling}
 
 \subsection{Test specifics}
+Setup of the test goes here To do tomorrow.
 
 \subsection*{The equipment used during this test}
 
