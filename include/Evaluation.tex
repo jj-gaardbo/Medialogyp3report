@@ -42,17 +42,20 @@ Firstly, the participant was informed about the general purpose of the test, tas
 After the participants tried their different roles they where asked to fill out a questionnaire (see appendix ??) as their respective roles, so each participant had to fill out two questionnaires. The questionnaires contained questions regarding the experience as a client and an architect.
 
 \subsection{Results}
-In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test. The questionnaires was not 100\% Likert scale questions, but we took those out and put them in a box plot. Some of the questions will be picked out and shown in a bar chart.
+In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test (see \autoref{fig:boxPlotResults} and \autoref{fig:boxPlotResults2}). The questionnaires was not 100\% Likert scale questions, but we took those out and put them in a box plot. Some of the questions will be picked out and shown in a bar chart.
 The questions is as follows:\\
 
 Client Questions:\\
-Rate the amount of discomfort tou experienced during the test\\
+Rate the amount of discomfort you experienced during the test\\
 Was the framerate (the frequency at which the screen updates) tolerable?\\
 How engaged did you feel with the program?\\
 How good did the environment and objects look?\\
 Did you feel you had enough space to move around?\\
 Could you easily communicate with the other participant?\\
 
+
+\begin{figure}[H]
+	\centering
 \begin{tikzpicture}
 \begin{axis}
 [
@@ -94,12 +97,16 @@ table[row sep=\\,y index=0] {
  
 \end{axis}
 \end{tikzpicture}
+\caption{Box plot graph showing the result of the client scale questions.}
+\label{fig:boxPlotResults}
+\end{figure}
 
 Architect questions:\\
 How easy was the product to use?\\
 How easy was it to tell what the garden looked while you were building it?\\
 
-
+\begin{figure}[H]
+	\centering
 \begin{tikzpicture}
 \begin{axis}
 [
@@ -126,7 +133,24 @@ table[row sep=\\,y index=0] {
 
 \end{axis}
 \end{tikzpicture}
+\caption{Box plot graph showing the results of the architect Likert questions.}
+\label{fig:boxPlotResults2}
+\end{figure}
 
+\begin{comment}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,0) (2,0) (3,1) (4,3) (Strongly agree - 5,5)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart.}
+	\label{fig:barChartEasy}
+\end{figure}
+
+\end{comment}
 
 \subsection{Findings}
 conclusion from the results goes here
