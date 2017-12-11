@@ -260,7 +260,7 @@ Following this definition extracting a blob can be made quiet simple. Find a whi
 This is called a Grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there is no more grass/pixels.
 It is a recursive algorithm. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixels, which might cause the function to call itself again. This recursive function calling is very easy to implement but means that the program's call stack might fill up and crash it.  \todo{what is a call stack}\\
 Because of the relatively small blobs in our program, usually somewhere between 150 and 16000 pixels, all we had to do prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large camera sizes, the stack has must be massive to accommodate the recursive function. While the webcam used in the prototype is tiny, early in the process it was thought that a larger resolution would be used in the final prototype. To anticipate this some options where added to the prototype. Namely the option to set a variable called \codeword{gridSize} which causes the algorithm to make jumps of size \codeword{gridSize} pixels instead of 1. Instead of checking the pixel to its right the algorithm will check the one \codeword{gridSize} to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, counteracting a larger camera resolution. Now the algorithms speed vs accuracy can be tailored to suit our specific need.
-\subsection{The blob object and parameters}
+\section{The blob object and parameters}
 The list of pixels and blob parameters are often held in an structure.
 We created one for this purpose. Our blob structure is called \codeword{gylphObj}, because the pattern underneath can resemble a glyph\footnote{\url{goo.gl/HkFksM}}. The structure is declared as shown in listing \ref{listing:glyph}
 \begin{listing}[H]
@@ -280,11 +280,20 @@ We created one for this purpose. Our blob structure is called \codeword{gylphObj
 \end{listing}
 cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box, not the center of mass. We found that the boundbox center was more reliable.
 \todo{visualisation of bounding box vs center of mass as, also explanation also explanation of how rotation and stuff, maybe put that in the design section} 
-The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker. This object is used to represent each blob and is used in the grassfire algorithm.
+The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker. This object is used to represent each blob and is used in the grassfire algorithm.
 \subsection{Grassfire implementation}
-Our implementation can be seen in listing \ref{listing:grassfireIm}. Due to its iterative nature, this method will be called many thousand times. So it is important to cut down on variable instantiation and general computation as much as possible. We have made attempts to do this in the function. Starting with the method signature where we pass by reference whenever possible. While there is very little difference between passing integers and references, you do not have to instantiate the reference every call, so it is slightly faster. Another thing to note is that the function does not make us of the very computationally expensive Mat.at<uchar>(y,x) function. Instead we use pointers 
+Our implementation can be seen in listing \ref{listing:grassfireIm}. Due to its iterative nature, this method will be called many thousand times. Note that the function does not make use of the very computationally expensive Mat.at<uchar>(y,x) function. Instead we use pointers to navigate both horizontally and vertically.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/data.png}
+	\caption{Visualization of what happens when one adds the images width to a pointer. In a non-sequential image jumping doing this might result in writing to an invalid location. But in a sequentially laid out image it will result in the pointer pointing to the same index in the row below } 
+	\label{fig:vis}
+\end{figure}
+ The implemented method only works if the data in the image is laid out sequentially. Being sequential means that the data of each row is laid out right after each other. So after the last index in the first row, comes the first index in the second row. Normally to get from a coordinate $(x,y)$ to $(x,y+1)$ one would have to get a pointer to the first column using the mat.ptr<uchar>(y+1) and then adding the x value to it. This is exactly what the Mat.at<uchar>(y,x) does. But if the image is sequential one can add the image width to its index and end up in the row below it, as illustrated in Figure \ref{fig:vis}.\\\\
+ 
+ Now that we can navigate between pixel it is possible to implement the algorithm, and we implemented it as seen in listing \ref{listing:grassfireIm}
 \begin{listing}[H]
-	\caption{The drop fire function starts from one pixel and recursively spreads until the entire blob has been consumed. It does this through connected component analysis, analyzing its connected pixels, and spreading to them if they are white.}
+	\caption{The drop fire function starts from one white pixel changes its color and recursively spreads until the entire blob has been consumed. It does this through connected component analysis, analyzing its connected pixels, and spreading to them if they are white.}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 void dropFire(uchar * pixel, glyphObj &store, int &width, int y, int x, cVector &from) {
 	*pixel = store.nr;
@@ -308,10 +317,12 @@ void dropFire(uchar * pixel, glyphObj &store, int &width, int y, int x, cVector 
 }
 	\end{minted}
 	\label{listing:grassfireIm}
-\end{listing}
+\end{listing} 
+The arguments consist of a pointer to the pixel, the blob that this fire is creating, and the image's width. Two ints that are the fires current coordinates. A reference to a vector to avoid instantiating a new one in each recursion. The function starts on line 2 by changing the pixels color, in order to avoid infinite recursion. Lines 3 to 5 adds the current coordinates to the blob. Next are four if statements. Each check if the neighboring pixel in a certain direction are white. If any of them are, it spreads the fire in those directions with the new x and y values.\\
+With the knowledge of how to create the grassfire and how it works, all we need is to find the white pixels where the fire should start.
 
-\subsection{Scanning for white pixel}
-First one loops through each pixel in the image and checks if it is white. Obviously this only works if the image is binary. In our case, the image is 8bit greyscale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
+\subsection{Scanning for white pixels}
+First one loops through each pixel in the image and checks if it is completely white. Obviously this only works if the image is binary. In our case, the image is 8bit greyscale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
 \begin{listing}[H]
 	\caption{"We didn't start the grassfire". This algorithm did. It scans for white pixels, creates blobs if it finds any, and then starts fires}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -326,7 +337,6 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	int col = 245;
 	for (int i = GRIDSIZE + 1; i < nRows - GRIDSIZE - 1; i += GRIDSIZE) {
 		p = biImg.ptr<uchar>(i);
-		
 		for (int j = GRIDSIZE + 1; j < nCols - GRIDSIZE - 1; j += GRIDSIZE) {
 			if (p[j] == 255) {
 				blobs.push_back(currentBlob);
@@ -344,10 +354,26 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
-
+The arguments for this function are a reference to an binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to be passed the images width. a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs it color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes to dark, in line 20 to 23.
+\todo{image before and after the grassfire}
+The results of the image before and after this algorithm has been run can be seen in \todo{ref the above image}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
 \section{Blob analysis}
+In this section we will deal with how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
 \subsection{Parameter overview, and flow }
-\subsection{Bounding box and Center}
+At present we have a list of the pixels in each blob. To evaluate the markerhood of a given blob it needs the following parameters.
+\begin{enumerate}
+	\item Number of pixels in the blob.
+	\item Height to width relation ship of the bounding box.
+	\item Bounding box center.
+	\item Rotation of the blob.
+\end{enumerate}
+When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\\\
+
+The flow of the algorithm can be seen in the flow chart below.
+\todo{make a flow chart for this}
+
+   
+ 
 \subsection{Rotation}
 \subsection{Vectors to find sample points}
 
