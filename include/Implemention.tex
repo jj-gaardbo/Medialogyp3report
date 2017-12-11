@@ -1,22 +1,25 @@
 \chapter{Implemention}
 	\section{How the program works}
 	This section describes how to set up the prototype, connect the camera, limitations of the program and all that jazz.
-	\subsection{VR}
-	Something about VR toolkit in Unity
+	
+	\section{VR in Unity}
+	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}, as it allows for high-level management of objects in space, and would reduce development time on the part of the implementation not concerned with image processing.
+	\todo{Describe technical details of VR in Unity using Steam VR}
+	
 	\section{DLLs and Unity}
-		When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}, as it allows for high-level management of objects in space, and would reduce development time on the part of the implementation not concerned with image processing. Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
+		 Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
 		One issue is that Unity uses C\# and openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and are instead designed to be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. However, there are a number of disadvantages with this implementation that must be taken into consideration, and which have made the process of completing this project less smooth. As Unity and the plug-in do not have access to each other's code, passing an object between the two is difficult, for example. For the same reason, debugging crashes is tricky. During development of this project, one fatal bug consistently crashing the program happened in an unmanaged part of Unity, so Unity could not give an error message. The code was developed in C++ which had no console where a log could be printed. Therefore troubleshooting became the source of a lot of frustration.\\\\
 		Importing a function into DLL is simple, as seen in Listing \ref{listing:dllExport}.
 \begin{listing}[H]
-\caption{How to: declare a function for DLL export}
+\caption{How to declare a function for DLL export in C++}
 \label{listing:dllExport}
 \begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{cpp}
-extern "C" __declspec( dllexport ) int MyFunc(long parm1);
+extern "C" __declspec( dllexport ) int init(int w, int h);
 \end{minted}
 \end{listing}
-\codeword{extern "C"} tells the compiler that the function name should not be changed when it is compiled, so that its name is known when it is being imported into Unity. \codeword{__declspec()} tells the linker to do something. In this case \codeword{dllexport}, which tells it that it should export a function to a DLL. Therefore \codeword{__declspec(dllimport)} will be used to import the function in Unity. A sample call might look like this\\
+\codeword{extern "C"} tells the compiler that the function name should not be changed when it is compiled, so that its name is known when it is being imported into Unity. \codeword{__declspec()} tells the linker to do something. In this case \codeword{dllexport}, which tells it that it should export a function to a DLL. Therefore \codeword{DllImport(...)} will be used to import the function in Unity. A sample call might look like this\\
 \begin{listing}[H]
-	\caption{How to: declare a function for DLL import}
+	\caption{How to declare a function for DLL import in C\#}
 	\label{listing:dllImport}
 	\begin{minted}[frame=lines,
 	framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{cpp}
