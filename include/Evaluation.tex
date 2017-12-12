@@ -101,6 +101,53 @@ table[row sep=\\,y index=0] {
 \label{fig:boxPlotResults}
 \end{figure}
 
+\subsection*{Was the framerate (the frequency at which the screen updates) tolerable?}
+As seen in \autoref{fig:barChartFrame}, 3 of the 8 participants didnt find the framerate very tolerable. 1 participant found it somewhat tolerable and 3 participants found it very tolerable.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,0) (2,3) (3,1) (4,1) (Strongly agree - 5,3)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart showing if the participants found the framerate tolerable.}
+	\label{fig:barChartFrame}
+\end{figure}
+
+
+\subsection*{How engaged did you feel with the program?}
+Out of 8 participants, 7 of them strongly agreed that they felt engaged with the program. This can be seen in \autoref{fig:barChartEngaged}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,0) (2,0) (3,0) (4,7) (Strongly agree - 5,1)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart showing how engaged the participants felt like.}
+	\label{fig:barChartEngaged}
+\end{figure}
+
+
+\subsection*{Could you easily communicate with the other participant?}
+2 of the participants strongly disagreed that they were able to communicate with the other participant, where 6 of them strongly agreed that it was easy to communicate with the other participant. This can be seen in \autoref{fig:barChartCommunicate}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,2) (2,0) (3,0) (4,1) (Strongly agree - 5,5)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart showing if it was easy to communicate with the other participant.}
+	\label{fig:barChartCommunicate}
+\end{figure}
+
 Architect questions:\\
 How easy was the product to use?\\
 How easy was it to tell what the garden looked while you were building it?\\
@@ -137,20 +184,43 @@ table[row sep=\\,y index=0] {
 \label{fig:boxPlotResults2}
 \end{figure}
 
-\begin{comment}
+
+\subsection*{How easy was the product to use?}
+Out of 8 participants 1 of them strongly disagreed that the product was easy to use, while 2 participants hit the middle ground and 5 participants agreed that the product was easy to use. This can be seen in \autoref{fig:barChartEasy}.
+
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[scale=0.7]
 	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,0) (2,0) (3,1) (4,3) (Strongly agree - 5,5)};
+	\addplot coordinates {(Strongly disagree - 1,1) (2,0) (3,2) (4,2) (Strongly agree - 5,3)};
 	\end{axis}
 	
 	\end{tikzpicture}
-	\caption{Bar chart.}
+	\caption{Bar chart showing if the product was easy to use.}
 	\label{fig:barChartEasy}
 \end{figure}
 
-\end{comment}
+
+\subsection*{How easy was it to tell what the garden looked liked while you were building it?}
+5 participants disagreed that that it was easy to tell how the garden looked, while 3 participants hit the middle ground. This is seen in \autoref{fig:barChartLook}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,2) (2,3) (3,3) (4,0) (Strongly agree - 5,0)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart showing how easy it was to tell how the garden looked like, while building it.}
+	\label{fig:barChartLook}
+\end{figure}
+
+
+
+
+
+
 
 \subsection{Findings}
 conclusion from the results goes here
