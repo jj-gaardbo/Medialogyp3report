@@ -7,12 +7,8 @@
 	\todo{Describe technical details of VR in Unity using Steam VR}
 	
 	\section{DLLs and Unity}
-<<<<<<< HEAD
 	\todo{the object has new fields, a few places needs rewrites}
-		When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}, as it allows for high-level management of objects in space, and would reduce development time on the part of the implementation not concerned with image processing. Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
-=======
 		 Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
->>>>>>> b7a16a412eabb34a95baeae47437df88d392b11d
 		One issue is that Unity uses C\# and openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and are instead designed to be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. However, there are a number of disadvantages with this implementation that must be taken into consideration, and which have made the process of completing this project less smooth. As Unity and the plug-in do not have access to each other's code, passing an object between the two is difficult, for example. For the same reason, debugging crashes is tricky. During development of this project, one fatal bug consistently crashing the program happened in an unmanaged part of Unity, so Unity could not give an error message. The code was developed in C++ which had no console where a log could be printed. Therefore troubleshooting became the source of a lot of frustration.\\\\
 		Importing a function into DLL is simple, as seen in Listing \ref{listing:dllExport}.
 \begin{listing}[H]
@@ -63,11 +59,18 @@ unsafe{
 \end{minted}
 \end{listing}
 \section{Implications of working in vr}
-Virtual reality is computationally demanding. In 2016 Nvidia estimated that an imersive VR experience was seven times more demanding than PC gaming\footnote{\url{goo.gl/AFsBGs}}\footnote{\url{https://www.pcgamesn.com/eve-valkyrie/vr-requires-a-pc-7-times-more-powerful-than-1080p-gaming-say-nvidia}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
+Virtual reality is computationally demanding. In 2016 Nvidia estimated that an imersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
 For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm. In the following sections there will at be times when the algorithm might go about finding objects in a way that is less straight forward, but faster at run time.
 
 \section{BGR to RG chromaticity conversion}
-Its was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticx  space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
+Since we are now diving into image processing we can show the outputs of the  operations. A snap shot of from the prototype's webcam has been taken for just this purpose. It is shown in Figure \ref{fig:snapshot}, and after each of the image processing sections code's output will be shown.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth]{figure/Analysis/testimage.jpg}
+\caption{A test image that will show the results of the image processing}
+\label{fig:snapshot}
+\end{figure} 
+It was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticity space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
 \subsection{Theory of RG} 
 The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
@@ -91,57 +94,6 @@ The resultcolors can be seen in figure \ref{fig:conversion} The same is true for
 \end{figure} 
 In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
 
-\subsection{Differences with HSV}
-\todo{write this section}
-\subsection{Thresholding in RG}
-\todo{write a bit more about the implication of each threshold}
-Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}. The image contains a slightly modified RG space. Instead of 0 to 255, it is 0 to 1. Really it is just percentage based instead. 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
-	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
-	\label{fig:rgbNorm}
-\end{figure}
-There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
- or 0.\\
-\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a fair bit bluer. You also cannot set it too wide, since doing so will cause with thing to also be segmented. There are ways the provide more control over the segmentation.\\
-\begin{multicols}{2}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
-		\caption{in range threshold in rg space}
-		\label{thresholdintrange}
-	\end{figure}
-	\columnbreak
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
-		\caption{below line threshold in rg space}
-		\label{fig:thresholdbelowline}
-	\end{figure}
-
-\end{multicols}
-
-\todo{we are now using below line and distance make accoridng changes}
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
-\begin{multicols}{2}
-	\begin{figure}[H]
-		\centering
-		\label{thresholddist}
-		\includegraphics[width=1\linewidth]{figure/Analysis/distthresholdcolor.png}
-		\caption{distance threshold in rg space}
-	\end{figure}
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
-		\caption{combined threshold in rg space}
-		\label{fig:threshold}
-	\end{figure}
-	
-\end{multicols}
-\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\
-\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the it as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top of the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. We found that this produces the most consistent threshold, and was the most resistant to lighting changes. It now time to look at how to actually implement all of the RG things.
 \subsection{rg chomaticity in code}
 The process of converting an rgb image described above is a matter of simple point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
 \begin{enumerate}
@@ -151,9 +103,6 @@ The process of converting an rgb image described above is a matter of simple poi
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Creating a lookup tabel}
 The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
-\todo{Fix the position of below images: They currently end up beyond the bottom of the page}
-
-
 	\begin{multicols}{2}
 
 	\begin{figure}[H]
@@ -230,10 +179,68 @@ void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
 }
 	\end{minted}
 \end{listing}
-As can be seen in listing \ref{listing:sum},inside the for loop, the code starts by saving the values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is usefulness data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted.
+As can be seen in listing \ref{listing:sum},inside the for loop, the code starts by saving the values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is usefulness data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted. After executing the function on our test image the following Figure \ref{fig:rgsnapshot} is the output.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgbNorm.png}
+	\caption{Test image after being converted into RG}
+	\label{fig:rgsnapshot}
+\end{figure} 
+
+
+\subsection{Thresholding in RG}
+\todo{write a bit more about the implication of each threshold}
+Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}. The image contains a slightly modified RG space. Instead of 0 to 255, it is 0 to 1. Really it is just percentage based instead. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
+	\label{fig:rgbNorm}
+\end{figure}
+There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
+or 0.\\
+\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a fair bit bluer. You also cannot set it too wide, since doing so will cause with thing to also be segmented. There are ways the provide more control over the segmentation.\\
+\begin{multicols}{2}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
+		\caption{in range threshold in rg space}
+		\label{thresholdintrange}
+	\end{figure}
+	\columnbreak
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
+		\caption{below line threshold in rg space}
+		\label{fig:thresholdbelowline}
+	\end{figure}
+	
+\end{multicols}
+
+\todo{we are now using below line and distance make accoridng changes}
+\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ decides the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
+\begin{multicols}{2}
+	\begin{figure}[H]
+		\centering
+		\label{thresholddist}
+		\includegraphics[width=1\linewidth]{figure/Analysis/distthresholdcolor.png}
+		\caption{distance threshold in rg space}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
+		\caption{combined threshold in rg space}
+		\label{fig:threshold}
+	\end{figure}
+	
+\end{multicols}
+\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\
+\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the it as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top of the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. We found that this produces the most consistent threshold, and was the most resistant to lighting changes. It now time to look at how to actually implement all of the RG things.
+
 \subsection{Thresholding implementation}
-\todo{We are now using both below the line thresholding and distance make according chagnes}
-So like the conversion this operation involves  visiting each pixel once, performing an operation uses its color value as inputs Ohh you feel that, that is my look-up-table-senses tingeling.  Since we are doing distance based lookup, turning the equation in code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.
+\todo{We are now using both below the line thresholding and distance make according changes}
+So like the conversion this operation involves  visiting each pixel once, performing an operation that uses its color value as inputs Ohh you feel that, that is my look-up-table-senses tingling.  Since we are doing distance based lookup, turning the equation in code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.\todo{we have a new threshold}
 \begin{listing}[H]
 	\caption{Instantiating the Distance threshold look up table}
 	\label{listing:thresholdDist}
@@ -253,41 +260,52 @@ So like the conversion this operation involves  visiting each pixel once, perfor
 	\end{minted}
 \end{listing}
 Inside the double for loop there is an if statement that test the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This saves us having to use a square root. Although the table is instantiated once and does not have to be computationally speedy it is just less confusing. So we test if the distance is smaller than 60. If true make the index white, otherwise make it black. 
-In terms of implementations using the lookup table, it is very similar to the rg conversion and as such it not worth mentioning.\\
-The algorithm has now, all things going well, produced a binary thresholded image with value that are either 255 or 0. The next thing it does is separate the image into blobs. But how? and why? those things are coming up in the next section. 
+In terms of implementations using the lookup table, it is very similar to the rg conversion and as such it not worth mentioning. The output after thresholding the normalized test image, can be seen in Figure \ref{fig:thsnapshot}\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/thresholded.png}
+	\caption{The thresholded version of out normalized test image}
+	\label{fig:thsnapshot}
+\end{figure} 
+The algorithm has now produced a binary thresholded image with value that are either 255 or 0. The next thing it does is separate the image into blobs. But how? and why? those things are coming up in the next section. 
 \section{Blob detection}
 See, what did i tell you. Blob detection used to segment a picture into individual blobs. If you need to deal with multiple object in a image, it is worth investigating. 
 \subsection{What is a blob, and why detect them}
 Blob stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest(ROI) in a image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob, like size, and bounding box, and a host of others. For a program a program trying to recognize real life objects, Knowing the range of features that the object normally produces can help it determine if a blob is that object. Generally these features are calculated from a list of pixels in the blob.\\\\
-\todo{maybe an image here, maybe a thresholded image}
-There is staggeringly large amount of features that could be calculated on a blob. But our job is made \textbf{A LOT} easier by three factors. First, our marker are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. There are many things to love about circle, their heigth/with relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest. Meaning our blob detection has to do less work in discriminating the blobs.
-\subsection{Blob Extraction by recursion}
-All features of a blob are calculated from a list of pixels included in the it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to each other pixel through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\
-Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
-This is called a Grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there is no more grass/pixels.
-It is a recursive algorithm. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixels, which might cause the function to call itself again. This recursive function calling is very easy to implement but means that the program's call stack might fill up and crash it.  \todo{what is a call stack}\\
-Because of the relatively small blobs in our program, usually somewhere between 150 and 16000 pixels, all we had to do prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large camera sizes, the stack has must be massive to accommodate the recursive function. While the webcam used in the prototype is tiny, early in the process it was thought that a larger resolution would be used in the final prototype. To anticipate this some options where added to the prototype. Namely the option to set a variable called \codeword{gridSize} which causes the algorithm to make jumps of size \codeword{gridSize} pixels instead of 1. Instead of checking the pixel to its right the algorithm will check the one \codeword{gridSize} to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, counteracting a larger camera resolution. Now the algorithms speed vs accuracy can be tailored to suit our specific need.
+There is staggeringly large amount of features that could be calculated on a blob. But our job is made \textbf{A LOT} easier by three factors. First, our marker are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. There are many things to love about circle, their heigth/with relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest(see Fig \ref{fig:thsnapshot}). Meaning our blob detection has to do less work in discriminating the blobs.
 \section{The blob object and parameters}
 The list of pixels and blob parameters are often held in an structure.
 We created one for this purpose. Our blob structure is called \codeword{gylphObj}, because the pattern underneath can resemble a glyph\footnote{\url{goo.gl/HkFksM}}. The structure is declared as shown in listing \ref{listing:glyph}
 \begin{listing}[H]
 	\caption{The declaration of glyph object, the structure that contain a blob, as well has the parameters about it}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-	struct glyphObj {
-		vector<cVector> list;
-		cVector bBoxStart;
-		cVector bBowEnd;
-		cVector center;
-		cVector rotation;
-		int nr;
-		bool returnable = false;
-	};
+		struct glyphObj {
+			vector<cVector> list;
+			cVector bBoxStart;
+			cVector bBowEnd;
+			cVector center;
+			cVector rotation;
+			int nr;
+			bool returnable = false;
+		};
 	\end{minted}
 	\label{listing:glyph}
 \end{listing}
-cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box, not the center of mass. We found that the boundbox center was more reliable.
-\todo{visualisation of bounding box vs center of mass as, also explanation also explanation of how rotation and stuff, maybe put that in the design section} 
-The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker. This object is used to represent each blob and is used in the grassfire algorithm.
+We dive deeper into the parameters and what they are used for in the next section, so the uses of the variables will be not discussed in detail there. 
+cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to find disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box.
+The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker.
+\subsection{Blob Extraction by recursion}
+All features of a blob are calculated from a list of pixels included in it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to each other pixel through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\
+Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
+This is called a Grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there is no more grass/pixels.
+It is a recursive algorithm. You have a function that adds a pixel to the blob, then checks it neighborhoods, and potentially calls itself on those pixels, which might cause the function to call itself again. This recursive function calling is very easy to implement but means that the program's call stack might fill up and crash it resulting in a situation very well illustrated by Figure \ref{fig:firefighter}.  \todo{what is a call stack}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{figure/Analysis/firefighter.jpg}
+	\caption{What happens inside your call stack during a grassfire algorithm. The fire spreads adding calls onto the stack, until the fire is done the stack cannot resolve. When done spreading the call stack is resolved, represented by the old man putting out the fire}
+	\label{fig:firefighter}
+\end{figure} 
+Because of the relatively small blobs in our program, usually somewhere between 150 and 450 pixels, all we had to do prevent stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large camera sizes, the stack has must be massive to accommodate the recursive function. While the webcam used in the prototype is tiny, early in the process it was thought that a larger resolution would be used in the final prototype. To anticipate this some options where added to the prototype. Namely the option to set a variable called \codeword{gridSize} which causes the algorithm to make jumps of size \codeword{gridSize} pixels instead of 1. Instead of checking the pixel to its right the algorithm will check the one \codeword{gridSize} to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, counteracting a larger camera resolution. Now the algorithms speed vs accuracy can be tailored to suit our specific need.
 \subsection{Grassfire implementation}
 Our implementation can be seen in listing \ref{listing:grassfireIm}. Due to its iterative nature, this method will be called many thousand times. Note that the function does not make use of the very computationally expensive Mat.at<uchar>(y,x) function. Instead we use pointers to navigate both horizontally and vertically.
 \begin{figure}[H]
@@ -379,10 +397,53 @@ When all parameters are acquired, and if the blob passes all the tests, it is ti
 The flow of the algorithm can be seen in the flow chart below.
 \todo{make a flow chart for this}
 \\\\
-In regards the parameters some of them are implementation wise very simple. For instance, finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center averaging these values for x and y respectively. Rotation on the other hand is trickier, and requires use of knowledge about the layout of the marker.  
+In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center averaging these values for x and y respectively. Rotation on the other hand is trickier, and requires use of knowledge about the layout of the marker.  
 \subsection{Rotation}
+Finding a circle's rotation is impossible, if it does not have any distinguishing features. So we added some. There is a small line towards the center and we call it the direction line. If the center's coordinates are known, one can find the closest pixel in the blob. This pixel will be in the direction line. Finding a vector between these points will give you a rotation direction vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why the bounding box center is used over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/boundingbox.png}
+	\caption{example of how } 
+	\label{fig:boundbox}
+\end{figure}
+We found that smaller blobs would have a more wobbly rotation, because the direction line now contains fewer pixel, and since it only find one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel we average all the pixel within 70\% of the circles radius. We also store the results as a float. These changes make the direction vector much more stable, and have been illustrated in Figure \ref{fig:lowpixel}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/lowpixel.png}
+	\caption{} 
+	\label{fig:lowpixel}
+\end{figure}
+ The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, and happens right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
+\begin{listing}[H]
+	\caption{Direction vector calculation}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+float heightWidth = ((largestX - smallestX) / (float)(largestY - smallestY));
+//check: discriminate based on height width relation
+if (heightWidth > (1 + discrimHW) || heightWidth <(1 - discrimHW)) { continue; }	
 
-
+radiusDist = (largestX - smallestX + largestY - smallestY) / 4;
+searchDist = (float)radiusDist*0.70 * (float)radiusDist*0.70;
+int dist;
+vector<cVector> points;  //contains the pixels within 0.7 radius
+//find pixel within search dist
+for (auto &v : i.list) {	//loop through all pixels in the
+	dist = (v.x - i.center.x) * (v.x - i.center.x) + (v.y - i.center.y) * (v.y - i.center.y);
+	if (dist < searchDist) {
+		points.push_back(v);
+	}
+}
+float rotX = 0;
+float rotY = 0;
+for (auto &p : points) {
+	rotX += p.x - centerX;
+	rotY += p.y - centerY;
+}
+rotX = (rotX / points.size());
+rotY = (rotY / points.size());
+	\end{minted}
+	\label{listing:direction}
+\end{listing}
+Now that a direction vector has been found, we need to calculate the the position of each bit field on the marker. This is done with a bit of vector math and knowledge of the marker layout.
 \subsection{Vectors to find sample points}
 
 
