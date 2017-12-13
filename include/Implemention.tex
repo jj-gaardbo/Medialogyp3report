@@ -443,11 +443,77 @@ rotY = (rotY / points.size());
 	\end{minted}
 	\label{listing:direction}
 \end{listing}
-Now that a direction vector has been found, we need to calculate the the position of each bit field on the marker. This is done with a bit of vector math and knowledge of the marker layout.
+Now that a direction vector has been found, we need to calculate the the position of each bit fields on the marker. This is done with a bit of vector math and knowledge of the marker layout. A legend of the important componenes can be seen in Figure \ref{fig:vector}.
 \subsection{Vectors to find sample points}
-The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius.
+The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in Figure \ref{fig:vector}.
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/vector.png}
+	\caption{To the left one can see the location of the direction line, used to find the direction that the marker is facing, and the bit fields used to ascertain the marker's value. To the right, the "skeleton" of vectors used to find bit fields coordinates are shown.} 
+	\label{fig:vector}
+\end{figure}
+Finding the sample points is a matter of adding the correct vectors to the marker's center. To begin a start point is created 25 percent towards the direction line. From here there are three different type of vector used to reach the sample points. Two that move perpendicular to the direction, used to move "sideways", and one that moves opposite the direction to get the second row of points. Rotating a vector 90° is fortunately easy, and can be done by flipping the axis and changing a sign(- x, or -y).    
+\begin{listing}[H]
+	\caption{Declaration of vectors used to find sample points}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+	int startPointX = centerX + rotX*0.25;
+	int startPointY = centerY + rotY*0.25;
+	
+	//Perpendicular movement
+	float cClockX = -rotY*0.185;
+	float cClockY = rotX*0.185;
+	float clockX = rotY*0.185;
+	float clockY= -rotX*0.185;
+	
+	//Backwards movement
+	float reverseX = -rotX*0.55;
+	float reverseY = -rotY*0.55;
+	\end{minted}
+	\label{listing:vectors}
+\end{listing}
+From these the sample points can be acquired. Once they have all there is left is to check whether the bit fields that they point to are dark or white. This is done by checking each color in the original image and, if they all are below a threshold, adding 2 to the power of the field to the total count. The implementation can be seen in Listing \ref{listing:sumingval}.
+ \begin{listing}[H]
+ 	\caption{After finding the sample points, this code checks the value in that pixel and, if low enough, adds it's value to the bit counter. If the bit counter is larger than 0, when all points have been checked, the bit counter is assigned to the blob's nr, allowing it to be returned to unity.}
+ 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+int bitCounter = 0;					//total marker value
+int thresh = 50;
+for (auto &sp : searchPoints) {		//loop through each point
+	Vec3b intensity = drawImg.at<Vec3b>(sp.y, sp.x);
+	if (intensity[0]< thresh && intensity[1] < thresh && intensity[2] < thresh) {
+		bitCounter += pow(2, iterations);
+	}
+}
 
+if (bitCounter > 0) {
+	i.returnable = true;
+	i.nr = bitCounter;
+}
+ 	\end{minted}
+ 	\label{listing:sumingval}
+\end{listing}
+Finally, since we often get 0 as a false positive from different skin blobs, we do not return the object to unity unless at least one of the bit fields are dark.
+So finally we can present the final image after the blobs have been analyzed. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/output.png}
+	\caption{The output after the blobs from the grassfire has been analyzed. The radius used to find points for the direction vector is drawn in purple. The direction vector after scaling it to have a length of radius is drawn in green. The sample points are drawn in either red, if they are too white, and green if they are considered dark} 
+	\label{fig:output}
+\end{figure}
 
+Returning the objects to unity can be done very simply. 
+ \begin{listing}[H]
+	\caption{returning all blobs that have passed the test to unity}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
+for (auto &blob : blobs) {
+if (outDetectedMarkersCount == maxOutMarkersCount)	break;
+if (blob.returnable == false)	continue;
+rotation = acos(blob.rotation.x / sqrt((blob.rotation.x * blob.rotation.x) + (blob.rotation.y * blob.rotation.y)));
+outMarkers[outDetectedMarkersCount] = ObjectData(screenWidth - blob.center.x, screenHeight - blob.center.y, blob.nr, blob.rotation.x, blob.rotation.y, (180 / 3.1415) * rotation);
+outDetectedMarkersCount++;
+}
+	\end{minted}
+	\label{listing:return}
+\end{listing}
 
 
 \section{Limitations}
