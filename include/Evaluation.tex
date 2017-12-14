@@ -235,7 +235,7 @@ In addition to this question the participants were able to give a comment, if th
 
  \begin{quote}
  	
- 	\textit{I had a hard time knowing where the client was on the glass plate compared to the items. Sometimes there were some consistency in where i placed the item and where it appeared, but i got the hang of it eventually}\\
+ 	\textit{I had a hard time knowing where the client was on the glass plate compared to the items. Sometimes there were some \todo{inconsistency?}consistency in where i placed the item and where it appeared, but i got the hang of it eventually}\\
   \end{quote}
   
   \begin{quote}
@@ -267,7 +267,7 @@ As it can be seen in \autoref{fig:pie3}, half of the participants stated that th
 
 In addition to this question, we asked the participants who answered no to this question, to elaborate on their answer.\\
 
-\begin{quote}
+\begin{quote}\todo{Explain these quotes, can't just let them speak for themselves}
 	\textit{bugged out, so it did not show the items in VR}\\
 \end{quote}
 
@@ -275,7 +275,7 @@ In addition to this question, we asked the participants who answered no to this 
 	\textit{No rotation}\\
 \end{quote}
 
-As seen above, one of the participants had some issues with the prototype bugging, and sometimes not showing the object in the VR world. Others complained that it was not possible to rotate the objects, which resulted in the client not having to see how the garden would look like exactly.
+As seen above, one of the participants had some issues with the prototype bugging, and sometimes not showing the object in the VR world. Others complained that it was not possible to rotate the objects, which resulted in the client not having to see how the garden would look like exactly\todo{Rewrite. Doesn't make any sense}.
 
 
 \subsection{Findings}
@@ -292,24 +292,71 @@ Even though the above question was not elaborated further, the next given questi
 
 
 \section{Immersion test}
-This user experience test was conducted to make a proof of concept, to make sure that our idea of the prototype was plausible.
+This immersion test was conducted to make a proof of our concept, to make sure that our idea of the prototype was plausible.
 
 \subsection{Test goals}
-
-
+The goal of the test was to determine if the prototype in fact did answer the final problem statement (\autoref{sec:FPS}). The keywords from the FPS are:
+\begin{itemize}
+	\item[-] Fast
+	\item[-] Efficient
+	\item[-] Immersive
+\end{itemize}
+and hence these were the words we were keen on measuring with this test.
 \subsection{Sampling}
+Finding real garden architects among the students at AAU CPH, turned out to be a larger challenge than first expected, and therefore it was decided that convenience sampling were to replace that criteria. Convenience sampling among the students at AAU CPH gave us a "random" assortment of test participants. In total, twelve participants were found.
 
 \subsection{Test specifics}
-Setup of the test goes here
+The test consisted of three parts:
+\begin{itemize}
+	\item[-] 2D sketching
+	\item[-] 3D viewing
+	\item[-] Virtual reality
+\end{itemize}
+Between each part, the participant filled out the same questionnaire, changing their answers depending on what test they had just done. Each participant was given a test subject id, starting from 1, and going to 12. To eliminate bias we used every possible sequence combination of 2D sketching, 3D viewing and Virtual Reality on two differently designed gardens, as seen in \autoref{table:immersionCombinations}.
 
-\subsection*{The equipment used during this test}
+\begin{table}[H]
+	\centering
+	\caption{All the sequence combinations of 2D sketching, 3D viewing and virtual reality, and which participant that did what combination.}
+	\label{table:immersionCombinations}
+	\begin{tabular}{l | c|c|c|c|c|c}
+		&
+		\begin{tabular}[c]{@{}c@{}}VR\\ 2D\\ 3D\end{tabular} & \begin{tabular}[c]{@{}c@{}}VR\\ 3D\\ 2D\end{tabular} & \begin{tabular}[c]{@{}c@{}}2D\\ 3D\\ VR\end{tabular} & \begin{tabular}[c]{@{}c@{}}2D\\ VR\\ 3D\end{tabular} & \begin{tabular}[c]{@{}c@{}}3D\\ VR\\ 2D\end{tabular} & \begin{tabular}[c]{@{}c@{}}3D\\ 2D\\ VR\end{tabular} \\ \hline 
+		Garden 1 & 2                                                                            & 5                                                                            & 4                                                                            & 3                                                                            & 1                                                                            & 6                                                                            \\ 
+		Garden 2 & 7                                                                            & 8                                                                            & 9                                                                            & 10                                                                           & 11                                                                           & 12                                                                           \\
+	\end{tabular}
+	
+\end{table}
+\begin{multicols}{2}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{figure/Evaluation/Garden1.png}
+	\caption{Sketch garden 1}
+	\label{fig:sketchGarden1}
+\end{figure}
+\columnbreak
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{figure/Evaluation/Garden2.png}
+	\caption{Sketch garden 2}
+	\label{fig:sketchGarden2}
+\end{figure}
+\end{multicols}
 
-\subsection*{Location and schedule}
-
-\subsection*{Test procedure}
 
 \subsection{Results}
 
 \subsection{Findings}
+\begin{table}[H]
+	\centering
+	\caption{Average of responses}
+	\label{my-label}
+	\begin{tabular}{p{3cm}|p{3cm}|p{2cm}|p{3cm}|p{3cm}}
+		Test type       & How long do you think it took you to gain insight into how it would be, to be in the garden? & How immersed did you feel? & How useful do you think this tool could be for a garden architect? & How much do you feel like you understood the garden's design? \\ \hline
+		&&&&\\
+		3D Viewing      & 6.08  & 4.67  & 4.00    & 8.67               \\
+		Sketching       & 6.75    & 2.00    & 3.92      & 7.58            \\
+		Virtual Reality & 8.17     & 7.67     & 4.58      & 9.17    
+	\end{tabular}
+\end{table}
 
 
