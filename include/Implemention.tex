@@ -3,14 +3,13 @@
 	This section describes how to set up the prototype, connect the camera, limitations of the program and all that jazz.
 	
 	\section{VR in Unity}
-	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}, as it allows for high-level management of objects in space, and would reduce development time on the part of the implementation not concerned with image processing.
+	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, and would reduce development time on all the non-image processing based parts by inconceivably many hours.
 	\todo{Describe technical details of VR in Unity using Steam VR}
 	
 	\section{DLLs and Unity}
-	\todo{the object has new fields, a few places needs rewrites}
-		 Unity has a fair number of different options for performing image processing. However, as we would be creating the fiducial markers from scratch we could not use any preexisting software. We were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
-		One issue is that Unity uses C\# and openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and are instead designed to be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. However, there are a number of disadvantages with this implementation that must be taken into consideration, and which have made the process of completing this project less smooth. As Unity and the plug-in do not have access to each other's code, passing an object between the two is difficult, for example. For the same reason, debugging crashes is tricky. During development of this project, one fatal bug consistently crashing the program happened in an unmanaged part of Unity, so Unity could not give an error message. The code was developed in C++ which had no console where a log could be printed. Therefore troubleshooting became the source of a lot of frustration.\\\\
-		Importing a function into DLL is simple, as seen in Listing \ref{listing:dllExport}.
+		 Unity has a fair number of different options for performing image processing. We would be creating the fiducial markers from scratch and could not use any preexisting software. at this point, we were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
+		One issue is that Unity uses C\# but openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and instead can be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and therefore a speedy as all heck\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawback to using DLLs as well,  and they definitely caused some bumps in the implementation. Firstly, passing an object between the DLL and Unity is difficult be cause Unity cannot understand the code in the plug-in. On the C++ side you do not have a terminal, meaning getting any information about what is happening inside the DLL is very difficult. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback.\\\\
+		How to declare a function for export in C++ can be seen in Listing \ref{listing:dllExport}.
 \begin{listing}[H]
 \caption{How to declare a function for DLL export in C++}
 \label{listing:dllExport}
@@ -18,7 +17,7 @@
 extern "C" __declspec( dllexport ) int init(int w, int h);
 \end{minted}
 \end{listing}
-\codeword{extern "C"} tells the compiler that the function name should not be changed when it is compiled, so that its name is known when it is being imported into Unity. \codeword{__declspec()} tells the linker to do something. In this case \codeword{dllexport}, which tells it that it should export a function to a DLL. Therefore \codeword{DllImport(...)} will be used to import the function in Unity. A sample call might look like this\\
+Here's what the words actually mean. \codeword{extern "C"} tells the compiler to not change the function's name, so that it can be imported into Unity. \codeword{__declspec()} tells the linker to do a thing, depending on the argument. In this case \codeword{dllexport}. This lets the compiler know that it should export a function to a DLL. So now the function will be exported under a name that we know. In Unity a corresponding \codeword{DllImport("name")} will be used to import the function in Unity. A sample call might look like this\\
 \begin{listing}[H]
 	\caption{How to declare a function for DLL import in C\#}
 	\label{listing:dllImport}
@@ -28,26 +27,25 @@ extern "C" __declspec( dllexport ) int init(int w, int h);
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given as the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". It is important that the function name is not changed when exporting, or this process will fail. In line 2; a function is declared that will call the imported function. It is important to note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit more tricky. It requires the declaration of similar objects in both languages, with variables in the same order. Otherwise the data will not make sense when returned. As an example, we need to return the markers found after image processing. They are represented in a structure: 
+The name of the DLL file "unityOpencvPlugin" is given, and the function that we want to import is the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here you can see the importance of knowing the function name, otherwise the function could not be found. In line 2, a function is declared that will call the imported function. Note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the markers found after image processing. They are represented in a structure: 
 \begin{listing}[H]
 	\caption{Objects in C\# and C++}
 	\label{listing:objects}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 			//in C++
-struct ObjectData{
-ObjectData(int x, int y, int type, int color) : X(x), Y(y), Type(type), Color(color) {}
-int X, Y, Type, Color;
+struct ObjectData {
+int X, Y, Type, RotationX, RotationY, Rotation;
 };
 			//in C#	
-[StructLayout(LayoutKind.Sequential, Size = 16)]
+[StructLayout(LayoutKind.Sequential, Size = 24)]
 public struct CVObject{
-public int X, Y, Type, Color;
+public int X, Y, Type, RotationX, RotationY, Rotation;
 }
 	\end{minted}
 \end{listing}
-In Unity the structure needs to be laid out sequentially when exported to unmanaged memory.\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. In order to detect several objects it is easier to pass a pointer to an array, and make C++ fill it out from the code. A few things are needed for this to work. The function needs to take a pointer as an argument, and the size of the array must be passed as an argument, so that the method does not overwrite data outside of the array. The memory that the pointer points to must not remain static, or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. Below is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
+In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. We are going to be returning several objects. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. Below is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
 \begin{listing}[H]
-\caption{The function call to pass a pointer to C++, which is filled by the code}
+\caption{The function call to pass a pointer to C++, which is filled with object data by the code}
 \label{listing:pointer}
 \begin{minted}[frame=lines,
 		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -59,11 +57,11 @@ unsafe{
 \end{minted}
 \end{listing}
 \section{Implications of working in vr}
-Virtual reality is computationally demanding. In 2016 Nvidia estimated that an imersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
-For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm. In the following sections there will at be times when the algorithm might go about finding objects in a way that is less straight forward, but faster at run time.
+Virtual reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
+For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm.
 
 \section{BGR to RG chromaticity conversion}
-Since we are now diving into image processing we can show the outputs of the  operations. A snap shot of from the prototype's webcam has been taken for just this purpose. It is shown in Figure \ref{fig:snapshot}, and after each of the image processing sections code's output will be shown.
+Since we are now diving into image processing, we can show the outputs of the operations. A snap shot from the prototype's webcam has been taken for just this purpose. It is shown in Figure \ref{fig:snapshot}, and after each of the image processing sections the output will be shown.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\linewidth]{figure/Analysis/testimage.jpg}
@@ -74,18 +72,18 @@ It was found that differences in lighting conditions made thresholding the feed 
 \subsection{Theory of RG} 
 The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
-where x represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that color. However, since floats are operationally slow it is advised to scale the value to 8bits by multiplying by 255. If one where to convert all three, with capital letter representing the RG chromaticity, the channels can be found as.
+Where x represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range og 0 - 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
 \[ RED = \frac{red}{red + blue + green} * 255\]
 \[ BLUE = \frac{blue}{red + blue + green} * 255\]
 \[ GREEN = \frac{green}{red + blue + green} * 255\]
 This means that in RG the sum of all channels must be 255.
-\[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
+\[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
 It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small value as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
 \[ BLUE = 255 - RED - GREEN\]
-So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. for example two colors (0,10,50) and (0,50,250) will produce exactly similar value when converted to RG. 
+So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG. 
 \[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
 \[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 \]
-The resultcolors can be seen in figure \ref{fig:conversion} The same is true for any two color that are proportionately similar.\\
+The resultant colors can be seen in figure \ref{fig:conversion} The same is true for any two color that are proportionately similar.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgconversion.png}
@@ -101,8 +99,8 @@ The process of converting an rgb image described above is a matter of simple poi
 	\item Assign the corresponding pixel in the output to the value found in a look up table using the sum and value in the channel\\
 \end{enumerate}
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
-\subsection{Creating a lookup tabel}
-The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we use has a resolution of 640 x 480. That is 307200 pixel. Now mulitplications and additions are very fast and generally faster than memory access\todo{references for this}. Division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
+\subsection{Lookup tables}
+The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
 	\begin{multicols}{2}
 
 	\begin{figure}[H]
@@ -121,12 +119,12 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 			Look up table always& .0007741 sec\\
 			\hline 
 		\end{tabular}
-	\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as a "if smaller than" statement can significantly increase the speed. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
+	\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as an "if smaller than" statement can significantly increase the speed. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
 	\label{table:rgConvSpeed}
 	\end{table}
 \end{multicols}
 
-
+\subsection{Creating a look up table}
 Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
 \todo{update to new threshold style}
 \begin{listing}[H]
@@ -147,11 +145,10 @@ Creating a look up table is straight forward. You take the operation that would 
 	}
 \end{minted}
 \end{listing}
-The first thing the loop does is to check if we are below the threshold where we should zero it(to prevent noise in dark areas from messing with the image). In that case  set the index to zero. Otherwise calculate the value that would result from the color(j) divided by sum(i) and multiplied by 255.
-The tabel is now made and can be passed to a function. 
+The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise calculate the value that would result from the color(j) divided by sum(i) and multiplied by 255.
 \subsubsection{Suming rgb channels and looking up results}
-The is point processing and as such it calls for a double for loop to ensure each pixel is visited. The function takes an input image assumed to be BGR, and an output image also amused to be BGR. The ampersand(\&) in the function signature indicates that the argument should be passed by reference. This allows for changes to the input arguments to be made. If not included we would be making changes copies instead.\\
-Before the loop we instantiate a few variables so we don't have to recreate them for each pixel. There are three pointers. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to a row in the image where we want the results. \codeword{lutptr} points to a column in the look up table. This is useful because the sum, and therefore the column, will be the same for each of the color, meaning that the furthest two color values we want to look up can be form each other is 256. With the pointer one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
+This is point processing and as such it calls for a double for loop to ensure each pixel is visited. The function takes an input image assumed to be BGR, and an output image also amused to be BGR. The ampersand(\&) in the function signature, seen in Listing \ref{listing:sum}, indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes copies instead.\\\\
+Before the loop we instantiate a three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same row three times in a row, one for red, one for blue, and so on. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
@@ -159,7 +156,7 @@ Before the loop we instantiate a few variables so we don't have to recreate them
 		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
 	//declare other variables
-	int nCols = in.cols * 3;	//since theres 3 channels per pixel
+	int nCols = in.cols * 3;	//since there's 3 channels per pixel
 	
 	for (int i = 0; i < nRows; i += GRIDSIZE) {
 		p = in.ptr<uchar>(i);
@@ -179,7 +176,7 @@ void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
 }
 	\end{minted}
 \end{listing}
-As can be seen in listing \ref{listing:sum},inside the for loop, the code starts by saving the values of each channel to the corresponding variables. Then these values are summed. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change, we get the address of the row that our sum is on and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is usefulness data and so does not need to be assigned\todo{remove blue man, also do so in code}, and note that would not need to assign blue, we do it when we want to display the output. But in the final code it can be omitted. After executing the function on our test image the following Figure \ref{fig:rgsnapshot} is the output.
+Inside the for loop, the code starts by saving the values of each channel to the corresponding variables. The values are then added together. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change we get the address of the row of the sum and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is unnecessary data and so does not need to be assigned. We will be calculating the blue when showing the  output, but that is only to make the image less jarring for humans to look at. In the final code it \label{key}can be omitted. After executing the function on our test image the following Figure \ref{fig:rgsnapshot} is the output.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgbNorm.png}
@@ -514,7 +511,7 @@ outDetectedMarkersCount++;
 	\end{minted}
 	\label{listing:return}
 \end{listing}
-
+After all of that the data is now in unity. As such, we will cover that next
 
 \section{Limitations}
 Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
