@@ -1,6 +1,26 @@
 \chapter{Design}
 To develop an interface that satisfies the design requirements in \autoref{sec:designRequirements} and the final problem statement of this project, described in \autoref{sec:FPS}, some considerations were made in regards to the actual design of both the physical prototype and the virtual environment. This chapter describes the final design of the product.
-\todo{Wouldn't it be better to also show how we got to this design of the box?}
+
+
+\todo{fit it to some place in design}
+%Why did we do tokens?
+The initial idea was for a camera to recognize colors, shapes, sizes, and symbols on a simple user created sketch of a garden. This seemed to be the ideal prototype as it would give the user a lot of creative freedom in the creative process. However, the issue with sketching ended up being consistency, and ease of tweaking. We wanted the structure to be simple, and the elements of the prototype to be controlled for consistent recognition. The use of tokens also known as fiducial markers were determined to be the best solution for achieving consistency. This also mean tweaking the positions of elements would be very quick. The tokens would be physical objects manipulated within the physical side of the prototype.\\
+
+
+
+%No interface, not much in the design department, no real low fidelity prototype.
+It was decided to use a physical interface. The physical surface and the tokens placed on it would act as the only way to manipulate the world.
+
+%Why no interface inside vr?
+Using a physical interface makes the process of manipulating the virtual world much more approachable to those not familiar with VR. It also encourages creativity more so than a digital system would.
+
+
+\section{Design development}
+When we started think about potential designs that could be used, we initially wanted make a different design for a different target group. We thought that this problem of visualizing a plant or tree in a context that only existed mentally could be applied at a garden center. A garden center is a retailer of different garden things, and they want to provide a good service, and sell many trees. Customers might be more willing to buy if they had the opportunity to see how their purchase would appear in their own garden. We already started conducting interviews at a garden center in Hillerød. However, during the demo day we found that the setup process was extensive and time consuming, as the demo'ers had to set up a new garden from scratch every time. This would likely be true even in a final product. We found that the transition between how a garden appeared on the prototype, and how it looked in VR, often caused the demo'ers to lose their sense of position in the garden. Simply getting the HMD off and on again added to the time between reviewing the garden designs as well. The people who made best use of the prototype were teams where one person would be an "architect" and one person would experience the changes made by the architect. It was very difficult to be creative for just one person. Combining this with results from the garden center survey ,that garden center customers had difficulties actually remembering what plants they had in their garden, it might be impossible for people to reconstruct their actual garden\\
+
+In response to these problems we pivoted to a different target group and a different context. From our interviews with garden architects we knew that they face similar problems in visualizing their designs for the customers. Garden architects often are called upon for big reworks, or to design for gardens in newly built houses with no plants in them at all. While the opportunity cost of spending five minutes in garden center just to see what a new tree would look like is quiet high, the cost of spending that same amount of time for a once in your life time thing is very low. This also avoids the problem of not being able to remember what is in your garden, because you will be in that garden with the architect. Also there will be a two person team, the architect can show their idea to the client, and quickly make adjustments based on their input, and client won't have to take of the HMD.\\
+This is how we ended up with the final design idea. From here decisions had to be made as to how to actually implement the design, and how to make it possible.
+
 \section{The Physical Prototype}
 
 The prototype consists of a lightweight box, of which four sides are laser cut MDF and the top is a square piece of acrylic. The bottom is open. A number of tokens may be moved around the surface of the box. The tokens are circular and 3D printed, with a colored marker on the bottom and a picture of the token's virtual counterpart on the top. A camera is placed at the bottom of box, looking up. 

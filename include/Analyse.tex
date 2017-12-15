@@ -25,7 +25,7 @@
  	A landscape architect is a person who is educated in landscape architecture; a practice that among other things includes: site analysis, site inventory, land planning, planting design, grading, storm water management, sustainable design, construction specification\footnote{Definition from the "Landscape architect" Wikipedia page: \url{https://en.wikipedia.org/wiki/Landscape\_architect}}
  	The design process of landscape architects has been heavily influenced by modern digital technology over the past 50 years, since Harvard's Laboratory of Computer Graphics was established.\cite{landscapeArchitectureDigiTech} In spite of landscape architects being first-movers in exploring digital applications for spatial analysis, many landscape architects are struggling with conceptualizing digital technology as a creative medium\cite{landscapeArchitectureDigiTech}. \\
  	\\
- 	A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that a 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive\todo{This will 100\% be question at exam if not explained betterer}"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
+ 	A survey on members of ASLA (American Society of Landscape Architects)\cite{surveySketchVSDigital}, shows that 46\% of landscape architects prefer sketching by hand during the design process instead of using digital tools, 31\% prefer using a computer and the remaining 23\% use the computer for efficiency and the hand for creativity. Based on the statements given by the respondents the survey concludes that; \textit{"computers are not intuitive and design is intuitive\todo{This will 100\% be question at exam if not explained betterer}"}\cite{landscapeArchitectureDigiTech}\cite{surveySketchVSDigital}. Although, computer software enables visualization in 3D which is an effective way of communicating large amounts of complex data to a wide non-expert audience, through visual cues that are more intuitive than those of a 2D-sketch, it can be time-consuming to create 3D visualizations\cite{landscapeVisual}
 		
 	\subsection{Target Group}\label{sec:targetGroup}
 	Evaluating the results of the ASLA survey as seen in \autoref{whoSaysSo} there seems to be an actual problem with creating 3D visualizations. It is far from impossible, but the time and effort it takes is non-beneficial for the landscape architects as these two factors, result in high cost in relation to time used on designing the visual landscape. \\
@@ -35,7 +35,7 @@
 	For further knowledge gathering and validation of the problem, four expert interviews with landscape architects (Experts) were conducted. Two of the experts were actively using 3D technology for visualizing garden plans for their customers. These experts were Jens Peter Jacobsen from unikaHaver.dk\footnote{unikaHaver website: \url{http://unikahaver.dk/}} and Henriette Lyngsted\footnote{Lyngsted Landskab website: \url{http://lyngsted-landskab.dk/}}. The other two, Frank Kirkegaard Hansen\footnote{Frank Kirkegaard Hansen website: \url{http://www.frankkirkegaard.dk/}} and Karen Dahl\footnote{Havens Arkitekter website: \url{www.havens-arkitekter.dk}}, only used sketching by hand to visualize their design for the clients. Due to logistics the interviews were conducted over the phone as the experts had their practices at various locations throughout Denmark. The interviews were semi-structured to allow for new ideas and points to potentially surface. Some practical advantages of interviewing over the phone instead of face-to-face interviews were also considered. These were, amongst others, advantages like Time Efficiency, (Re)arrangement Flexibility and Geographical Reach\cite{telephoneInterview}.
 		
 		\subsubsection{Findings}
-		In this sub section the main categories from the previously mentioned coding process will be examined. In each category there will be translated quotes from the different interviews, in no particular order. The list of categories is listed below:
+		In this sub section the main categories from the previously mentioned coding process will be examined. In each category translated quotes from the interviews will be presented in no particular order. The list of categories is listed below:
 		
 		\begin{enumerate}
 			\item Process
@@ -195,7 +195,7 @@
 
 			\subsection{Image Processing}
 			Image processing is the act of enhancing, or extracting information from, a digital image using certain operations. It will take as input a photograph, computer generated image, or even a video feed, and return an output depending on the operations performed. Visual enhancements could be brightening a scene, increasing color saturation, or resizing, flipping, twisting and turning the image. Information extracted from the frame could be  in the form of counting objects or identifying objects, even complicated ones like faces. 
-		
+		½
 			\subsubsection{Color detection}
 			One of the simpler things to extract from an image is color. A simple program may count the number of pixels with the RGB color code (255,0,0), which we know as "red". A slightly more sophisticated program will have some leniency built in, counting red-ish colors as being red. This is useful since in a real life scenario, neither the camera nor the light is going to be perfect, and therefore some inaccuracies must be accounted for. 
 			
@@ -219,11 +219,7 @@
 			\end{figure}
 		%Images from https://stackoverflow.com/questions/30022377/should-i-use-hsv-hsb-or-rgb-and-why
 		Here we see that the leukocytes stand out the most in the saturation channel of the HSV color space. But they are also quite noticeable in the green channel of RGB space. It would likely be the best option to use HSV in this case\todo{Maybe explain specifically why this is}. 
-		
-			\subsubsection{Edge detection}
-			
-			Edge detection is performed by applying a variety of mathematical methods. Simply put the algorithm will find points in a digital image in which the brightness changes abruptly\todo{Maybe add some more here, kinda too short}. 
-			
+	
 			\subsubsection{Blob detection}
 			
 			A BLOB, or "Binary Large OBject", refers to a group of connected pixels in a binary image. Detecting BLOBs in an image must be done before we can start analyzing and comparing their features. Examples of such features could be area, compactness, circularity, or center of mass.
@@ -258,8 +254,6 @@
 			
 			Failing to properly address these criteria will reduce the usability of a marker system remarkably\cite{fiducialMarkers}. All of the numbers have a valid reason for them to be announced; The false positive rate is falsely reporting the presence of a marker when none is present. The intermarker confusion rate is when one marker is mistaken for another. The false negative rate is when the marker can be seen on an image, but not reported. The minimal marker size is the size of the pixels required for the system to detect the marker. The vertex jitter is the noise in the marker corner positions. The library size is the number of unique markers the system is capable of storing. Two important things from the list is immunity to lightning conditions and immunity to occlusion, for a fiducial marker system it is crucial that the system is able to detect and recognize the markers despite the ambient lighting and partial covering of the pattern.\\
 			Last is to mention the practical issue of speed performance. A vision-based fiducial marker tracking system must function in real time, using a low cost computing power, for it to be considered useful.\\
-			
-			All these criteria can be highly fulfilled using a system called ARTag\todo{Maybe not have this part? We don't actually use this system, and pretty sure we never explain why not.} \cite{fiducialARTag}. ARTag consists of a library of patterns with a square border and unique interior digital signature, along with the possibility to detect algorithms found in imagery \cite{fiducialMarkers}.\\
 			
 			It is important to state here, that not every kind of pattern in a marker is suitable when it comes to fiducial markers\cite{fiducialMarkers}. As an example it is worth mentioning bar codes as seen in \autoref{fig:fiducialmarkers}, these are not suitable as fiducial markers, because they are made to be read by a laser scanner.\\
 			Alongside bar codes follows QR. There are two reasons for this; in fiducial marker systems a large field of view is usually preferred. therefore QR is not suitable for this, mainly because they are not intended for this kind of system.This will cause perspective distortion and they will not provide enough image points for 3D pose calculation.The second reason that QR is not suitable is because they require a large area in the image, this will limit the range as to where the markers can be used.\\ 
@@ -338,8 +332,13 @@
 	
 	VR uses what is known from the human-computer interface and implements it in a structure that activates and increases the users human senses. A typical virtual reality device uses, as mentioned in \autoref{sec:virtualReality}, a Head Mounted Display with a stereoscopic display and can eventually feature audio. Furthermore, it sets the user in a place that gives them the sense of actual presence in the environment they are put into. The display is split into right-eye and left-eye views to replicate the feeling of stereoscopic human vision while wearing the display. 
 	
-	Another issue with virtual reality and the immersion of actual reality, how force feedback is processed enable the user to actually feel if they e.g. touch something, hear anything etc. This issue is resolved through the use of Haptic feedback as seen in e.g. bHaptics TactSuit\footnote{bHaptics TactSuit: \url{http://www.bhaptics.com/tactsuit.html}} \\
-	
+	Another issue with virtual reality and the immersion of actual reality, how force feedback is processed enable the user to actually feel if they e.g. touch something, hear anything etc. This issue is resolved through the use of Haptic feedback as seen in e.g. bHaptics TactSuit\footnote{bHaptics TactSuit: \url{http://www.bhaptics.com/tactsuit.html}}, presented in Figure \ref{fig:haptics} \\
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{figure/Analysis/haptics}
+	\caption{A demo of the bHaptics Tactsuit}
+	\label{fig:haptics}
+	\end{figure}
 	In engineering VR software was developed using existing libraries most commonly from C or C++. The libraries were designed with functions to track data coming from the user input e.g. rotation. With these libraries engineers in history built toolkits to make virtual reality engineering accessible for development in regard to actual requirements of the single user. \cite{engineeringVR}
 	In modern engineering engines like Unity using C\# scripts and custom plug-ins allows for fast visualization of models or environments in virtual reality. With the use of Unity and the virtual machine C\# uses, more users have access to experiencing virtual reality applications made in the engine. With the high accessibility engineering works in virtual reality, it has become more natural, in the aspect that an engineer could be present in a virtual space, whilst designing, shaping or in anyway creating physical objects but in virtual space\todo{Entire sentence sounds weird, plz rewrite from scratch}. The major benefit of this is the cost, it is not very expensive, as the software provides materials, tools and all the things usually needed to be bought from hardware stores etc. before creating actual designs. \\ 
 	
@@ -470,7 +469,7 @@
 			\end{figure}
 			
 			\subsection{Sub-conslusion}
-			Most of the questionnaire respondents are familiar with VR and felt comfortable using it. The group that expressed most comfort in using it were aged 36-45, which is within the age group defined by the experts in \autoref{sec:expertInterviews}
+			Most of the questionnaire respondents are familiar with VR and felt comfortable using it. The group that expressed most comfort with it were aged 36-45, which is within the age group defined by the experts in \autoref{sec:expertInterviews}
 			The garden sizes vary quite a bit although the vast majority of the respondents' gardens were larger than 800m² and the second largest group were in between 500-800m²\todo{Doesn't actually conclude anything from this}.
 			If the project ends up being limited in the number of models included, it would make sense to at least include the common garden plants shown in \autoref{fig:plantlist}.
 			
