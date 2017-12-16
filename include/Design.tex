@@ -57,28 +57,24 @@ Holes are cut into the sides near the bottom to route cables for the webcam thro
 The physical construction of the tokens was not a cause of great concern. They simply needed to be circular, as most trees take up a circular amount of space. We chose 3D printing for the tokens because of consistency concerns, and for the ease of construction. The markers themselves are color prints on regular white printer paper, that are glued to the bottom of the tokens. Markers can be easily reprinted and replaced if a problem is found with the current image processing implementation. 
 The size of the markers is made to be as small as possible while still working with the image processing aspect. It all depends on the quality of the webcam image. The worse quality the webcam delivers, the larger the markers need to be. With a proper DSLR camera we could scale down the markers considerably, but the software to make such a camera work as a webcam is expensive, and so for the prototype we went with a Logitech QuickCam® Communicate STX\footnote{Logitech QuickCam® Communicate STX product page: \url{http://support.logitech.com/en_us/product/quickcam-communicate-stx}}.\\
 
-The marker is designed to have a thick stroke around its perimeter. This is what makes the program classify it as a marker. At one point, a line is drawn from the edge of the marker and slightly inwards. This lets the program determine the token's rotation vector. In the center of the marker, between 0 and 8 squares are placed.
+The marker is designed to have a thick stroke around its perimeter. This is what makes the program classify it as a marker. At one point, a line, called the direction line is drawn from the edge of the marker and slightly inwards. This lets the program determine the token's rotation vector. In the center of the marker, between 0 and 8 squares are placed.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Design/markermap.png}
 	\caption{Example marker indicating a value of 165}
 	\label{fig:circle2}
 \end{figure}
-
-These each represent a bit, black indicating a 1 and white indicating a 0. They do not necessarily need to be square. The program looks at the center of each to get a brightness value.
-
+These each represent a bit, and as such are called bit fields. Black indicating a 1 and white indicates a 0. They do not necessarily need to be square. The program looks at the center of each to get a brightness value.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\linewidth]{figure/Design/markerValues.png}
+	\includegraphics[width=0.25\linewidth]{figure/Design/markerValues.png}
 	\caption{The value
 		 each square represents}
 	\label{fig:circle}
 \end{figure}
-
 This allows us to print a marker representing any one of 255 items. More could be added later, but for testing the prototype there is no need for more combinations as we are limited by the number of unique digital models.
 
-A program was made to automatically generate markers as needed. It takes an array of integers and creates sheets of markers corresponding to the array. For the input \codeword{int[] markers = {1, 2, 4, 8, 16, 32, 64, 128, 100, 3, 9};} it returns the following image:
-
+To ensure consistency a program was made to automatically generate markers as needed. It takes an array of integers and creates sheets of markers corresponding to the array. For the input \codeword{int[] markers = {1, 2, 4, 8, 16, 32, 64, 128, 100, 3, 9};} it returns the following image:
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{figure/Analysis/result}
