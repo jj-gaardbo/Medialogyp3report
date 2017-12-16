@@ -1,15 +1,14 @@
 \chapter{Implemention}
-	\section{How the program works}
-	This section describes how to set up the prototype, connect the camera, limitations of the program and all that jazz.
+	To develop a system that uses Image Processing to get data from token patterns via a webcam into Unity and \textit{"translate"} it into a Virtual Reality garden that can be explored through the HTC Vive using Steam VR, there are many considerations that have to be made. This section explains the program implementation and some of the algorithms that went into the development process. Furthermore, some of the most essential and relevant code snippets will also be presented.
 	
 	\section{VR in Unity}
 	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, and would reduce development time on all the non-image processing based parts by inconceivably many hours.
 	\todo{Describe technical details of VR in Unity using Steam VR}
 	
 	\section{DLLs and Unity}
-		 Unity has a fair number of different options for performing image processing. We would be creating the fiducial markers from scratch and could not use any preexisting software. at this point, we were already familiar with openCV, a fast library for image processing and computer vision, so developing using openCV made sense.\\\\
-		One issue is that Unity uses C\# but openCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or "Dynamic Linked Library", and import it into the C\# code. DLLs  cannot be executed in the way normal applications are, and instead can be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and therefore a speedy as all heck\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawback to using DLLs as well,  and they definitely caused some bumps in the implementation. Firstly, passing an object between the DLL and Unity is difficult be cause Unity cannot understand the code in the plug-in. On the C++ side you do not have a terminal, meaning getting any information about what is happening inside the DLL is very difficult. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback.\\\\
-		How to declare a function for export in C++ can be seen in Listing \ref{listing:dllExport}.
+ 		Unity has a fair number of different options for performing image processing. We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
+ 		
+		One issue is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and instead can be used by other applications. Because they can be complied from a host of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation. Firstly, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the C++ side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback. Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
 \begin{listing}[H]
 \caption{How to declare a function for DLL export in C++}
 \label{listing:dllExport}
@@ -17,7 +16,7 @@
 extern "C" __declspec( dllexport ) int init(int w, int h);
 \end{minted}
 \end{listing}
-Here's what the words actually mean. \codeword{extern "C"} tells the compiler to not change the function's name, so that it can be imported into Unity. \codeword{__declspec()} tells the linker to do a thing, depending on the argument. In this case \codeword{dllexport}. This lets the compiler know that it should export a function to a DLL. So now the function will be exported under a name that we know. In Unity a corresponding \codeword{DllImport("name")} will be used to import the function in Unity. A sample call might look like this\\
+\codeword{extern "C"} tells the compiler to not change the function's name, so that it can be imported into Unity. \codeword{__declspec()} tells the linker to do something depending on the argument, which in this case is \codeword{dllexport}. This lets the compiler know that it should export a function to a DLL. So now the function will be exported under a name that we know. In Unity a corresponding \codeword{DllImport("name")} will be used to import the function in Unity. Listing \ref{listing:dllImport} shows how this looks in C\# on the Unity side.
 \begin{listing}[H]
 	\caption{How to declare a function for DLL import in C\#}
 	\label{listing:dllImport}
@@ -27,23 +26,24 @@ Here's what the words actually mean. \codeword{extern "C"} tells the compiler to
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given, and the function that we want to import is the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here you can see the importance of knowing the function name, otherwise the function could not be found. In line 2, a function is declared that will call the imported function. Note that this function must have the same signature (return type and arguments). Unity cannot check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible and straightforward for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the markers found after image processing. They are represented in a structure: 
+The name of the DLL file "unityOpencvPlugin" is given, and the function that we want to import is the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the methods names match completely, otherwise it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments). Unity can not check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
 \begin{listing}[H]
 	\caption{Objects in C\# and C++}
 	\label{listing:objects}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-			//in C++
+//in C++
 struct ObjectData {
-int X, Y, Type, RotationX, RotationY, Rotation;
+   int X, Y, Type, RotationX, RotationY, Rotation;
 };
-			//in C#	
+
+//in C#	
 [StructLayout(LayoutKind.Sequential, Size = 24)]
 public struct CVObject{
-public int X, Y, Type, RotationX, RotationY, Rotation;
+   public int X, Y, Type, RotationX, RotationY, Rotation;
 }
 	\end{minted}
 \end{listing}
-In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. We are going to be returning several objects. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. Below is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
+In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. We are going to be returning several objects. One for each token. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
 \begin{listing}[H]
 \caption{The function call to pass a pointer to C++, which is filled with object data by the code}
 \label{listing:pointer}
@@ -56,8 +56,8 @@ unsafe{
 }
 \end{minted}
 \end{listing}
-\section{Implications of working in vr}
-Virtual reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for vr, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of vr, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
+\section{Implications of working in VR}
+Virtual reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
 For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm.
 
 \section{BGR to RG chromaticity conversion}
@@ -100,7 +100,7 @@ The process of converting an rgb image described above is a matter of simple poi
 \end{enumerate}
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Lookup tables}
-The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
+The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
