@@ -69,7 +69,7 @@ Since we are now diving into image processing, we can show the outputs of the op
 \label{fig:snapshot}
 \end{figure} 
 It was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}.
-\subsection{Theory of RG}
+\subsection{Theory of RG}\label{sec:theoryOfRG}
 The critical property that RG has is that it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
 Where $x$ represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range og 0 - 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
@@ -80,38 +80,38 @@ This means that in RG the sum of all channels must be 255.
 \[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
 It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small values as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
 \[ BLUE = 255 - RED - GREEN\]
-So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG. 
+So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG.
 \[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
 \[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 \]
-The resultant colors can be seen in figure \ref{fig:conversion} The same is true for any two color that are proportionately similar.\\
+The resultant colors can be seen in \autoref{fig:conversion} The same is true for any two color that are proportionately similar.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgconversion.png}
 	\caption{Two colors of very different intensity are identical when converted to RG because they have the same percentages of the different colors. This make the RG color space more resistant to different lighting condition}
 	\label{fig:conversion}
 \end{figure} 
-In relation to image processing one has to be aware that noise, particularly in shadows, mess with the rg space. For this reason it is recommended to zero the values if the total sum is below a certain value.
+In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. For this reason it is recommended to zero the values if the total sum is below a certain value.
 
-\subsection{rg chomaticity in code}
-The process of converting an rgb image described above is a matter of simple point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
+\subsection{RG chromaticity in code}
+The process of converting an RGB image described above is a matter of point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
 \begin{enumerate}
-	\item Find the sum of the rgb chanels.
+	\item Find the sum of the RGB channels.
 	\item Assign the corresponding pixel in the output to the value found in a look up table using the sum and value in the channel\\
 \end{enumerate}
-Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
+The only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Lookup tables}
-The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
+The concept of a lookup table is to calculate a table with the results of all possible inputs and look up what the result is, instead of calculating every time\footnote{Wiki page for Lookup tables: \url{https://en.wikipedia.org/wiki/Lookup_table}}. In our case, this is necessary because of the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. In total that is 307200 pixels. Operations like multiplications, subtractions and additions are very fast, but division is a more expensive operation\footnote{Streamhpc page on operation expenses: \url{https://streamhpc.com/blog/2012-07-16/how-expensive-is-an-operation-on-a-cpu/}} and we have to do division and multiplication three times per pixel (one for each channel). We found that, at runtime, using a look up table, increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
 	\label{rgConversion}
-	\caption{Test image used to test the speed of the BGR to RG conversion. Using a look up table halved it execution time}
+	\caption{Test image used to test the speed of the BGR to RG conversion. Using a look up table halved it at execution time}
 	\end{figure}
 
     \columnbreak
 	\begin{table}[H]
 		\centering
-			\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as an "if smaller than" statement can significantly increase the speed. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
+		\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as an "if smaller than"-operation(As seen in line 4 of Listing \ref{listing:lutTable}) can significantly increase the time. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
 		\begin{tabular}{ l | l }
 			\hline			
 			No lookup table & .0015028 sec\\
@@ -124,7 +124,7 @@ The concept of a lookup table is, "instead of calculating this thing every time,
 \end{multicols}
 
 \subsection{Creating a look up table}
-Creating a look up table is straight forward. You take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. Sum which can vary between 0, when all colors are zero, and 765, and Color which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
+To create a look up table we take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
 \label{listing:lutTable}
