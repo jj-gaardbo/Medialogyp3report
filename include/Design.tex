@@ -27,7 +27,7 @@ The initial idea was for a camera to recognize colors, shapes, sizes, and symbol
 	\end{figure}
 \end{multicols}
 A few changes were made to the original design though. We realized that users would likely be unable to recognize what a token was solely from pattern on top. This would be a huge issue with the product. One solution could be to make the tokens very distinct, for instance a pine tree and a an oak tree have very different silhouettes. Using silhouettes solves the human vision issue, but reduces the amount of tokens that the camera can recognize, because telling the difference between different varieties of the same species would be very difficult. So the garden architect would often be forced to place just a "pine" token rather than something specific like a European black pine.\\\\
-To solve this issue we decided to separate the image processing from what the user saw. The camera would be moved beneath the table, and the table would be transparent. The top of the token would now display a 3D rendering of the plant it represented in VR, while the bottom now contained the pattern used for object recognition. During the interviews some garden architects expressed concern regarding weight of the prototype. They work on the move, and would want to avoid something too heavy. In accordance the larger table was scraped in favor of a smaller box design. 
+To solve this issue we decided to separate the image processing from what the user saw. The camera would be moved beneath the table, and the table would be transparent. The top of the token would now display a 3D rendering of the plant it represented in VR, while the bottom now contained the marker used for object recognition. During the interviews some garden architects expressed concern regarding weight of the prototype. They work on the move, and would want to avoid something too heavy. In accordance the larger table was scraped in favor of a smaller box design. 
 
 \section{The Physical Prototype}
 The prototype consists of a lightweight box, of which four sides are laser cut MDF and the top is a square piece of acrylic. The bottom is open. A number of tokens may be moved around the surface of the box. The tokens are circular and 3D printed, with a colored marker on the bottom and a picture of the token's virtual counterpart on the top. A camera is placed at the bottom of box, looking up. 
@@ -54,13 +54,13 @@ Holes are cut into the sides near the bottom to route cables for the webcam thro
 
 \subsection{The tokens}
 
-The physical construction of the tokens was not a cause of great concern. They simply needed to be circular. We chose 3D printing for the tokens for consistency's sake, and for the ease of construction. The markers themselves are color prints on regular white printer paper, which are to be glued to the bottom of the tokens. Markers can be easily reprinted and replaced if a problem is found with the current image processing implementation. 
+The physical construction of the tokens was not a cause of great concern. They simply needed to be circular, as most trees take up a circular amount of space. We chose 3D printing for the tokens because of consistency concerns, and for the ease of construction. The markers themselves are color prints on regular white printer paper, that are glued to the bottom of the tokens. Markers can be easily reprinted and replaced if a problem is found with the current image processing implementation. 
 The size of the markers is made to be as small as possible while still working with the image processing aspect. It all depends on the quality of the webcam image. The worse quality the webcam delivers, the larger the markers need to be. With a proper DSLR camera we could scale down the markers considerably, but the software to make such a camera work as a webcam is expensive, and so for the prototype we went with a Logitech QuickCam® Communicate STX\footnote{Logitech QuickCam® Communicate STX product page: \url{http://support.logitech.com/en_us/product/quickcam-communicate-stx}}.\\
 
 The marker is designed to have a thick stroke around its perimeter. This is what makes the program classify it as a marker. At one point, a line is drawn from the edge of the marker and slightly inwards. This lets the program determine the token's rotation vector. In the center of the marker, between 0 and 8 squares are placed.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\linewidth]{figure/Design/markerExample.png}
+	\includegraphics[width=1\linewidth]{figure/Design/markermap.png}
 	\caption{Example marker indicating a value of 165}
 	\label{fig:circle2}
 \end{figure}
