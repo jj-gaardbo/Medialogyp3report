@@ -1,6 +1,5 @@
 \chapter{Implemention}
-	\section{How the program works}
-	This section describes how to set up the prototype, connect the camera, limitations of the program and all that jazz.
+	To develop a system that uses Image Processing to get data from token patterns via a webcam into Unity and \textit{"translate"} it into a Virtual Reality garden that can be explored through the HTC Vive using Steam VR, there are many considerations that have to be made. This section explains the program implementation and some of the algorithms that went into the development process. Furthermore, some of the most essential and relevant code snippets will also be presented.
 	
 	\section{VR in Unity}
 	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, and would reduce development time on all the non-image processing based parts by inconceivably many hours.
@@ -100,7 +99,7 @@ The process of converting an rgb image described above is a matter of simple poi
 \end{enumerate}
 Really the only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Lookup tables}
-The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}. 
+The concept of a lookup table is, "instead of calculating this thing every time, why don't i calculate a table with the results of all possible inputs and just look up what the result is". This might sound like madness until one realizes the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. That is 307200 pixel. Now multiplications and additions are very fast, but division is a more expensive operation and we have to do division and multiplication three times per pixel (one for each channel). We found that at runtime using a look up table increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
