@@ -57,28 +57,28 @@ unsafe{
 \end{minted}
 \end{listing}
 \section{Implications of working in VR}
-Virtual reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
+Virtual Reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
 For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm.
 
 \section{BGR to RG chromaticity conversion}
-Since we are now diving into image processing, we can show the outputs of the operations. A snap shot from the prototype's webcam has been taken for just this purpose. It is shown in Figure \ref{fig:snapshot}, and after each of the image processing sections the output will be shown.
+Since we are now diving into image processing, we can show the outputs of the operations. A snap shot from the prototype's webcam has been taken for just this purpose is shown in \autoref{fig:snapshot}, and after each of the image processing sections the output will be shown.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\linewidth]{figure/Analysis/testimage.jpg}
 \caption{A test image that will show the results of the image processing}
 \label{fig:snapshot}
 \end{figure} 
-It was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to rg chromaticity, also known as normalized rgb, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticity space\footnote{\url{https://en.wikipedia.org/wiki/Chromaticity}}.
-\subsection{Theory of RG} 
-The critical property that RG has is it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
+It was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}.
+\subsection{Theory of RG}
+The critical property that RG has is that it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
 \[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
-Where x represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range og 0 - 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
+Where $x$ represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range og 0 - 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
 \[ RED = \frac{red}{red + blue + green} * 255\]
 \[ BLUE = \frac{blue}{red + blue + green} * 255\]
 \[ GREEN = \frac{green}{red + blue + green} * 255\]
 This means that in RG the sum of all channels must be 255.
 \[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
-It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small value as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
+It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small values as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
 \[ BLUE = 255 - RED - GREEN\]
 So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG. 
 \[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
