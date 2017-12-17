@@ -241,21 +241,21 @@ Like the RG conversion this operation involves visiting each pixel once and perf
 framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 uchar lookup[256][256];
 for (int i = 0; i < 256; i++) {
-   for (int j = 0; j < 255; j++) {
-      if (j > 180) { // if red is above 180
-	     lookup[i][j] = 255;
-	  } else if (((i - g)*(i - g) + ((j - r)*(j - r))) < 3600) {
-		 lookup[i][j] = 255;
-	  } else {
-		 lookup[i][j]= 0;
-	  }
-   }
+	for (int j = 0; j < 255; j++) {
+		if (j > 180) { // if red is above 180
+			lookup[i][j] = 255;
+		} else if (((i - g)*(i - g) + ((j - r)*(j - r))) < 3600) {
+			lookup[i][j] = 255;
+		} else {
+			lookup[i][j]= 0;
+		}
+	}
 }
 \end{minted}
 \end{listing}
 
-Inside the double for loop there is an if statement that test the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This saves us having to use a square root. So we test if the distance is smaller than 60. If true make the index white, otherwise make it black. 
-In terms of implementations using the lookup table, it is very similar to the rg conversion and as such it not worth mentioning. The output after thresholding the normalized test image, can be seen in Figure \ref{fig:thsnapshot}\\
+Inside the double for loop there are 2 if statements that each perform a different thresholding operation. The first is an In Range where it checks if the red color is larger than 180. The second is checks the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This saves us from having to use a square root. So we check if the distance is smaller than 60. If either of these if statements are true, make the index white, otherwise make it black.
+In terms of implementations using the lookup table, it is very similar to the RG conversion and as such it not worth mentioning. The output after thresholding the normalized test image, can be seen in \autoref{fig:thsnapshot}\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/thresholded.png}
