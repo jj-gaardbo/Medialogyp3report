@@ -345,9 +345,9 @@ The arguments consist of a pointer to the pixel, the blob that this fire is goin
 With the knowledge of how to create the grassfire and how it works, all we need is to find the white pixels where the fire should start.
 
 \subsection{Scanning for white pixels}
-First one loops through each pixel in the image and checks if it is completely white. Obviously this only works if the image is binary. In our case, the image is 8bit gray scale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
+Scanning for white pixels can be accomplished by looping through each pixel in the image and checking if it is completely white. This only works if the image is binary. In our case, the image is 8bit gray scale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
 \begin{listing}[H]
-	\caption{"We didn't start the grassfire". This algorithm did. It scans for white pixels, creates blobs if it finds any, and then starts fires}
+	\caption{Here it is shown how we scan for white pixels, create blobs if it finds any and then start fires}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	int nRows = biImg.rows;
@@ -377,14 +377,14 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
-The arguments for this function are a reference to an binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to be passed the images width. a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs it color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes to dark, in line 20 to 23.\\
-\begin{figure}
+The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for-loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/grassfire.png}
 	\caption{The test image after the grassfire algorithm has been run. Each blob is made slightly darker than the lost one, until a threshold where the color is made quiet white again}
 	\label{fig:grsnapshot}
 \end{figure} 
-The results of the image before and after this algorithm has been run can be seen in Figure \ref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
+The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
 \section{Blob analysis}
 In this section we will deal with how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
 \subsection{Parameter overview, and flow }
