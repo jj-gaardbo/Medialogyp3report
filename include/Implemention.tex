@@ -233,6 +233,7 @@ or 0.\\
 
 \subsection{Thresholding implementation}
 Like the RG conversion this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. Again we use a lookup table. The operation that we need to perform is find the distance, if it is smaller than the threshold set pixel to 255, else if it is larger set it to 0. Listing \ref{listing:thresholdDist} shows how we initialized our table.
+
 \begin{listing}[H]
 	\caption{Instantiating the Distance threshold look up table}
 	\label{listing:thresholdDist}
