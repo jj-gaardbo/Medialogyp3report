@@ -130,51 +130,51 @@ To create a look up table we take the operation that would be performed, and sav
 \label{listing:lutTable}
 \begin{minted}[frame=lines,
 	framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-	int divLUT[766][256]; //division lookuptavle;
-	for (int i = 0; i < 766; i++) {
-		for (int j = 0; j < 256; j++) {
-			if (i < rgConvThreshold) { 
-				divLUT[i][j] = 0;
-			}
-			else {
-				divLUT[i][j] = (j * 255) / i;
-			}
-		}
-	}
+int divLUT[766][256]; //division lookuptavle;
+for (int i = 0; i < 766; i++) {
+   for (int j = 0; j < 256; j++) {
+      if (i < rgConvThreshold) { 
+         divLUT[i][j] = 0;
+      } else {
+         divLUT[i][j] = (j * 255) / i;
+      }
+   }
+}
 \end{minted}
 \end{listing}
-The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise calculate the value that would result from the color(j) divided by sum(i) and multiplied by 255.
-\subsubsection{Suming rgb channels and looking up results}
-This is point processing and as such it calls for a double for loop to ensure each pixel is visited. The function takes an input image assumed to be BGR, and an output image also amused to be BGR. The ampersand(\&) in the function signature, seen in Listing \ref{listing:sum}, indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes copies instead.\\\\
-Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the rgb image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same row three times in a row, one for red, one for blue, and so on. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. 
+The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise it calculates the value that would result from the color \codeword{j} divided by sum \codeword{i} and multiplied by 255.
+\subsubsection{Summing RGB channels and looking up results}
+To use the lookup table all we have to do is visit each pixel once and lookup the value in the pixel. This is done using a double for-loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, and an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\\
+
+Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same row three times in a row, one for blue, one for green and one for red. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. \todo{Add simple figure here for the DivLUT}
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
 	\begin{minted}[frame=lines,
 		framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
-	//declare other variables
-	int nCols = in.cols * 3;	//since there's 3 channels per pixel
+   //declare other variables
+   int nCols = in.cols * 3;	//since there's 3 channels per pixel
 	
-	for (int i = 0; i < nRows; i += GRIDSIZE) {
-		p = in.ptr<uchar>(i);
-		cp = out.ptr<uchar>(i);
-		
-		for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
-			blue = p[j];
-			green = p[j+1];
-			red = p[j+2];
-			sum = blue + green + red;
-			lutptr = divLUT[sum];
-			//cp[j] = *(lutptr + blue);  not needed
-			cp[j + 1] = *(lutptr + green);
-			cp[j + 2] = *(lutptr + red);
-		}
-	}
+   for (int i = 0; i < nRows; i += GRIDSIZE) {
+     p = in.ptr<uchar>(i);
+	 cp = out.ptr<uchar>(i);
+	
+	 for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
+	    blue = p[j];
+		green = p[j+1];
+		red = p[j+2];
+		sum = blue + green + red;
+		lutptr = divLUT[sum];
+		//cp[j] = *(lutptr + blue);  not needed
+		cp[j + 1] = *(lutptr + green);
+		cp[j + 2] = *(lutptr + red);
+	 }
+   }
 }
 	\end{minted}
 \end{listing}
-Inside the for loop, the code starts by saving the values of each channel to the corresponding variables. The values are then added together. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change we get the address of the row of the sum and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section blue is unnecessary data and so does not need to be assigned. We will be calculating the blue when showing the  output, but that is only to make the image less jarring for humans to look at. In the final code it \label{key}can be omitted. After executing the function on our test image the following Figure \ref{fig:rgsnapshot} is the output.
+Inside the for loop, the code starts by saving the values of each channel to the corresponding variables. The values are then added together. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change we get the address of the row of the sum and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section(See \autoref{sec:theoryOfRG}) blue is unnecessary data and so does not need to be assigned. We will be calculating the blue when showing the output, but that is only to make the image less jarring for humans to look at. In the final code it can be omitted. After executing the function on our test image the following \autoref{fig:rgsnapshot} is the output.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgbNorm.png}
@@ -184,7 +184,7 @@ Inside the for loop, the code starts by saving the values of each channel to the
 
 \section{Thresholding in RG}
 \todo{write a bit more about the implication of each threshold}
-Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in figure \ref{fig:rgbNorm}. The image contains a slightly modified, but prettier, RG space. 
+Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in \autoref{fig:rgbNorm}. The image shows a slightly modified RG space. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
@@ -192,20 +192,21 @@ Because RG can be represented by two values it is possible to plot the  chromati
 	\label{fig:rgbNorm}
 \end{figure}
 There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
-or 0.\\\\
-\textbf{In range}, is an often used way of thresholdnig in the HSV color space\footnote{\url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. One sets a range in each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space. It should not surprise anyone because we are comparing two constants. Constants create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a fair bit bluer. You also cannot set it too wide, since doing so will cause white things to also be segmented. There are ways the provide more control over the segmentation.\\
+or 0.\\
+
+\textbf{In Range} is a method of thresholdnig in the HSV color space\footnote{openCV tutorial where inRange() is used: \url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}.A range is defined on each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space because we are comparing two constants which create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a bit bluer. You also cannot set it too wide, since doing so will cause white elements to also be segmented. There are, however, ways the provide more control over the segmentation.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
-		\caption{in range threshold in rg space}
+		\caption{inRange threshold in RG space}
 		\label{thresholdintrange}
 	\end{figure}
 	\columnbreak
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
-		\caption{below line threshold in rg space}
+		\caption{Below line threshold in RG space}
 		\label{fig:thresholdbelowline}
 	\end{figure}
 	
