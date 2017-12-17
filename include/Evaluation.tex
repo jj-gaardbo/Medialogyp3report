@@ -5,11 +5,16 @@ To ensure that the prototype satisfied our final problem statement, we had to ev
 In order to find out to which degree our prototype met our usability requirements, we conducted a usability test.
 
 \subsection{Test goals}
-The main goal of this test was to figure out if our target group perceived the prototype's usability and that the user experience was satisfaction. Although our original idea was that this test should be tested on our experts, unfortunately this was not possible which led us to test the prototype on regular students from AAU CPH, but in role as a garden designer and the customer.\\
+The main goal of this test was to figure out if our prototype had satisfactory usability, and if indeed did satisfy our usability requirements. These goals specifically included:
+\begin{enumerate}
+	\item Enough different plants to make a satisfactory garden for the client.\\
+	\item The virtual environment should be pleasurable to be in.\\
+	\item The garden architect should have control over the virtual objects with physical tokens.\\
+\end{enumerate}
 
 
 \subsection{Sampling}
-The usability test was conducted with the help of 8 participants. We used convenience sampling to find students at AAU CPH.
+With the initial test idea, the plan was to test on our main target group, with time constraints and transport resources not being possible, we ended up finding 8 participants, utilizing convenience sampling on AAU CPH.
 
 \subsection{Test specifics}
 In \autoref{fig:test1} seen below, is the setup for our usability test.
@@ -40,7 +45,7 @@ Firstly, the participant was informed about the general purpose of the test, tas
 After the participants tried their different roles they where asked to fill out a questionnaire (see appendix ??)\todo{put it in} as their respective roles, so each participant had to fill out two questionnaires. The questionnaires contained questions regarding the experience as a client and an architect.
 
 \subsection{Results}
-In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test (see \autoref{fig:boxPlotResults} and \autoref{fig:boxPlotResults2}). The questionnaires was not 100\% Likert scale questions, but we took those out and put them in a box plot. Some of the questions will be picked out and shown in a bar chart.
+In this section we will display the results conducted from our questionnaires that the participants filled out after each role in the test (see \autoref{fig:boxPlotResults} and \autoref{fig:boxPlotResults2}). Some of the questions will be picked out and shown in a bar chart.
 The questions is as follows:\\
 
 Client Questions:\\
@@ -101,6 +106,43 @@ table[row sep=\\,y index=0] {
 \label{fig:boxPlotResults}
 \end{figure}
 
+Architect questions:\\
+\begin{enumerate}
+	\item How easy was the product to use?\\
+	\item How easy was it to tell what the garden looked while you were building it?\\
+\end{enumerate}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	boxplot/draw direction=y,
+	height=10cm,
+	width=15cm,
+	enlargelimits=0.03,
+	ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
+	xtick={1,2},
+	xlabel=Questions,
+	ylabel={Level of agreement},
+	xticklabels={
+		1,2}
+	]
+	\addplot+[boxplot]
+	table[row sep=\\,y index=0] {
+		data\\ 1\\ 3\\ 3\\ 4\\ 4\\ 5\\ 5\\ 5\\
+	};
+	\addplot+[boxplot]
+	table[row sep=\\,y index=0] {
+		data\\ 1\\ 1\\ 2\\ 2\\ 2\\ 3\\ 3\\ 3\\
+	};   
+	
+	
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Box plot graph showing the results of the architect Likert questions.}
+	\label{fig:boxPlotResults2}
+\end{figure}
+
 \subsection*{Was the framerate (the frequency at which the screen updates) tolerable?}
 As seen in \autoref{fig:barChartFrame}, 3 of the 8 participants didnt find the framerate very tolerable. 1 participant found it somewhat tolerable and 3 participants found it very tolerable.
 
@@ -148,43 +190,6 @@ Out of 8 participants, 7 of them strongly agreed that they felt engaged with the
 	\label{fig:barChartCommunicate}
 \end{figure}
 
-Architect questions:\\
-How easy was the product to use?\\
-How easy was it to tell what the garden looked while you were building it?\\
-
-\begin{figure}[H]
-	\centering
-\begin{tikzpicture}
-\begin{axis}
-[
-boxplot/draw direction=y,
-height=10cm,
-width=15cm,
-enlargelimits=0.03,
-ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
-xtick={1,2},
-xlabel=Questions,
-ylabel={Level of agreement},
-xticklabels={
-	1,2}
-]
-\addplot+[boxplot]
-table[row sep=\\,y index=0] {
-	data\\ 1\\ 3\\ 3\\ 4\\ 4\\ 5\\ 5\\ 5\\
-};
-\addplot+[boxplot]
-table[row sep=\\,y index=0] {
-	data\\ 1\\ 1\\ 2\\ 2\\ 2\\ 3\\ 3\\ 3\\
-};   
-
-
-\end{axis}
-\end{tikzpicture}
-\caption{Box plot graph showing the results of the architect Likert questions.}
-\label{fig:boxPlotResults2}
-\end{figure}
-
-
 \subsection*{How easy was the product to use?}
 Out of 8 participants 1 of them strongly disagreed that the product was easy to use, while 2 participants hit the middle ground and 5 participants agreed that the product was easy to use. This can be seen in \autoref{fig:barChartEasy}.
 
@@ -229,7 +234,7 @@ As seen in \autoref{fig:pie1} over half of the participants answered yes to this
 	\label{fig:pie1}
 \end{figure}
 
-In addition to this question the participants were able to give a comment, if they answered no to the given question. Here are some examples of the answers:\\
+If the participant answered no, they had the ability to clarify further, such two comments were:\\
 
  \begin{quote}
  	
@@ -278,14 +283,15 @@ As seen above, one of the participants had some issues with the prototype buggin
 
 \subsection{Findings}
 In general the participants were positive about our prototype, the Likert scale questions showed an overall understanding of our prototype.
-Especially in \autoref{fig:barChartEngaged} it can be seen that all 8 participants felt engaged with the program, when they were in the VR environment. This could have something to do with the result of the question in \autoref{fig:barChartFrame}, a majority of the participants answered that the framerate was tolerable.\\
+Especially in \autoref{fig:barChartEngaged} it can be seen that all 8 participants felt engaged with the program when they were in the VR environment. This could have something to do with the result of the question in \autoref{fig:barChartFrame}, a majority of the participants answered that the framerate was tolerable.\\
 
 
-A fair amount of participants answered that they were able to do what the clients wanted as seen in \ref{fig:pie1}. A common statement from the participants were that it was difficult for them to localize the client in the garden. The architect couldn't see where the client was in the garden, because the client was able to move around freely inside the VR garden. Its hard to say how relevant this is, but it is still important to have in mind.\\
+A fair amount of participants answered that they were able to do what the clients wanted as seen in \ref{fig:pie1}. A common statement from the participants were that it was difficult for them to localize the client in the garden. The architect couldn't see where the client was in the garden, because the client was able to move around freely inside the VR garden.\\
 
 
-Over half of the participants answered that it was easy to follow the clients instructions (see \autoref{fig:pie2}) despite there being some problems with the prototypes functioning from time to time. Because we did not use a follow up question for this one we cant directly say why the last bit of the participants had difficulties following the clients instructions. Taking in consideration that the client and the architect stood almost right beside each other, it is most likely not a lack of communication, but rather a problem from the prototypes side.\\
-Even though the above question was not elaborated further, the next given question, seen in \ref{fig:pie3} shows that half of the participants felt that the program responded to their actions, and half of them felt the opposite. This i very likely to have something to do with the prototype since some of the participants stated further that the prototype bugged out and didn't show the objects in VR. Another answer was that the objects didn't have any rotation, which made it hard to make the garden as detailed as possible or at least as finished as possible.
+Over half of the participants answered that it was easy to follow the clients' instructions (see \autoref{fig:pie2}). Because we did not use a follow up question for this question we can't directly say why the last segment of participants had difficulties following the clients instructions.\\
+
+Even though the above question was not elaborated further, the next given question, seen in \ref{fig:pie3} shows that half of the participants felt that the program responded to their actions, and half of them felt the opposite. This is very likely to have something to do with the prototype since some of the participants stated further that the prototype bugged out and didn't show the objects in VR. Another answer was that the objects didn't have any rotation, which might have made it more challenging for the participants to build the garden they had envisioned.
 
 
 
