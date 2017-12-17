@@ -505,11 +505,15 @@ Returning the objects to unity can be done very simply.
 	\caption{returning all blobs that have passed the test to unity}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 for (auto &blob : blobs) {
-if (outDetectedMarkersCount == maxOutMarkersCount)	break;
-if (blob.returnable == false)	continue;
-rotation = acos(blob.rotation.x / sqrt((blob.rotation.x * blob.rotation.x) + (blob.rotation.y * blob.rotation.y)));
-outMarkers[outDetectedMarkersCount] = ObjectData(screenWidth - blob.center.x, screenHeight - blob.center.y, blob.nr, blob.rotation.x, blob.rotation.y, (180 / 3.1415) * rotation);
-outDetectedMarkersCount++;
+	if (outDetectedMarkersCount == maxOutMarkersCount)	break;
+		if (blob.returnable == false)	continue;
+		
+		rotation = acos(blob.rotation.x / sqrt((blob.rotation.x * blob.rotation.x)
+		 + (blob.rotation.y * blob.rotation.y)));
+		outMarkers[outDetectedMarkersCount] = 
+		ObjectData(screenWidth - blob.center.x, screenHeight - blob.center.y
+		, blob.nr, blob.rotation.x, blob.rotation.y, (180 / 3.1415) * rotation);
+		outDetectedMarkersCount++;
 }
 	\end{minted}
 	\label{listing:return}
