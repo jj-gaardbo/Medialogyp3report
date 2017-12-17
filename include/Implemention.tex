@@ -386,20 +386,20 @@ The arguments for this function are a reference to a binary image, and reference
 \end{figure} 
 The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
 \section{Blob analysis}
-In this section we will deal with how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
-\subsection{Parameter overview, and flow }
-At present we have a list of the pixels in each blob. To evaluate the markerhood of a given blob it needs the following parameters.
+In this section we will describe how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
+\subsection{Parameter overview, and flow}
+Now that we have a list of the pixels in each blob, we need to evaluate if the given blob is a marker by the following parameters:
 \begin{enumerate}
 	\item Number of pixels in the blob.
 	\item Height to width relationship of the bounding box.
 	\item Bounding box center.
 	\item Rotation of the blob.
 \end{enumerate}
-When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\\\
+When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\
 
-The flow of the algorithm can be seen in the flow chart below.
+The flow of the algorithm can be seen in the flow chart below.\\
 \todo{make a flow chart for this}
-\\\\
+
 In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.  
 \subsection{Rotation}
 Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
