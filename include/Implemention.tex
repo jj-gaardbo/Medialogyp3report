@@ -451,8 +451,8 @@ rotY = (rotY / points.size());
 Now that a direction vector has been found, we need to calculate the position of each bit field on the marker. This is done with a bit of vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
 
 \subsection{Vectors to find sample points}
-The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in Figure \ref{fig:vector}.
-\begin{figure}
+The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in \autoref{fig:vector}.
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/vector.png}
 	\caption{To the left one can see the location of the direction line, used to find the direction that the marker is facing, and the bit fields used to ascertain the marker's value. To the right, the "skeleton" of vectors used to find bit fields coordinates are shown.} 
@@ -497,7 +497,7 @@ if (bitCounter > 0) {
  	\end{minted}
  	\label{listing:sumingval}
 \end{listing}
-Finally, since we often get 0 as a false positive from different skin blobs, we do not return the object to unity unless at least one of the bit fields are dark.
+Finally, since we often get 0 as a false positive from different skin blobs, we do not return the object to Unity unless at least one of the bit fields are dark.
 So finally we can present the final image after the blobs have been analyzed. 
 \begin{figure}[H]
 	\centering
@@ -506,9 +506,9 @@ So finally we can present the final image after the blobs have been analyzed.
 	\label{fig:output}
 \end{figure}
 
-Returning the objects to unity can be done very simply. 
+Returning the objects to Unity can be done very simply. 
  \begin{listing}[H]
-	\caption{returning all blobs that have passed the test to unity}
+	\caption{Returning all blobs that have passed the test to Unity}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 for (auto &blob : blobs) {
 	if (outDetectedMarkersCount == maxOutMarkersCount)	break;
