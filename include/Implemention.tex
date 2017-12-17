@@ -341,7 +341,7 @@ void dropFire(uchar * pixel, glyphObj &store, int &width, int y, int x, cVector 
 	\end{minted}
 	\label{listing:grassfireIm}
 \end{listing} 
-The arguments consist of a pointer to the pixel, the blob that this fire is going to add data to, and the image's width. Two integers that are the fire's current coordinates. A reference to a vector to avoid instantiating a new one in each recursion. The function starts on line 2 by changing the pixels color, in order to avoid infinite recursion. Lines 3 to 5 adds the current coordinates to the blob. Next are four if statements. Each check if the neighboring pixel in a certain direction are white. If any of them are, it spreads the fire in those directions with the new x and y values.\\
+The arguments consist of a pointer to the pixel, the blob that this fire is going to add data to, and the image's width. Two integers that are the fire's current coordinates. A reference to a vector to avoid instantiating a new one in each recursion. The function starts on line 2 by changing the pixels color to the blobs color, in order to avoid infinite recursion. Lines 3 to 5 adds the current coordinates to the blob. Next are four if statements. Each check if the neighboring pixel in a certain direction are white. If any of them are, it spreads the fire in those directions with the new x and y values.\\
 With the knowledge of how to create the grassfire and how it works, all we need is to find the white pixels where the fire should start.
 
 \subsection{Scanning for white pixels}
