@@ -58,7 +58,7 @@ unsafe{
 \end{listing}
 \section{Implications of working in VR}
 Virtual Reality is computationally demanding. In 2016 Nvidia estimated that an immersive VR experience was seven times more demanding than PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience, which still leaves the average laptop way underpowered. At 45 fps compared to VR it has to render 2.5 times as many pixels, and twice as many frames per second.
-For this reason the algorithm should be fairly quick to execute, because there is going to be quiet a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm.
+For this reason the algorithm should be fairly quick to execute, because there is going to be quite a load on the system running the VR experience. Consequently, we have been trying to optimize our algorithm.
 
 \section{BGR to RG chromaticity conversion}
 Since we are now diving into image processing, we can show the outputs of the operations. A snap shot from the prototype's webcam has been taken for just this purpose is shown in \autoref{fig:snapshot}, and after each of the image processing sections the output will be shown.
@@ -67,7 +67,7 @@ Since we are now diving into image processing, we can show the outputs of the op
 \includegraphics[width=0.6\linewidth]{figure/Analysis/testimage.jpg}
 \caption{A test image that will show the results of the image processing}
 \label{fig:snapshot}
-\end{figure} 
+\end{figure}
 It was found that differences in lighting conditions made thresholding the feed from the camera at best suboptimal. To circumvent this the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but instead a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}.
 \subsection{Theory of RG}\label{sec:theoryOfRG}
 The critical property that RG has is that it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
@@ -124,20 +124,21 @@ The concept of a lookup table is to calculate a table with the results of all po
 \end{multicols}
 
 \subsection{Creating a look up table}
-To create a look up table we take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
+To create a look up table we take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for-loop, as can be seen in Listing \ref{listing:lutTable}.
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
 \label{listing:lutTable}
 \begin{minted}[frame=lines,
 	framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-int divLUT[766][256]; //division lookuptavle;
+	int divLUT[766][256]; //division lookuptavle;
 for (int i = 0; i < 766; i++) {
    for (int j = 0; j < 256; j++) {
       if (i < rgConvThreshold) { 
-         divLUT[i][j] = 0;
-      } else {
-         divLUT[i][j] = (j * 255) / i;
-      }
+	     divLUT[i][j] = 0;
+	  }
+	  else {
+	     divLUT[i][j] = (j * 255) / i;
+	  }
    }
 }
 \end{minted}
@@ -146,7 +147,7 @@ The first thing the loop does is to check if the arguments are below the thresho
 \subsubsection{Summing RGB channels and looking up results}
 To use the lookup table all we have to do is visit each pixel once and lookup the value in the pixel. This is done using a double for-loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, and an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\\
 
-Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same row three times in a row, one for blue, one for green and one for red. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. \todo{Add simple figure here for the DivLUT}
+Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same row three times in a row, one for blue, one for green and one for red. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from the start to \codeword{lutptr[sum][red]}. \todo{Add simple figure here for the DivLUT} 
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
@@ -155,21 +156,21 @@ Before the loop we instantiate three pointers so we don't have to instantiate th
 void preLookUpBgr2rg(Mat &in, Mat &out, uchar (&divLUT)[766][256]) {
    //declare other variables
    int nCols = in.cols * 3;	//since there's 3 channels per pixel
-	
+
    for (int i = 0; i < nRows; i += GRIDSIZE) {
-     p = in.ptr<uchar>(i);
-	 cp = out.ptr<uchar>(i);
-	
-	 for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
-	    blue = p[j];
-		green = p[j+1];
-		red = p[j+2];
-		sum = blue + green + red;
-		lutptr = divLUT[sum];
-		//cp[j] = *(lutptr + blue);  not needed
-		cp[j + 1] = *(lutptr + green);
-		cp[j + 2] = *(lutptr + red);
-	 }
+      p = in.ptr<uchar>(i);
+	  cp = out.ptr<uchar>(i);
+		
+	  for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
+	     blue = p[j];
+		 green = p[j+1];
+		 red = p[j+2];
+		 sum = blue + green + red;
+		 lutptr = divLUT[sum];
+		 //cp[j] = *(lutptr + blue);  not needed
+		 cp[j + 1] = *(lutptr + green);
+		 cp[j + 2] = *(lutptr + red);
+	  }
    }
 }
 	\end{minted}
@@ -184,7 +185,7 @@ Inside the for loop, the code starts by saving the values of each channel to the
 
 \section{Thresholding in RG}
 \todo{write a bit more about the implication of each threshold}
-Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in \autoref{fig:rgbNorm}. The image shows a slightly modified RG space. 
+Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in \autoref{fig:rgbNorm}. The image shows a slightly modified RG space.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
@@ -199,7 +200,7 @@ or 0.\\
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
-		\caption{inRange threshold in RG space}
+		\caption{In Range threshold in RG space}
 		\label{thresholdintrange}
 	\end{figure}
 	\columnbreak
@@ -213,19 +214,19 @@ or 0.\\
 \end{multicols}
 
 \todo{we are now using below line and distance make accoridng changes}
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
+\textbf{Line threshold} is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared to the line to see which side of the line it is on. If the values are on the right side we set it to 255, else we set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
 		\label{thresholddist}
 		\includegraphics[width=1\linewidth]{figure/Analysis/distthresholdcolor.png}
-		\caption{distance threshold in rg space}
+		\caption{Distance threshold in RG space}
 	\end{figure}
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
-		\caption{combined threshold in rg space}
+		\caption{Combined threshold in RG space}
 		\label{fig:threshold}
 	\end{figure}	
 \end{multicols}
