@@ -241,15 +241,15 @@ Like the RG conversion this operation involves visiting each pixel once and perf
 framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 uchar lookup[256][256];
 for (int i = 0; i < 256; i++) {
-	for (int j = 0; j < 255; j++) {
-		if (j > 180) { // if red is above 180
-			lookup[i][j] = 255;
-		}else if (((i - g)*(i - g) + ((j - r)*(j - r))) < 3600) {
-			lookup[i][j] = 255;
-		}else {
-			lookup[i][j]= 0;
-		}
-	}
+   for (int j = 0; j < 255; j++) {
+      if (j > 180) { // if red is above 180
+	     lookup[i][j] = 255;
+	  } else if (((i - g)*(i - g) + ((j - r)*(j - r))) < 3600) {
+		 lookup[i][j] = 255;
+	  } else {
+		 lookup[i][j]= 0;
+	  }
+   }
 }
 \end{minted}
 \end{listing}
