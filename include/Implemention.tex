@@ -183,7 +183,6 @@ Inside the for loop, the code starts by saving the values of each channel to the
 \end{figure} 
 
 \section{Thresholding in RG}
-\todo{write a bit more about the implication of each threshold}
 Because RG can be represented by two values it is possible to plot the  chromaticity space using two axes, as can be seen in \autoref{fig:rgbNorm}. The image shows a slightly modified RG space. 
 \begin{figure}[H]
 	\centering
@@ -212,28 +211,27 @@ or 0.\\
 	
 \end{multicols}
 
-\todo{we are now using below line and distance make accoridng changes}
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared to the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
+\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
 		\label{thresholddist}
 		\includegraphics[width=1\linewidth]{figure/Analysis/distthresholdcolor.png}
-		\caption{Distance threshold in RG space}
+		\caption{distance threshold in rg space}
 	\end{figure}
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/thresholdcolor.png}
-		\caption{Combined threshold in RG space}
+		\caption{combined threshold in rg space}
 		\label{fig:threshold}
 	\end{figure}	
 \end{multicols}
-\textbf{Distance threshold} is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\\\
+\textbf{Distance threshold}. Is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\\\
 \textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the threshold as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top of the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. We found that this produces the most consistent threshold, and was the most resistant to lighting changes.
 
 \subsection{Thresholding implementation}
-Like the RG conversion this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. You feel that, that is my look-up-table-senses tingling. Turning the equation into code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else if larger than  else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.\todo{we have a new threshold}
+Like the RG conversion this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. You feel that, that is my look-up-table-senses tingling. Turning the equation into code is quiet simple. The operation that we need to perform is find the distance, if it is smaller than the threshold  set pixel to 255, else if larger than  else 0. How we initialized our table can be seen in listing \ref{listing:thresholdDist}.
 
 \begin{listing}[H]
 	\caption{Instantiating the Distance threshold look up table}
