@@ -525,11 +525,7 @@ for (auto &blob : blobs) {
 	\label{listing:return}
 \end{listing}
 \section{Unity}
-	Unity show, where data gets used.
-	Position generation.
-	Deciding on object type I guess.
-	
-	Continuing from Listing \ref{listing:pointer}, we now have the means to get the markers into an array of CVObjects called \codeword{_markers}. When the script starts, it makes the \codeword{Detect()} function run every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction}, clears the elements array, which is what holds the GameObjects. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. The reason for the unsafe is to make us able to use pointers inside C\#, and fixed makes sure the function stays at the same location of the memory.
+	Continuing from Listing \ref{listing:pointer}, we now have the means to get the markers into an array of CVObjects called \codeword{_markers}. When the script starts, it makes the \codeword{Detect()} function run every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction}, clears the elements array, which is what holds the GameObjects. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. The reason for the \codeword{unsafe} is to make us able to use pointers inside C\#, and \codeword{fixed} makes sure the function stays at the same location of the memory.
 	\begin{listing}[H]
 		\caption{C\# function that takes the out-coming markers from the DLL file.}
 		\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
@@ -554,8 +550,9 @@ private void Detect(){
 	\end{minted}
 \label{listing:detectFunction}
 \end{listing}
-Then we loop through the \codeword{_markers} array and spawn the appropriate object for each one. The type of object is gotten from Listing \ref{listing:sumingval}, and rotation is calculated in Listing \ref{listing:direction}.\\\\
-The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which just means that it is a false positive that is useless. If the Y rotation is above 0, then we should flip the rotation, because of the way the rotation is calculated, which can only be between 0 and 180. Hence to get the full 360 rotation that is needed to fully rotate the object in virtual space, we make it go the other way.
+Then we loop through the \codeword{_markers} array and spawn the appropriate object for each one. The type of object is determined in Listing \ref{listing:sumingval}, and rotation is calculated in Listing \ref{listing:direction}.\\
+
+The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which just means that it is a false positive and therefore useless. If the Y rotation is above 0, then we should flip the rotation, because of the way the rotation is calculated, which can only be between 0 and 180. Hence to get the full 360 rotation that is needed to fully rotate the object in virtual space, we make it go the other way.
 \begin{listing}[H]
 	\caption{C\# function that spawns the objects in the world, and add them to the elements array.}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
@@ -573,4 +570,4 @@ private void Spawn(int type, int x, int z, int rotation, int rotationY) {
 	\end{minted}
 \label{listing:spawnFunction}
 \end{listing}
-The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is just required to make the objects fit in the virtual garden. To finish off we add the element to the elements array, making it so that we can remove all the objects again.
+The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is just required to make the objects fit in the virtual garden. To finish off we add the element to the elements array, making it so that we can clear all the objects again for the next pass which follows immediately after.
