@@ -28,7 +28,7 @@ public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 \end{listing}
 The name of the DLL file "unityOpencvPlugin" is given, and the function that we want to import is the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the methods names match completely, otherwise it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments). Unity can not check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
 \begin{listing}[H]
-	\caption{Objects in C\# and C++}
+	\caption{Objects in C++ and C\#}
 	\label{listing:objects}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 //in C++
@@ -37,7 +37,7 @@ struct ObjectData {
 };
 
 //in C#	
-[StructLayout(LayoutKind.Sequential, Size = 24)]
+[StructLayout(LayoutKind.Sequential, Size = 16)]
 public struct CVObject{
    public int X, Y, Type, RotationX, RotationY, Rotation;
 }
@@ -522,6 +522,53 @@ for (auto &blob : blobs) {
 	\end{minted}
 	\label{listing:return}
 \end{listing}
-After all of that the data is now in unity and the image processing section is now now done.
-\section{Limitations}
-Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
+\section{Unity}
+	Unity show, where data gets used.
+	Position generation.
+	Deciding on object type I guess.
+	
+	Continuing from Listing \ref{listing:pointer}, we now have the means to get the markers into an array of CVObjects called \codeword{_markers}. When the script starts, it makes the \codeword{Detect()} function run every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction}, clears the elements array, which is what holds the GameObjects. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. The reason for the unsafe is to make us able to use pointers inside C\#, and fixed makes sure the function stays at the same location of the memory.
+	\begin{listing}[H]
+		\caption{C\# function that takes the out-coming markers from the DLL file.}
+		\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
+private void Detect(){
+	if (shouldDetect) {
+		if (elements.Capacity > 0) {
+			clearElements();
+		}
+		elements = new List<GameObject>();
+		int detectedMarkersCount = 0;
+		unsafe{
+			fixed (CVObject* outMarkers = _markers) {
+				Cap(outMarkers, _maxMarkerDetectCount, ref detectedMarkersCount);
+			}
+		}
+		for (int i = 0; i < _markers.Length; i++) {
+			Spawn(_markers[i].Type, _markers[i].X, _markers[i].Y,
+			_markers[i].Rotation, _markers[i].RotationY);
+		}
+	}
+}
+	\end{minted}
+\label{listing:detectFunction}
+\end{listing}
+Then we loop through the \codeword{_markers} array and spawn the appropriate object for each one. The type of object is gotten from Listing \ref{listing:sumingval}, and rotation is calculated in Listing \ref{listing:direction}.\\\\
+The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which just means that it is a false positive that is useless. If the Y rotation is above 0, then we should flip the rotation, because of the way the rotation is calculated, which can only be between 0 and 180. Hence to get the full 360 rotation that is needed to fully rotate the object in virtual space, we make it go the other way.
+\begin{listing}[H]
+	\caption{C\# function that spawns the objects in the world, and add them to the elements array.}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
+private void Spawn(int type, int x, int z, int rotation, int rotationY) {
+	if (x == 0 && z == 0) { type = -1; }
+	if (type != -1 && type != 0) {
+		if (rotationY > 0) {
+			rotation *= -1;
+		}
+		GameObject tempObj = Instantiate(FindObj(type), PositionGen(x, z),
+		Quaternion.Euler(0, rotation, 0)) as GameObject;
+		elements.Add(tempObj);
+	}
+}
+	\end{minted}
+\label{listing:spawnFunction}
+\end{listing}
+The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is just required to make the objects fit in the virtual garden. To finish off we add the element to the elements array, making it so that we can remove all the objects again.
