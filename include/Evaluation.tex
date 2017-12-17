@@ -5,7 +5,7 @@ To ensure that the prototype satisfied our final problem statement, we had to ev
 In order to find out to which degree our prototype met our usability requirements, we conducted a usability test.
 
 \subsection{Test goals}
-The main goal of this test was to figure out if our prototype had satisfactory usability, and if indeed did satisfy our usability requirements. These goals specifically included:
+The main goal of this test was to figure out if our prototype had satisfactory usability, and if indeed did satisfy our usability requirements. These goals specifically included:\\
 \begin{enumerate}
 	\item Enough different plants to make a satisfactory garden for the client.\\
 	\item The virtual environment should be pleasurable to be in.\\
@@ -291,7 +291,7 @@ Even though the above question was not elaborated further, the next given questi
 
 
 \section{Immersion test}
-This immersion test was conducted to make a proof of our concept, to make sure that our idea of the prototype was plausible.
+The immersion test was conducted to test how immersive our prototype was compared to two of the tools traditionally employed by garden architects, sketching and a 3D fly through. From the analysis in section \ref{sec:immersion} it was found that immersive virtual reality resulted in better spacial perception. As such, if our prototype feels more immersive it might be a better tool for presenting designs to clients.
 
 \subsection{Test goals}
 The goal of the test was to determine if the prototype in fact did answer the final problem statement (\autoref{sec:FPS}). The keywords from the FPS are:
@@ -300,18 +300,19 @@ The goal of the test was to determine if the prototype in fact did answer the fi
 	\item[-] Efficient
 	\item[-] Immersive
 \end{itemize}
-and hence these were the words we were keen on measuring with this test.
+as such we were keen on measuring these usability goals in this test.
 \subsection{Sampling}
-Finding real garden architects among the students at AAU CPH, turned out to be a larger challenge than first expected, and therefore it was decided that convenience sampling were to replace that criteria. Convenience sampling among the students at AAU CPH gave us a "random" assortment of test participants. In total, twelve participants were found.
-
+Finding real garden architects among the students at AAU CPH, turned out to be a larger challenge, and therefore it was decided that convenience sampling were to replace that criteria. Convenience sampling among the students at AAU CPH gave us a "random" assortment of test participants. In total, twelve participants were found.
+\subsection{Environment}
+The test were carried out in our group room. The group members who were not part of the test would leave and work elsewhere during testing period. This was very much an artificial environment, again due to the difficulty getting a hold of target group memebers. The artificial environment allows do large quantities of tests, as we can bring participants into highly controlled situation and test very specific elements of the experience.
 \subsection{Test specifics}
-The test consisted of three parts:
+The participants were told they would be trying three different technologies, and were asked to try and understand they layout, in such a way that they could visualize it themselves. The participant were told to take as long as they needed with each of the parts. The parts consisted of:
 \begin{itemize}
 	\item[-] 2D sketching
 	\item[-] 3D viewing
 	\item[-] Virtual reality
 \end{itemize}
-Between each part, the participant filled out the same questionnaire, changing their answers depending on what test they had just done. Each participant was given a test subject id, starting from 1, and going to 12. To eliminate bias we used every possible sequence combination of 2D sketching, 3D viewing and Virtual Reality on two differently designed gardens, as seen in \autoref{table:immersionCombinations}.
+After each part a four question questionnaire of Likert scales was filled out, that can be seen in \todo{but questionnaire in appendecies} . This meant that each person would answer the same questionnaire three times. From this we would be able to see how the testers rated the different parts in terms of immersiveness, speediness of spacial understanding, perceived usefulness to garden architects, and understanding of the gardens design. To differentiate between the subjects they were each given a participant number. As each participant spend longer time observing the garden, we predicted their understanding would improves. To eliminate this bias we used every possible sequence combination of 2D sketching, 3D viewing and Virtual Reality on two differently designed gardens, as seen in \autoref{table:immersionCombinations}.
 
 \begin{table}[H]
 	\centering
@@ -325,29 +326,28 @@ Between each part, the participant filled out the same questionnaire, changing t
 	\end{tabular}
 	
 \end{table}
-The 2D sketches the participants were asked to study can be seen in \autoref{fig:sketchGarden1} and \autoref{fig:sketchGarden2}. These were both created from the 3D virtual scenes made in unity. The two gardens purposely have two very different layouts, and two very different complexity levels(The number of objects in the scene). This was done in another attempt to eliminate bias and the odds of the results being up to chance.
-\begin{multicols}{2}
+The 2D sketches the participants were asked to study can be seen in \autoref{fig:sketchGarden1} and \autoref{fig:sketchGarden2}. These were both created from the 3D virtual scenes made in unity. The two gardens purposely have two very different layouts, and two very different complexity levels(The number of objects in the scene). This was done in an attempt to eliminate bias and the odds of the results being up to chance, as one layout might favor one part.
 \begin{figure}[H]
 	\centering
+	\begin{minipage}[b]{0.49\textwidth}
 	\includegraphics[width=1.0\linewidth]{figure/Evaluation/Garden1.png}
 	\caption{Sketch garden 1}
 	\label{fig:sketchGarden1}
-\end{figure}
-\columnbreak
-\begin{figure}[H]
-	\centering
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.49\textwidth}
 	\includegraphics[width=1.0\linewidth]{figure/Evaluation/Garden2.png}
 	\caption{Sketch garden 2}
 	\label{fig:sketchGarden2}
+	\end{minipage}
 \end{figure}
-\end{multicols}
-The 3D scenes had a camera that automatically moved and looked around the garden. This was done to replicate what we observed some garden architects were advertising on their web pages.
+The 3D scenes had a camera that automatically moved and looked around the garden. This was done to replicate what we observed some garden architects were advertising on their web pages\footnote{Visualization done by garden architect : \url{https://youtu.be/1ki9H5fs7EI}}. In VR, the participants could use the controller to teleport around and observe the garden, as described in Section \ref{sec:designUI}. 
 
 \subsection{Findings}
 After the tests had finished, we compiled the answers into two tables, one for garden 1 (\autoref{table:averageResponseGarden1}) and one for garden 2 (\autoref{table:averageResponseGarden2}). These tables contained the averages of the responses.
 \begin{table}[H]
 	\centering
-	\caption{Average of responses with test on garden 1}
+	\caption{Average of responses with test on garden 1, higher numbers are better}
 	\label{table:averageResponseGarden1}
 	\begin{tabular}{p{3cm}|p{3cm}|p{2cm}|p{3cm}|p{3cm}}
 		Test type       & How long do you think it took you to gain insight into how it would be, to be in the garden? & How immersed did you feel? & How useful do you think this tool could be for a garden architect? & How much do you feel like you understood the garden's design? \\ \hline
@@ -360,7 +360,7 @@ After the tests had finished, we compiled the answers into two tables, one for g
 From \autoref{table:averageResponseGarden1} it can be be seen that for all four questions, Virtual reality was rated higher than when 3D viewing and 2D sketching. For the first question, about the length of time it took the participant to gain insight into how it would be, to be in the garden, in both garden 1 and 2, the participants rated virtual reality as the quickest (Higher number is faster). In both gardens however, the 3D viewing experience was rated the slowest (6.08 and 5.50).
 \begin{table}[H]
 	\centering
-	\caption{Average of the responses with test on garden 2}
+	\caption{Average of the responses with test on garden 2, higher numbers are better}
 	\label{table:averageResponseGarden2}
 	\begin{tabular}{p{3cm}|p{3cm}|p{2cm}|p{3cm}|p{3cm}}
 		Test type       & How long do you think it took you to gain insight into how it would be, to be in the garden? & How immersed did you feel? & How useful do you think this tool could be for a garden architect? & How much do you feel like you understood the garden's design? \\ \hline

@@ -28,7 +28,7 @@ public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 \end{listing}
 The name of the DLL file "unityOpencvPlugin" is given, and the function that we want to import is the "entrypoint". Unity will then do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the methods names match completely, otherwise it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments). Unity can not check whether or not this is true, so it will proceed as if it is the case. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
 \begin{listing}[H]
-	\caption{Objects in C\# and C++}
+	\caption{Objects in C++ and C\#}
 	\label{listing:objects}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 //in C++
@@ -37,7 +37,7 @@ struct ObjectData {
 };
 
 //in C#	
-[StructLayout(LayoutKind.Sequential, Size = 24)]
+[StructLayout(LayoutKind.Sequential, Size = 16)]
 public struct CVObject{
    public int X, Y, Type, RotationX, RotationY, Rotation;
 }
@@ -386,20 +386,20 @@ The arguments for this function are a reference to a binary image, and reference
 \end{figure} 
 The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
 \section{Blob analysis}
-In this section we will deal with how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
-\subsection{Parameter overview, and flow }
-At present we have a list of the pixels in each blob. To evaluate the markerhood of a given blob it needs the following parameters.
+In this section we will describe how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
+\subsection{Parameter overview, and flow}
+Now that we have a list of the pixels in each blob, we need to evaluate if the given blob is a marker by the following parameters:
 \begin{enumerate}
 	\item Number of pixels in the blob.
 	\item Height to width relationship of the bounding box.
 	\item Bounding box center.
 	\item Rotation of the blob.
 \end{enumerate}
-When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\\\
+When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\
 
-The flow of the algorithm can be seen in the flow chart below.
+The flow of the algorithm can be seen in the flow chart below.\\
 \todo{make a flow chart for this}
-\\\\
+
 In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.  
 \subsection{Rotation}
 Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
@@ -522,6 +522,53 @@ for (auto &blob : blobs) {
 	\end{minted}
 	\label{listing:return}
 \end{listing}
-After all of that the data is now in unity and the image processing section is now now done.
-\section{Limitations}
-Or different section title. This section will describe how the implementation differs from the description of the original idea in the "Design" section. Why was it not possible to do X (e.g. live update or 1024 item types etc.) and what did we do instead?
+\section{Unity}
+	Unity show, where data gets used.
+	Position generation.
+	Deciding on object type I guess.
+	
+	Continuing from Listing \ref{listing:pointer}, we now have the means to get the markers into an array of CVObjects called \codeword{_markers}. When the script starts, it makes the \codeword{Detect()} function run every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction}, clears the elements array, which is what holds the GameObjects. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. The reason for the unsafe is to make us able to use pointers inside C\#, and fixed makes sure the function stays at the same location of the memory.
+	\begin{listing}[H]
+		\caption{C\# function that takes the out-coming markers from the DLL file.}
+		\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
+private void Detect(){
+	if (shouldDetect) {
+		if (elements.Capacity > 0) {
+			clearElements();
+		}
+		elements = new List<GameObject>();
+		int detectedMarkersCount = 0;
+		unsafe{
+			fixed (CVObject* outMarkers = _markers) {
+				Cap(outMarkers, _maxMarkerDetectCount, ref detectedMarkersCount);
+			}
+		}
+		for (int i = 0; i < _markers.Length; i++) {
+			Spawn(_markers[i].Type, _markers[i].X, _markers[i].Y,
+			_markers[i].Rotation, _markers[i].RotationY);
+		}
+	}
+}
+	\end{minted}
+\label{listing:detectFunction}
+\end{listing}
+Then we loop through the \codeword{_markers} array and spawn the appropriate object for each one. The type of object is gotten from Listing \ref{listing:sumingval}, and rotation is calculated in Listing \ref{listing:direction}.\\\\
+The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which just means that it is a false positive that is useless. If the Y rotation is above 0, then we should flip the rotation, because of the way the rotation is calculated, which can only be between 0 and 180. Hence to get the full 360 rotation that is needed to fully rotate the object in virtual space, we make it go the other way.
+\begin{listing}[H]
+	\caption{C\# function that spawns the objects in the world, and add them to the elements array.}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
+private void Spawn(int type, int x, int z, int rotation, int rotationY) {
+	if (x == 0 && z == 0) { type = -1; }
+	if (type != -1 && type != 0) {
+		if (rotationY > 0) {
+			rotation *= -1;
+		}
+		GameObject tempObj = Instantiate(FindObj(type), PositionGen(x, z),
+		Quaternion.Euler(0, rotation, 0)) as GameObject;
+		elements.Add(tempObj);
+	}
+}
+	\end{minted}
+\label{listing:spawnFunction}
+\end{listing}
+The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is just required to make the objects fit in the virtual garden. To finish off we add the element to the elements array, making it so that we can remove all the objects again.
