@@ -400,24 +400,25 @@ When all parameters are acquired, and if the blob passes all the tests, it is ti
 The flow of the algorithm can be seen in the flow chart below.\\
 \todo{make a flow chart for this}
 
-In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.  
+In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.
+  
 \subsection{Rotation}
-Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
-\begin{figure}
+Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in \autoref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in \autoref{fig:boundbox}.\\
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/boundingbox.png}
-	\caption{the difference between using the center of mass or bounding box to find the blob center. With bad thresholding the found center is closer to the actual center, resulting in a better direction vector} 
+	\caption{The difference between using the center of mass or bounding box to find the blob center. With bad thresholding the found center is closer to the actual center, resulting in a better direction vector} 
 	\label{fig:boundbox}
 \end{figure}
-We found that smaller blobs would have a more wobbly direction vector, because the direction line now contains fewer pixel. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel we average all the pixel within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
+We found that smaller blobs would have a more wobbly direction vector, because the direction line now contains fewer pixel. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel, we average all the pixel within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
 periphery. Rotation is also calculated as a float instead of integer. These changes make the direction vector much more stable, and have been illustrated in Figure \ref{fig:lowpixel}
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/lowpixel.png}
-	\caption{illustration of the advantage of using mean of many pixel vs single closest pixel to calculate the direction vector.} 
+	\caption{Illustration of the advantage of using mean of many pixel vs single closest pixel to calculate the direction vector.} 
 	\label{fig:lowpixel}
 \end{figure}
- The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, and happens right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
+ The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs and happens right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
 \begin{listing}[H]
 	\caption{Direction vector calculation}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -447,7 +448,7 @@ rotY = (rotY / points.size());
 	\end{minted}
 	\label{listing:direction}
 \end{listing}
-Now that a direction vector has been found, we need to calculate the the position of each bit fields on the marker. This is done with a bit of vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
+Now that a direction vector has been found, we need to calculate the position of each bit field on the marker. This is done with a bit of vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
 \subsection{Vectors to find sample points}
 The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in Figure \ref{fig:vector}.
 \begin{figure}
