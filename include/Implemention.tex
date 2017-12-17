@@ -275,21 +275,21 @@ We created one for this purpose. Our blob structure is called \codeword{gylphObj
 \begin{listing}[H]
 	\caption{The declaration of glyph object, the structure that contain a blob, as well has the parameters about it}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-		struct glyphObj {
-			vector<cVector> list;
-			cVector bBoxStart;
-			cVector bBowEnd;
-			cVector center;
-			cVector rotation;
-			int nr;
-			bool returnable = false;
-		};
+struct glyphObj {
+	vector<cVector> list;
+	cVector bBoxStart;
+	cVector bBowEnd;
+	cVector center;
+	cVector rotation;
+	int nr;
+	bool returnable = false;
+};
 	\end{minted}
 	\label{listing:glyph}
 \end{listing}
-We dive deeper into the parameters and what they are used for in the next section, so the uses of the variables will be not discussed in detail here. However a brief overview is provided. 
-cVector, short for coordinate vector, contains two int. One for each the dimensions. In c++ vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and are the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to disqualify a lot of blobs. \codeword{center} is the coordinates to the center of the bounding box.
-The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all test and therefore is considered a marker.
+We dive deeper into the parameters and what they are used for in the next section, so the uses of the variables will be not discussed in detail here. However, here is a brief overview:
+cVector, short for coordinate vector, contains two integers. One for each the dimensions. In C++ a vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and holds the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to disqualify a lot of redundant blobs. \codeword{center} is the coordinates to the center of the bounding box.
+The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all tests and therefore is considered a marker.
 \subsection{Blob Extraction by recursion}
 All features of a blob are calculated from a list of pixels included in it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to each other pixel through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\\\
 Following this definition extracting a blob can be made quiet simple. Find a white pixel. This pixel is now a blob.  If any pixels that it shares borders with it are white. Add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
