@@ -176,7 +176,7 @@ Before the loop we instantiate three pointers so we don't have to instantiate th
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure/Analysis/table.png}
-	\caption{A test image that will show the results of the image processing}
+	\caption{Demonstration of why the column is the same in the look up of all three colors. The sum of the pixel color does not change, and neither does the column.}
 	\label{fig:table}
 \end{figure} 
 Inside the for loop, the code starts by saving the values of each channel to the corresponding variables. The values are then added together. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change we get the address of the row of the sum and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section(See \autoref{sec:theoryOfRG}) blue is unnecessary data and so does not need to be assigned. We will be calculating the blue when showing the output, but that is only to make the image less jarring for humans to look at. In the final code it can be omitted. After executing the function on our test image the following \autoref{fig:rgsnapshot} is the output.
