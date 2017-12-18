@@ -323,7 +323,7 @@ Our implementation can be seen in Listing \ref{listing:grassfireIm}. Due to its 
 \end{figure}
  The implemented method only works if the data in the image is laid out sequentially. Being sequential means that the data of each row is laid out right after each other. So after the last index in the first row, comes the first index in the second row. Normally to get from a coordinate $(x,y)$ to $(x,y+1)$ one would have to get a pointer to the first column using the mat.ptr<uchar>(y+1) and then adding the x value to it. This is exactly what the Mat.at<uchar>(y,x) does. But if the image is sequential one can add the image width to its index and end up in the row below it, as illustrated in \autoref{fig:vis}.\\
  
- Now that we can navigate between pixel it is possible to implement the algorithm, and we implemented it as seen in Listing \ref{listing:grassfireIm}
+ Now that we can navigate between pixels it is possible to implement the algorithm, and we implemented it as seen in Listing \ref{listing:grassfireIm}
 \begin{listing}[H]
 	\caption{The drop fire function starts from one white pixel changes its color and recursively spreads until the entire blob has been consumed. It does this through connected component analysis, analyzing its connected pixels, and spreading to them if they are white.}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -411,8 +411,8 @@ When all parameters are acquired, and if the blob passes all the tests, it is ti
 	\includegraphics[width=1\linewidth]{figure/Analysis/flowchart.png}
 	\caption{The flow chart of the blob analysis algorithm, showing how we determine whether the returnable variable in each blob should be set to true. This decide which blobs get sent to unity}
 	\label{fig:flow}
-\end{figure} 
-In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.
+\end{figure} \todo{this is hard to read, change size of picture i guess??}
+In regards to calculating the parameters, some of them are very simple to find. Finding the size of a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.
   
 \subsection{Rotation}
 Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
