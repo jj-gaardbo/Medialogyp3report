@@ -223,7 +223,12 @@
 			One of the simpler things to extract from an image is color. A simple program may count the number of pixels with the RGB color code (255,0,0), which we know as "red". A slightly more sophisticated program will have some leniency built in, counting red-ish colors as being red. This is useful since in a real life scenario, neither the camera nor the light is going to be perfect, and therefore some inaccuracies must be accounted for. 
 			
 			The ideal color space to use for color detection depends on the specific case. 
-			\todo{insert pictures of color spaces}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{figure/Analysis/colorspaces.jpg}
+				\caption{Image showing RGB(left) and HSV(right) color spaces. (From \href{https://www.raywenderlich.com/69855/image-processing-in-ios-part-1-raw-bitmap-modification}{www.raywenderlich.com})}
+				\label{fig:colorSpace}
+			\end{figure}
 			For example, given the below image of leukocytes (white blood cells) surrounded by other blood cells, which color space would be most suitable for extracting the leukocytes?
 			\begin{figure}[H]
 				\centering
