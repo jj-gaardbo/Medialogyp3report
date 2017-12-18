@@ -63,8 +63,8 @@ Client Questions:\\
 \begin{axis}
 [
 boxplot/draw direction=y,
-height=10cm,
-width=15cm,
+height=7cm,
+width=10cm,
 enlargelimits=0.03,
 ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
 xtick={1,2,3,4,5,6},
@@ -115,8 +115,8 @@ Architect questions:\\
 	\begin{axis}
 	[
 	boxplot/draw direction=y,
-	height=10cm,
-	width=15cm,
+	height=7cm,
+	width=10cm,
 	enlargelimits=0.03,
 	ytick={1,1.5,2,2.5,3,3.5,4,4.5,5},
 	xtick={1,2},
@@ -156,38 +156,6 @@ As seen in \autoref{fig:barChartFrame}, 3 of the 8 participants didn't find the 
 	\label{fig:barChartFrame}
 \end{figure}
 
-
-\subsection*{How engaged did you feel with the program?}
-Out of 8 participants, 7 of them strongly agreed that they felt engaged with the program. This can be seen in \autoref{fig:barChartEngaged}
-
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}[scale=0.7]
-	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,0) (2,0) (3,0) (4,7) (Strongly agree - 5,1)};
-	\end{axis}
-	
-	\end{tikzpicture}
-	\caption{Bar chart showing how engaged the participants felt .}
-	\label{fig:barChartEngaged}
-\end{figure}
-
-
-\subsection*{Could you easily communicate with the other participant?}
-2 of the participants strongly disagreed that they were able to communicate with the other participant, where 6 of them strongly agreed that it was easy to communicate with the other participant. This can be seen in \autoref{fig:barChartCommunicate}.
-
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}[scale=0.7]
-	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,2) (2,0) (3,0) (4,1) (Strongly agree - 5,5)};
-	\end{axis}
-	
-	\end{tikzpicture}
-	\caption{Bar chart showing if it was easy to communicate with the other participant.}
-	\label{fig:barChartCommunicate}
-\end{figure}
-
 \subsection*{How easy was the product to use?}
 Out of 8 participants 1 of them strongly disagreed that the product was easy to use, while 2 participants hit the middle ground and 5 participants agreed that the product was easy to use. This can be seen in \autoref{fig:barChartEasy}.
 
@@ -201,22 +169,6 @@ Out of 8 participants 1 of them strongly disagreed that the product was easy to 
 	\end{tikzpicture}
 	\caption{Bar chart showing if the product was easy to use.}
 	\label{fig:barChartEasy}
-\end{figure}
-
-
-\subsection*{How easy was it to tell what the garden looked liked while you were building it?}
-5 participants disagreed that that it was easy to tell how the garden looked, while 3 participants hit the middle ground. This is seen in \autoref{fig:barChartLook}.
-
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}[scale=0.7]
-	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,2) (2,3) (3,3) (4,0) (Strongly agree - 5,0)};
-	\end{axis}
-	
-	\end{tikzpicture}
-	\caption{Bar chart showing how easy it was to tell how the garden looked like, while building it.}
-	\label{fig:barChartLook}
 \end{figure}
 
 \subsection*{Were you able to do everything you and the client wanted?}
@@ -241,39 +193,6 @@ If the participant answered no, they had the ability to clarify further, such tw
   \end{quote}	
  	 
  	As it can be seen from the given answers, some of the participants had a hard time figuring out where the client was in the garden, which made it difficult for them to know where to place the objects in regards to the client.
- 
-
-\subsection*{Was it easy to follow the client's instructions?}
-A little over half of the participants found it easy to follow the clients instructions, whereas a little under half of them did not find it easy. This can be seen in \autoref{fig:pie2}.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.8\linewidth]{figure/Evaluation/pie1.png}
-	\caption{Pie chart showing visualizing if the participants found it easy to follow the client's instructions.}
-	\label{fig:pie2}
-\end{figure}
-
-\subsection*{Did the program respond accurately to your actions?}
-As it can be seen in \autoref{fig:pie3}, half of the participants stated that the program responded accurately to their actions and half of them stated that this was not the case.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.8\linewidth]{figure/Evaluation/pie3.png}
-	\caption{Pie chart showing visualizing whether or not the program responded accurately to the participants' actions.}
-	\label{fig:pie3}
-\end{figure}
-
-In addition to this question, we asked the participants who answered no to this question, to elaborate on their answer:\\
-
-\begin{quote}
-	\textit{It bugged out, so it did not show the items in VR}\\
-\end{quote}
-
-\begin{quote}
-	\textit{No rotation}\\
-\end{quote}
-
-As seen above, one of the participants had some issues with the prototype bugging, and sometimes not showing the object in the VR world. Others complained that it was not possible to rotate the objects, which resulted in the client not having to see how the garden would look like exactly.
 
 
 \subsection{Findings}

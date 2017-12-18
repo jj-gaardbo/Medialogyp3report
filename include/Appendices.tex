@@ -1,39 +1,4 @@
-\section*{Brainstorm}
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}
-	\path[mindmap,
-	every node/.style=concept,
-	concept color=black,
-	scale=0.5,
-	text=white,
-	text width=2cm,
-	grow cyclic,
-	level 1/.append style={level distance=8.5cm,sibling angle=70},
-	level 2/.append style={level distance=6cm,sibling angle=45}]
-	node[concept] {Simple sketch to virtual world}
-	[clockwise from=-20]
-	child[concept color=green!50!black] {
-		node[concept] {Building}
-		[clockwise from=-20]
-		child { node[concept] {Over construction} }
-		child { node[concept] {Overuse of materials} }
-	}  
-	child[concept color=black!20!blue] {
-		node[concept] {Architecture}
-		[clockwise from=-67]
-		child { node[concept] {Sketching} }
-		child { node[concept] {3D modeling} }
-	}
-	child[concept color=orange] { node[concept] {Presentation} [clockwise from=-90]
-		child { node[concept] {Teachers}}
-		child { node[concept] {Students}}
-	};
-	\end{tikzpicture}
-	\captionof{figure}{The outcome of the intitial brainstorm}
-	\label{fig:brainstorm}
-\end{figure}
-\section*{Interview Questions for plant center customers}\label{sec:interviewQuestionsCustomer}
+\section{Interview Questions for plant center customers}\label{sec:interviewQuestionsCustomer}
 % when and where
 % what does location and time mean for the data
 List of questions for target group
@@ -57,7 +22,7 @@ List of questions for target group
 	\item[-] Why are you here? \\
 \end{itemize}
 
-\paragraph*{Demographic information}
+\paragraph{Demographic information}
 \begin{itemize}
 	\item[-] Sex
 	\item[-] Age
@@ -67,7 +32,7 @@ List of questions for target group
 \end{itemize}
 
 
-\section*{Interview Questions for experts}\label{sec:interviewQuestionsExperts}
+\section{Interview Questions for experts}\label{sec:interviewQuestionsExperts}
 This is a rough outline of the questions we asked the experts. The translated version (and the original Danish version) of each question is listed below. Since the interview was semi-structured all questions were not necessarily used or not used in exactly in the form written here.\\
 
 Personal questions:
@@ -120,7 +85,7 @@ SOTA questions:
 	\item[-] Have you heard of this type of product before or something similar? (Har du hørt om denne type produkt før eller noget lignende?)
 \end{itemize}
 
-\section*{Interview transcriptions}\label{interviewTranscriptions}
+\section{Interview transcriptions}\label{interviewTranscriptions}
 Due to the large number of pages the complete transcriptions have not been included in this report. We refer you instead to the digital appendices. This section includes the Danish translations of the quotes used in this report:\\
 \begin{comment}
 \includepdf[pages=-]{figure/Appendices/transcribedInterview1.pdf}
@@ -255,7 +220,7 @@ Due to the large number of pages the complete transcriptions have not been inclu
 
 
 
-\section*{Marker auto-generating program}
+\section{Marker auto-generating program}
 The code shown in Listing \ref{listing:generatorCode} is the Processing code used to generate markers given just an integer array as input. The program was developed using Processing.
 
 \begin{listing}[H]
