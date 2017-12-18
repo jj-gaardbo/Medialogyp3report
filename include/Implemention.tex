@@ -3,7 +3,6 @@
 	
 	\section{VR in Unity}
 	When discussing the initial idea at the semester workshop it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, and would reduce development time on all the non-image processing based parts by inconceivably many hours.
-	\todo{Describe technical details of VR in Unity using Steam VR}
 	
 	\section{DLLs and Unity}
  		Unity has a fair number of different options for performing image processing. We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
@@ -400,11 +399,14 @@ Now that we have a list of the pixels in each blob, we need to evaluate if the g
 	\item Bounding box center.
 	\item Rotation of the blob.
 \end{enumerate}
-When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity.\\
+When all parameters are acquired, and if the blob passes all the tests, it is time to check the value in the glyph. To do this, vectors are calculated based on the rotation that sample a pixel in each "bit" in the glyph and calculate the total value of it. If this value is between 1 and 255 it is considered a marker, and this blob is flagged so it can be sent to unity. The flow chart of each blob is analyzed can be seen in Figure \ref{fig:flow}.
 
-The flow of the algorithm can be seen in the flow chart below.\\
-\todo{make a flow chart for this}
-
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/flowchart.png}
+	\caption{The flow chart of the blob analysis algorithm, showing how we determine whether the returnable variable in each blob should be set to true. This decide which blobs get sent to unity}
+	\label{fig:flow}
+\end{figure} 
 In regards to calculating the parameters, some of them are very simple to find. Finding the size a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.
   
 \subsection{Rotation}
