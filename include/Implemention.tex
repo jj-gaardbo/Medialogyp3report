@@ -5,9 +5,9 @@
 	When discussing the initial idea at the semester workshop \todo{why does it matter where the indea was conceived?}it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, which would greatly reduce development time on all the non-image processing aspects of developing the prototype.\todo{Why Unity as opposed to e.g. Unreal Engine?}
 	
 	\section{DLLs and Unity}
- 		Unity has a number of different options for performing image processing.\todo{Then why are we developing our own markers instead of using Unity's functionality?} We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
+ 		Unity has a number of different options for performing image processing. \todo{Then why are we developing our own markers instead of using Unity's functionality?} We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
  		
-		One challenge is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and are instead used by other applications. Because they can be compiled from a number of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation of the prototype. First, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the DLL side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback.\todo{Did we try to overcome this? Could we have?} Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
+		One challenge is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and are instead used by other applications. Because they can be compiled from a number of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation of the prototype. First, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the DLL side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback. \todo{Did we try to overcome this? Could we have?} Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
 \begin{listing}[H]
 \caption{How to declare a function for DLL export in C++}
 \label{listing:dllExport}
@@ -59,76 +59,89 @@ unsafe{
 
 \section{Implications of working with VR}
 \todo{It might be a good idea to move this to section 5.1}
-Virtual Reality is computationally demanding. In 2016 Nvidia\todo{Who is Nvidia?} estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. \todo{Can we really link through goo.gl?}Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience\todo{Who is this group? The authors(us)? Based on what do we make this assessment?} , which still leaves the average laptop\todo{What is the average laptop? Sauce please} underpowered. At 45 fps, it has to render 2.5 times as many pixels, and twice as many frames per second compared to VR.
+Virtual Reality is computationally demanding. In 2016 Nvidia \todo{Who is Nvidia?}estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. \todo{Can we really link through goo.gl?}Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience\todo{Who is this group? The authors(us)? Based on what do we make this assessment?} , which still leaves the average laptop \todo{What is the average laptop? Sauce please} underpowered. At 45 fps, it has to render 2.5 times as many pixels, and twice as many frames per second compared to VR.
 For this reason the image processing algorithm should be quick to execute, as there is going to be a significant load on the system running the VR program. Consequently, work has been put into optimizing this algorithm.
 \todo{Any other consequences of VR? Price, development trouble?}
 \section{BGR to RG chromaticity conversion}
 \todo{What is BGR? Define and explain}
-A snap shot from the prototype's webcam has been taken for just this purpose is shown in \autoref{fig:snapshot}, and after each of the image processing sections the output will be shown.
+A snap shot from the prototype's webcam is shown in \autoref{fig:snapshot}, and after each of the image processing sections, the output following this input will be shown.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\linewidth]{figure/Analysis/testimage.jpg}
 \caption{A test image ready for image processing}
 \label{fig:snapshot}
 \end{figure} 
-It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}.
+It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}. \todo{If we have extra time, find better source than wiki}
 \subsection{Theory of RG}\label{sec:theoryOfRG}
 
-The critical property that RG has is that it does not record the individual channels intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
-\[ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}\]
-Where $x$ represents which of the channels that is to be converted. This will give a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range og 0 - 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
-\[ RED = \frac{red}{red + blue + green} * 255\]
-\[ BLUE = \frac{blue}{red + blue + green} * 255\]
-\[ GREEN = \frac{green}{red + blue + green} * 255\]
+The critical property of RG is that it does not record the individual channel's intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
+\begin{equation} 
+ RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}
+\end{equation} 
+
+Where $x$ represents which of the channels that is to be converted. This will return a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range of 0 to 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
+\begin{equation} 
+RED = \frac{red}{red + blue + green} * 255
+BLUE = \frac{blue}{red + blue + green} * 255
+GREEN = \frac{green}{red + blue + green} * 255
+\end{equation} 
 This means that in RG the sum of all channels must be 255.
-\[ \frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1\]
-It is observed that in RG the channel values are codependent. If the value of red is large, then the other channels must by definition contain small values as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
-\[ BLUE = 255 - RED - GREEN\]
-So it is possible to store the data using two bits, and calculate the third color if it is needed. This loss of information comes from the loss of intensity data\cite{NormRGB}. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG.
-\[ BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 \]
-\[ BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 \]
-The resultant colors can be seen in \autoref{fig:conversion} The same is true for any two color that are proportionately similar.\\
+\begin{equation} 
+\frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1
+\end{equation} 
+In RG, the channel values are codependent. If the value of red is large, then the other channels must by definition contain small values as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
+\begin{equation} 
+BLUE = 255 - RED - GREEN
+\end{equation} 
+So it is possible to store the data using two bits, and calculate the third color if it is needed. The loss of intensity data\cite{NormRGB} means a loss of information. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG.
+\begin{equation} 
+BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 
+BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 
+\end{equation} 
+The resultant colors can be seen in \autoref{fig:conversion}. The same is true for any two colors that are proportionally similar.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/rgconversion.png}
-	\caption{Two colors of very different intensity are identical when converted to RG because they have the same percentages of the different colors. This make the RG color space more resistant to different lighting condition}
+	\caption{Two colors of very different intensity are identical when converted to RG because they have the same percentages of the different colors. This make the RG color space more resistant to different lighting conditions}
 	\label{fig:conversion}
 \end{figure} 
-In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. For this reason it is recommended to zero the values if the total sum is below a certain value.
+In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. For this reason it is recommended to zero the values if the total sum is below a certain value. \todo{sauce}
 
 \subsection{RG chromaticity in code}
-The process of converting an RGB image described above is a matter of point processing. We have made a few changes to speed up the process at runtime. The current code performs these two steps at each pixel in the input image.\\
+The process described above of converting an RGB image is a matter of point processing. We have made a few changes to the process to speed up the process at runtime. The current code performs these two steps for	 each pixel in the input image.\\
 \begin{enumerate}
 	\item Find the sum of the RGB channels.
-	\item Assign the corresponding pixel in the output to the value found in a look up table using the sum and value in the channel\\
+	\item Assign the corresponding pixel in the output to the value found in a lookup table using the sum and value in the channel\\
 \end{enumerate}
-The only big change is the decision to use a look up table. A look up table is useful if you are going to be performing the same operation on similar data a lot of times. 
+The only big change is the decision to use a lookup table. A lookup table is useful if you are going to be performing the same operation on similar data a lot of times. 
 \subsection{Lookup tables}
-The concept of a lookup table is to calculate a table with the results of all possible inputs and look up what the result is, instead of calculating every time\footnote{Wiki page for Lookup tables: \url{https://en.wikipedia.org/wiki/Lookup_table}}. In our case, this is necessary because of the magnitude of data we are working with. The webcam that we used had a resolution of 640 x 480. In total that is 307200 pixels. Operations like multiplications, subtractions and additions are very fast, but division is a more expensive operation\footnote{Streamhpc page on operation expenses: \url{https://streamhpc.com/blog/2012-07-16/how-expensive-is-an-operation-on-a-cpu/}} and we have to do division and multiplication three times per pixel (one for each channel). We found that, at runtime, using a look up table, increased the speed of our conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
+A lookup table is a table in which the results of all possible inputs are calculated and stored. In the table one can look up what the result is, instead of calculating the same numbers every time\footnote{Wiki page for Lookup tables: \url{https://en.wikipedia.org/wiki/Lookup_table}}. In our case, this is necessary because of the magnitude of data we are working with. The webcam used had a resolution of 640 x 480. In total that is 307,200 pixels. Operations like multiplications, subtractions and additions are very fast, but division is a more computationally expensive operation\footnote{Streamhpc page on operation expenses: \url{https://streamhpc.com/blog/2012-07-16/how-expensive-is-an-operation-on-a-cpu/}} and division and multiplication operations are carried out three times per pixel (one for each channel). We found that at runtime, using a lookup table increased the speed of the RG conversion algorithm by 100.25\% as can be seen in table \ref{table:rgConvSpeed}.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
 	\label{rgConversion}
-	\caption{Test image used to test the speed of the BGR to RG conversion. Using a look up table halved it at execution time}
+	\caption{Test image used to test the speed of the BGR to RG conversion. Using a lookup table halved the execution time}
 	\end{figure}
 
     \columnbreak
 	\begin{table}[H]
 		\centering
-		\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as an "if smaller than"-operation(As seen in line 4 of Listing \ref{listing:lutTable}) can significantly increase the time. Times are average times after 100000 runs on a test image with the dimensions 540 * 720}
+		\caption{Time taken to run the function. It can be seen that more data precomputed into a lookup table, results in faster execution. Due to the number of repetitions even something as basic as an "if less than" operation (As seen in line 4 of Listing \ref{listing:lutTable}) can significantly increase the time. Times are average times after 100,000 runs on a test image with the dimensions 540 * 720}
 		\begin{tabular}{ l | l }
 			\hline			
 			No lookup table & .0015028 sec\\
-			Look up if above threshold & .0010218 sec\\
-			Look up table always& .0007741 sec\\
+			Lookup if above threshold & .0010218 sec\\
+			Lookup table always& .0007741 sec\\
 			\hline 
 		\end{tabular}
 	\label{table:rgConvSpeed}
 	\end{table}
 \end{multicols}
 
-\subsection{Creating a look up table}
-To create a look up table we take the operation that would be performed, and save the results for the range of inputs needed. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, as can be seen in Listing \ref{listing:lutTable}.
+\todo{Why did we run the lookup table test on a random picture instead of a picture of markers, which would give a more accurate result?}
+
+\subsection{Creating a lookup table}
+To create a lookup table, the operation results for the full range of possible inputs are saved. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, shown in Listing \ref{listing:lutTable}.
 \begin{listing}[H]
 \caption{Instantiating our lookup table}
 \label{listing:lutTable}
@@ -148,7 +161,7 @@ for (int i = 0; i < 766; i++) {
 \end{listing}
 The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise it calculates the value that would result from the color \codeword{j} divided by sum \codeword{i} and multiplied by 255.
 \subsubsection{Summing RGB channels and looking up results}
-To use the lookup table all we have to do is visit each pixel once and lookup the value in the pixel. This is done using a double for-loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, and an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\\
+To use the lookup table we have to visit each pixel once and look up the value in the pixel. This is done using a double for loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\todo{What's the benefit of changing the original data instead of just making a copy?} \\
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
@@ -176,11 +189,11 @@ To use the lookup table all we have to do is visit each pixel once and lookup th
 	}
 	\end{minted}
 \end{listing}
-Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the look up table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same column three times in a row, one for blue, one for green and one for red. With the pointers one will not have to jump as far in memory every time the lookup table is used. Basically, it is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, then from codeword{lutptr[0][0] to \codeword{lutptr[sum][red]}. This can be seen in Figure \ref{fig:table}.
+Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the lookup table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same column three times in a row, one for blue, one for green and one for red. With the pointers the program will not need to jump as far in memory every time the lookup table is used. It is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, than from codeword{lutptr[0][0] to \codeword{lutptr[sum][red]}. This can be seen in Figure \ref{fig:table}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure/Analysis/table.png}
-	\caption{Demonstration of why the column is the same in the look up of all three colors. The sum of the pixel color does not change, and neither does the column.}
+	\caption{Demonstration of why the column is the same in the lookup of all three colors. The sum of the pixel color does not change, and neither does the column.}
 	\label{fig:table}
 \end{figure} 
 Inside the for loop, the code starts by saving the values of each channel to the corresponding variables. The values are then added together. Now we have the two variables that we need to use the lookup table. Since the sum is not going to change we get the address of the row of the sum and save it in \codeword{lutptr}. Now we can assign the values using \codeword{lutptr}. In accordance with the theory section(See \autoref{sec:theoryOfRG}) blue is unnecessary data and so does not need to be assigned. We will be calculating the blue when showing the output, but that is only to make the image less jarring for humans to look at. In the final code it can be omitted. After executing the function on our test image the following \autoref{fig:rgsnapshot} is the output.
@@ -196,13 +209,13 @@ Because RG can be represented by two values it is possible to plot the  chromati
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
-	\caption{The entire RG color space is visible here, it can be represented in 2D due to the loss of intensity data that happens during conversion. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the lack of intensity data. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.\todo{Could we put that last bit in the footer?}}
 	\label{fig:rgbNorm}
 \end{figure}
-There are different ways to threshold in RG, and because of the two dimensionality they are wonderfully reminiscent of high school math. Common amongst all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
+There are different ways to threshold in RG. Common among all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
 or 0.\\
 
-\textbf{In Range} is a method of thresholding in the HSV color space\footnote{openCV tutorial where inRange() is used: \url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}.A range is defined on each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space because we are comparing two constants which create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a bit bluer. You also cannot set it too wide, since doing so will cause white elements to also be segmented. There are, however, ways the provide more control over the segmentation.\\
+\textbf{In Range} is a method of thresholding in the HSV color space\footnote{openCV tutorial where inRange() is used: \url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. A range is defined on each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space because we are comparing two constants which create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a bit bluer. It also cannot be set too wide, since doing so will cause white elements to also be segmented. There are, however, ways the provide more control over the segmentation.\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
@@ -220,7 +233,7 @@ or 0.\\
 	
 \end{multicols}
 
-\textbf{Line threshold}. Is another potential way to threshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the color. In this case, lets say $x$ is red. $b$ decides where the thresholding should start and can be found using $b =- i * a$. Where $i$ is the start point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. Then our values can be compared the line to see which side of the line it is on. If the values are on the right side it to 255, else set it to zero. An example of this is a below line threshold as seen in \autoref{fig:thresholdbelowline}\\
+\textbf{Line threshold}. Another potential way to threshold is to use a line treshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the colors. If $x$ is red, then $b$ determines where the thresholding should start and can be found using $b =- i * a$, where $i$ is the starting point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. It is then determined on which side of the line the values lie. If the values are on the right side it is set to 255, else it is set to zero. A below line threshold is seen in \autoref{fig:thresholdbelowline}\\
 \begin{multicols}{2}
 	\begin{figure}[H]
 		\centering
@@ -236,15 +249,16 @@ or 0.\\
 		\label{fig:threshold}
 	\end{figure}	
 \end{multicols}
-\textbf{Distance threshold} is based on finding the chromaticity distance from the a pixels color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions the distance between two points, $p_0$ and $p_1$, can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. There is a problem though. We are unable to threshold extremely red color.\\
+\todo{These figures should have full color}
+\textbf{Distance threshold} Distance tresholding is based on finding the chromaticity distance from a pixel's color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions, the distance between two points $p_0$ and $p_1$ can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. This works well for the purposes of the project, but doesn't allow for the tresholding of extremely red color, as a circle of that size and position does not cover the lower right corner of the RG space. \\
 
-\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows us shape the threshold as we want. Following the problems with segmenting extreme reds, we decided to put an in range on top of the distance based threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. We found that this produces the most consistent threshold, and was the most resistant to lighting changes.
+\textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows shaping the treshold to suit any need. Following the problems with segmenting extreme reds, we decided to add an In Range to the Distance Threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. This produces the most consistent threshold for the prototype, as it is very resistant to lighting changes.
 
 \subsection{Thresholding implementation}
-Like the RG conversion this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. Again we use a lookup table. The operation that we need to perform is find the distance, if it is smaller than the threshold set pixel to 255, else if it is larger set it to 0. Listing \ref{listing:thresholdDist} shows how we initialized our table.
+Like the RG conversion, this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. A lookup table is used here. First, the distance is found. If it is smaller than the threshold, the pixel is set to 255, else, set it to 0. Listing \ref{listing:thresholdDist} shows how we initialized our table.
 
 \begin{listing}[H]
-	\caption{Instantiating the Distance threshold look up table}
+	\caption{Instantiating the Distance threshold lookup table}
 	\label{listing:thresholdDist}
 	\begin{minted}[frame=lines,
 framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -263,24 +277,25 @@ for (int i = 0; i < 256; i++) {
 \end{minted}
 \end{listing}
 
-Inside the double for loop there are 2 if statements that each perform a different thresholding operation. The first is an In Range where it checks if the red color is larger than 180. The second is checks the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This saves us from having to use a square root. So we check if the distance is smaller than 60. If either of these if statements are true, make the index white, otherwise make it black.
-In terms of implementations using the lookup table, it is very similar to the RG conversion and as such it not worth mentioning. The output after thresholding the normalized test image, can be seen in \autoref{fig:thsnapshot}\\
+\todo{Explain why we use uchar}
+Inside the double for loop there are two if statements that each perform a different thresholding operation. The first is an In Range where it checks if the red color is larger than 180. The second is checks the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This removes the need to calculate the square root, which is a computationally expensive operation. A check is made for whether the distance is smaller than 60. If either of these if statements are true, the index is made white, otherwise it is made black.
+In terms of implementation using the lookup table, it is very similar to the RG conversion. The output after thresholding the normalized test image, can be seen in \autoref{fig:thsnapshot}\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/thresholded.png}
-	\caption{The thresholded version of out normalized test image}
+	\caption{The thresholded version of the normalized test image}
 	\label{fig:thsnapshot}
 \end{figure} 
-The algorithm has now produced a binary thresholded image with value that are either 255 or 0. This image is used to do a grassfire blob detection. 
+The algorithm has now produced a binary thresholded image with values that are either 255 or 0. A grassfire blob detection will be performed on this image. 
 \section{Blob detection}
 Blob detection is used to segment a picture into individual blobs. If you need to deal with multiple objects in a image, it is worth investigating. 
 \subsection{What is a blob, and why detect them}
-Blob stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest(ROI) in a image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob like size, bounding box, and a host of others. For a program trying to recognize real life objects, knowing the range of features that the object normally produces can help it determine if a blob is that object. Generally these features are calculated from a list of pixels in the blob.\\
+BLOB stands for \textbf{B}inary \textbf{L}arge \textbf{OB}ject. They represent regions of interest (ROI) in an image. Extracting the blobs from an image can significantly cut down on processing time, because the program now only have to process the ROI instead of the entire image. Another use is to calculate features that might be useful to know about the blob like size, bounding box, and others. For a program trying to recognize real life objects, knowing the range of features that the object normally exhibits can help it determine if a blob is like that object. These features are calculated from the list of pixels which the blob consists of.\\
 
-There is a large amount of features that could be calculated on a blob. But our job is made a lot easier by three factors. First, our markers are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. Circles have many advantages. Their height/width relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a color(red), and after the segmentation we are already left with mostly regions of interest(See \autoref{fig:thsnapshot}). Meaning our blob detection has to do less work in discriminating the blobs.
+There is a large amount of features that could be calculated from a blob. But our job is made a lot easier by three factors. First, our markers are resting on a surface perpendicular to the camera. This means that rotation will only happen in two dimensions and that the shape of the markers will not change substantially when rotated. Secondly, our markers are circles. Circles have many advantages. Their height/width relationship is the same in any rotation, and you can work with its radius. Finally, we are segmenting based on a bright distinctive color(red), meaning that the thresholded version of the image contains just the regions of interest(See \autoref{fig:thsnapshot}). This makes the blob detection very accurate.
 \subsection{The blob object and parameters}
 The list of pixels and blob parameters are often held in an structure.
-We created one for this purpose. Our blob structure is called \codeword{gylphObj}, because the pattern underneath can resemble a glyph\footnote{\url{AForge Article on Glyphs' recognition: http://goo.gl/HkFksM}}. The structure is declared as shown in listing \ref{listing:glyph}
+We created one for this purpose. Our blob structure is called \codeword{glyphObj} because the pattern underneath can be considered a glyph\footnote{\url{AForge Article on Glyphs' recognition: http://goo.gl/HkFksM}}. The structure is declared as shown in listing \ref{listing:glyph}
 \begin{listing}[H]
 	\caption{The declaration of glyph object, the structure that contain a blob, as well has the parameters about it}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -296,9 +311,9 @@ struct glyphObj {
 	\end{minted}
 	\label{listing:glyph}
 \end{listing}
-We dive deeper into the parameters and what they are used for in the next section, so the uses of the variables will be not discussed in detail here. However, here is a brief overview:
-cVector, short for coordinate vector, contains two integers. One for each the dimensions. In C++ a vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and holds the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to disqualify a lot of redundant blobs. \codeword{center} is the coordinates to the center of the bounding box.
-The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found value from the pattern underneath the markers. Finally, since we find way more blobs than there are actual markers, and returning all the blobs to unity be a waste of time, a boolean \codeword{returnable} exists. It is only set to true if the blob passes all tests and therefore is considered a marker.
+The parameters and what they are used for will be explained in detail in the next section, so the uses of the variables will be not be covered extensively here. However, here is a brief overview:
+cVector is short for coordinate vector and contains two integers, one for each of the dimensions. In C++ a vector is a list type that can grow dynamically. So the vector of cVectors is going to contain the coordinates of all the pixels in the blob. bBox is short for bounding box and holds the two coordinates used to draw a bounding box around the blob, and find its height to width ratio. Since a circle always has similar height to width ratio in any rotation, this parameter can be used to disqualify a lot of false blobs. \codeword{center} is the coordinates to the center of the bounding box.
+The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found numerical value from the pattern underneath the markers. Finally, since the program finds more blobs than there are actual markers, and returning all the blobs to Unity is suboptimal, a boolean variable \codeword{returnable} is used. It is only set to true if the blob passes all tests and therefore is considered a marker.
 
 \subsection{Blob Extraction by recursion}
 All features of a blob are calculated from a list of pixels included in it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to all the other pixels through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\
@@ -386,7 +401,7 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
-The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for-loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
+The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/grassfire.png}
