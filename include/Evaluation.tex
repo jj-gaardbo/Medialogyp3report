@@ -30,7 +30,7 @@ The laptop running the VR unit, are according to HTC's own minimum specification
 The test took place Thursday 7/12 2017 in our group room at Aalborg University Copenhagen on Frederikskaj 12. Each testing with evaluation took approximately 15 to 20 minutes for two participants.
 
 \subsection*{Test procedure}
-Before the test began, the participants was informed about the general purpose of the test, tasks and their given consent to being recorded(for AVS production). After agreeing to this, the participants were asked to take the role of the customer or the architect. They where asked to role play planning and designing a new garden and find out what the design should look like. The client would take on the VR goggles and the architect would make a design with the markers, with the feedback from the client. After the participants tried their different roles the architect was asked to fill out the questionnaire (\ref{sec:appendixUsability}). Afterwards the participants would switch roles and do the same thing again.
+Before the test began, the participants was informed about the general purpose of the test, tasks and their given consent to being recorded(for AVS production). After agreeing to this, the participants were asked to take the role of the customer or the architect. They where asked to role play planning and designing a new garden and find out what the design should look like. The client would take on the VR goggles and the architect would make a design with the markers, with the feedback from the client. After the participants tried their different roles the architect was asked to fill out the questionnaire (\ref{sec:appendixUsability})\todo{remove client questionnaire}. Afterwards the participants would switch roles and do the same thing again.
 \subsection{Results}
 
 \begin{figure}[H]
@@ -96,7 +96,7 @@ Some of the questions in the questionnaire were yes no questions that dealt with
 			\centering
 		\textbf{	Were you able to do everything you and the client wanted?}
 			\begin{tikzpicture}
-			\raisebox{-10pt}{
+			\raisebox{-8pt}{
 			\pie [sum=auto,text=inside,before number =,after 		number=,rotate=0,radius=2,color={red!50 , black!20},explode=0.1]
 			{3/No, 5/Yes}
 			}
@@ -111,7 +111,7 @@ Some of the questions in the questionnaire were yes no questions that dealt with
 			\centering
 			\textbf{	Did the prototype respond accurately to your actions?}
 			\begin{tikzpicture}
-			\raisebox{-10pt}{
+			\raisebox{-8pt}{
 				\pie [sum=auto,text=inside,before number =,after 		number=,rotate=0,radius=2,color={red!50 , black!20},explode=0.1]
 				{4/No, 4/Yes}
 			}
@@ -121,7 +121,30 @@ Some of the questions in the questionnaire were yes no questions that dealt with
 		\end{figure}
 	\end{minipage}
 \end{figure}
+This data in itself is not very interesting for us. But the comments left by the participants were. A few usability problems became clear even from the small number of test that were conducted.
 
+\subsection*{Orientation of markers in relation to the world}
+The top of the tokens have a rendered picture of the object the represent(see Section \ref{sec:tokentop}). However this gives no overview of the direction the object will be facing inside the vr. One participant commented.  
+\\
+\begin{quote}
+\textit{i was not really sure about where the client was in the scene and his orientation. The tokens show an image so I tried to use it to help me with the orientation\\}
+\end{quote}
+This is a big problem when trying to correctly place objects where the direction is important, like a bench. Placing benches looked over a pool was a problem for instance. One solution to change the top of the tokens, to display the object from a top down view, which is the view of the architect. Another could be to add a feature to the top that would enable architects to see the direction clearly.
+
+\subsection*{Orientation of client in relation to tokens}
+The architect had no way of knowing where the customer were in relation to the garden he/she was building. This sometimes made communication between the two very difficult. The customer would point an object, an ask that it be moved a bit to the right, and the architect would have no idea which object it was, and which way the customers right was. Testers commented\\
+\begin{quote}
+	\textit{Was hard to place objects since i had difficulty with where they would appear compared to the client\\}
+\end{quote}
+
+\begin{quote}
+	\textit{I had a hard time knowing where the client was on the glass plate compared to the items. Sometimes there were some consistency in where i placed the item and where it appeared, but i got the hang of it eventually\\}
+\end{quote}
+
+\begin{quote}
+	\textit{orientation is very difficult to understand\\}
+\end{quote}
+ Allowing the customer to  highlighting objects in a way that could be displayed to the client would greatly reduce miscommunication. Furthermore, showing on the plate where customers was at the moment would greatly help with understanding their requests. Another way would be to introduce a "client" token that would control the clients position. This would allow architects to take the customer on a guided tour through out the garden.
 \subsection*{Were you able to do everything you and the client wanted?}
 As seen in \autoref{fig:pie1} over half of the participants answered yes to this question, and a little under half of them answered no.
 
