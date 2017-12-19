@@ -79,7 +79,7 @@ The critical property of RG is that it does not record the individual channel's 
  RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}
 \end{equation} 
 
-Where $x$ represents which of the channels that is to be converted. This will return a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0,000 to 1,000, it operates on a range of 0 to 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
+Where $x$ represents which of the channels that is to be converted. This will return a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0.000 to 1.000, it operates on a range of 0 to 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
 \begin{equation} 
 RED = \frac{red}{red + blue + green} * 255
 BLUE = \frac{blue}{red + blue + green} * 255
@@ -320,29 +320,30 @@ cVector is short for coordinate vector and contains two integers, one for each o
 The integer \codeword{nr} is used to help visualize the grass-fire algorithm, and will later contain the found numerical value from the pattern underneath the markers. Finally, since the program finds more blobs than there are actual markers, and returning all the blobs to Unity is suboptimal, a boolean variable \codeword{returnable} is used. It is only set to true if the blob passes all tests and therefore is considered a marker.
 
 \subsection{Blob Extraction by recursion}
-All features of a blob are calculated from a list of pixels included in it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is nothing more than a number of white pixel with other white pixels as neighbors. Because of this property each pixel in the blob must be connected to all the other pixels through a string of white pixels. Correspondingly, a blob can be found by finding all connected pixels of any pixel in the blob.\\
+All features of a blob are calculated from a list of pixels included in it. This section deals with how to get that initial list of pixels. In a segmented image, a blob is a number of neighboring white pixels. Each pixel in the blob must be connected to all the others. Therefore, a blob can be found by discovering all connected pixels of any one pixel in the blob.\\
 
-Following this definition, extracting a blob can simply be done by finding a white pixel. This pixel is now a blob. If any pixels that it shares borders with it are white, then add them to the blob. Then check if their neighbors are white pixels. If they are add them to the blob, and so on. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change it's color. When all the connected pixels are in the blob, that blob is done. Now you can find the next white pixel, and start a new blob there. You wont find any from the old blob because they all have a new color.\\
-This is called a grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there is no more grass/pixels.
-It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it. A concept illustrated metaphorically in \autoref{fig:firefighter}.  \todo{what is a call stack}
+The process of extracting a blob is as follows. A pixel is found, and is now treated as a new blob. If any pixels that it shares borders with it are white, they are added to the blob. Their neighbors are now checked for white pixels, and so the process continues recursively. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change its color. When no more connected pixels can be found, the blob is finished. A new, unconnected white pixel is then found, and the process starts again. The new color for pixels added to a blob ensures that no pixels from the first blob will be found.\\
+This process is called a grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there are no more pixels to "burn".
+It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it, a concept illustrated metaphorically in \autoref{fig:firefighter}.  \todo{what is a call stack}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/firefighter.jpg}
 	\caption{What happens inside your call stack during a grassfire algorithm. The fire spreads adding calls onto the stack, raging out of control, putting our call stack, the old man, in danger. Until the fire is done spreading the stack cannot resolve. When done spreading the call stack is resolved, represented by the old man, can out the fire.}
 	\label{fig:firefighter}
 \end{figure} 
-Because of the relatively small blobs in our program, usually somewhere between 150 and 450 pixels, all we had to do prevent a stack overflow was to increase the stack heap size to 4 mb instead of the visual studio standard of 1 mb. However, larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large camera sizes, the stack would have to be larger to accommodate the recursive function. Sampling that many pixels would also slow down the algorithm. While the webcam used in the prototype is tiny, early in the process it was thought that a larger resolution would be used in the final prototype. To anticipate this some options where added to the prototype. Namely the option to set a variable called \codeword{gridSize} which causes the algorithm to make jumps of size \codeword{gridSize} pixels instead of 1. Instead of checking the pixel to the right, the algorithm will check the one \codeword{gridSize} to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, counteracting a larger camera resolution. Now the algorithms speed vs accuracy can be tailored to suit our specific need.
+\todo{If the fire is literally out of control, why is the man fighting it? The fire stops itself when there is no more to burn}
+Due to the relatively small blobs in our program, usually between 150 and 450 pixels in area, a stack overflow could be prevented by increasing the stack heap size to 4 MB from 1 MB. However, larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large resolutions, the stack would have to be larger to accommodate the recursive function. Sampling that many pixels would also slow down the algorithm. While the webcam used in the prototype had a small resolution, larger resolutions were considered for the final prototype during early stages of development. A variable called \codeword{gridSize} was added to alleviate the problem. It causes the algorithm to make jumps of \codeword{gridSize} pixels instead of 1. Instead of checking the pixel immediately to the right, the algorithm will check the one \codeword{gridSize} places to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, solving the problem caused by a larger camera resolution. Now the algorithm's speed and accuracy can be tailored to suit the specific need.
 \subsection{Grassfire implementation}
-Our implementation can be seen in Listing \ref{listing:grassfireIm}. Due to its iterative nature, this method will be called many thousand times. Note that the function does not make use of the very computationally expensive Mat.at<uchar>(y,x) function. Instead we use pointers to navigate both horizontally and vertically.
+Our implementation can be seen in Listing \ref{listing:grassfireIm}. Due to its recursive nature, this method will be called many thousands of times. Note that the function does not make use of the very computationally expensive \codeword{Mat.at<uchar>(y,x)}} function. Instead pointers are used to navigate both horizontally and vertically.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/data.png}
 	\caption{Visualization of what happens when one adds the images width to a pointer. In a non-sequential image jumping doing this might result in writing to an invalid location. But in a sequentially laid out image it will result in the pointer pointing to the same index in the row below } 
 	\label{fig:vis}
 \end{figure}
- The implemented method only works if the data in the image is laid out sequentially. Being sequential means that the data of each row is laid out right after each other. So after the last index in the first row, comes the first index in the second row. Normally to get from a coordinate $(x,y)$ to $(x,y+1)$ one would have to get a pointer to the first column using the mat.ptr<uchar>(y+1) and then adding the x value to it. This is exactly what the Mat.at<uchar>(y,x) does. But if the image is sequential one can add the image width to its index and end up in the row below it, as illustrated in \autoref{fig:vis}.\\
+ The implemented method only works if the data in the image is laid out sequentially. Being sequential means that the data of each row is laid out right after each other. So after the last index in the first row, comes the first index in the second row. Normally to get from a coordinate $(x,y)$ to $(x,y+1)$ one would have to get a pointer to the first column using the \codeword{mat.ptr<uchar>(y+1)} and then adding the x value to it. This is exactly what the \codeword{Mat.at<uchar>(y,x)} does. But if the image is sequential one can add the image width to its index and end up in the row below it, as illustrated in \autoref{fig:vis}.\\
  
- Now that we can navigate between pixels it is possible to implement the algorithm, and we implemented it as seen in Listing \ref{listing:grassfireIm}
+ Now that we can navigate between pixels, it is possible to implement the algorithm as seen in Listing \ref{listing:grassfireIm}
 \begin{listing}[H]
 	\caption{The drop fire function starts from one white pixel changes its color and recursively spreads until the entire blob has been consumed. It does this through connected component analysis, analyzing its connected pixels, and spreading to them if they are white.}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -369,13 +370,12 @@ void dropFire(uchar * pixel, glyphObj &store, int &width, int y, int x, cVector 
 	\end{minted}
 	\label{listing:grassfireIm}
 \end{listing} 
-The arguments consist of a pointer to the pixel, the blob that this fire is going to add data to, and the image's width. Two integers that are the fire's current coordinates. A reference to a vector to avoid instantiating a new one in each recursion. The function starts on line 2 by changing the pixels color to the blobs color, in order to avoid infinite recursion. Lines 3 to 5 adds the current coordinates to the blob. Next are four if statements. Each check if the neighboring pixel in a certain direction are white. If any of them are, it spreads the fire in those directions with the new x and y values.\\
-With the knowledge of how to create the grassfire and how it works, all we need is to find the white pixels where the fire should start.
+The arguments consist of a pointer to the pixel, the blob that this fire is going to add data to, the image's width, two integers that are the fire's current coordinates, and a reference to a vector to avoid instantiating a new one in each recursion. The function starts on line 2 by changing the pixels color to the blobs color, in order to avoid infinite recursion. Lines 3 to 5 adds the current coordinates to the blob. Next are four if statements, each checking if the neighboring pixel in a certain direction are white. If any of them are, it spreads the fire in those directions with the new x and y values.\\
 
 \subsection{Scanning for white pixels}
-Scanning for white pixels can be accomplished by looping through each pixel in the image and checking if it is completely white. This only works if the image is binary. In our case, the image is 8bit gray scale to help visualize the blobs for us humans. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
+Scanning for white pixels can be accomplished by looping through each pixel in the image and checking if it is white. This only works if the image is binary. In our case, the image is 8bit gray scale to help visualize the blobs. If the pixel is white, create a blob, add it the list of blobs, and start the fire at the pixel. This is implemented as shown in Listing \autoref{listing:grassfire}.
 \begin{listing}[H]
-	\caption{Here it is shown how we scan for white pixels, create blobs if it finds any and then start fires}
+	\caption{Here it is shown how the program scans for white pixels, create blobs if it finds any, and then starts "fires"}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	int nRows = biImg.rows;
@@ -405,18 +405,19 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
-The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob) vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
+The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data\todo{What data?}. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob), vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop (line 10 to 24) it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/grassfire.png}
-	\caption{The test image after the grassfire algorithm has been run. Each blob is made slightly darker than the lost one, until a threshold where the color is made quiet white again}
+	\caption{The test image after the grassfire algorithm has been run. Each blob is made slightly darker than the last one, until a threshold where the color is made white again}
 	\label{fig:grsnapshot}
 \end{figure} 
-The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Now that we have a list of the pixels inside each blob, it is time to calculate the parameters are used to determine and evaluate the object.
+The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Then the program must calculate the parameters which are used to evaluate the object.
+\todo{What is the purpose of burning 50 shades of gray?}
 \section{Blob analysis}
 In this section we will describe how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
 \subsection{Parameter overview, and flow}
-Now that we have a list of the pixels in each blob, we need to evaluate if the given blob is a marker by the following parameters:
+A blob is determined to be a marker by considering the following parameters:
 \begin{enumerate}
 	\item Number of pixels in the blob.
 	\item Height to width relationship of the bounding box.
@@ -428,28 +429,29 @@ When all parameters are acquired, and if the blob passes all the tests, it is ti
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/flowchart.png}
-	\caption{The flow chart of the blob analysis algorithm, showing how we determine whether the returnable variable in each blob should be set to true. This decide which blobs get sent to unity}
+	\caption{The flow chart of the blob analysis algorithm, showing how we determine whether the returnable variable in each blob should be set to true. This decide which blobs get sent to Unity}
 	\label{fig:flow}
 \end{figure} \todo{this is hard to read, change size of picture i guess??}
-In regards to calculating the parameters, some of them are very simple to find. Finding the size of a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consist of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires use of knowledge about the layout of the marker.
+In regards to calculating the parameters, some of them are very simple to find. Finding the number of pixels of a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consists of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires knowledge of the layout of the marker.
   
 \subsection{Rotation}
-Finding a circle's rotation is impossible if it does not have any distinguishing features. So we added one, in the form of a small line towards the center that we call the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as seen in Figure \ref{fig:boundbox}.\\
+Finding a circle's rotation is impossible if it is rotationally symmetrical. A small line was added towards the center that will be referred to as the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as illustrated in Figure \ref{fig:boundbox}.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/boundingbox.png}
 	\caption{The difference between using the center of mass or bounding box to find the blob center. With bad thresholding the found center is closer to the actual center, resulting in a better direction vector} 
 	\label{fig:boundbox}
 \end{figure}
-We found that smaller blobs would have a more wobbly direction vector, because the direction line now contains fewer pixel. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel we average all the pixel within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
+We found that smaller blobs would have a more wobbly direction vector, because their direction line contains fewer pixels. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel, we average all the pixels within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
 periphery. Rotation is also calculated as a float instead of integer. These changes make the direction vector much more stable, and have been illustrated in Figure \ref{fig:lowpixel}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/lowpixel.png}
-	\caption{Illustration of the advantage of using mean of many pixel vs single closest pixel to calculate the direction vector.} 
+	\caption{Illustration of the advantage of using mean of many pixels over using the single closest pixel to calculate the direction vector.} 
 	\label{fig:lowpixel}
 \end{figure}
- The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, and happens right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
+ The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
+ \todo{Describe here what the code actually does. Also line 10 has a comment that is missing something}
 \begin{listing}[H]
 	\caption{Direction vector calculation}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -479,17 +481,17 @@ rotY = (rotY / points.size());
 	\end{minted}
 	\label{listing:direction}
 \end{listing}
-Now that a direction vector has been found, we need to calculate the position of each bit field on the marker. This is done with a bit of vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
+Now that a direction vector has been found, we need to calculate the position of each bit field on the marker. This is done with vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
 
 \subsection{Vectors to find sample points}
-The direction vectors length will vary a bit, because sometimes the middle point moves a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally one would like to base the vectors on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in \autoref{fig:vector}.
+The direction vectors' length will vary a bit, as sometimes the middle point will move a pixel or two. Under these circumstances the direction vector will still be reasonably stable, but its length will change depending on how much of the direction line is used for the direction calculation. Ideally the vectors would be based on a more stable property of the marker. For this reason, the direction vector is scaled so that its length is equal to the radius. We can now define distances as percentages of the markers radius. Sample points are the point where we check image intensity to determine whether the field is white or dark. These can be thought of as points on a "skeleton" made up of different vectors, as shown in \autoref{fig:vector}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/vector.png}
 	\caption{To the left one can see the location of the direction line, used to find the direction that the marker is facing, and the bit fields used to ascertain the marker's value. To the right, the "skeleton" of vectors used to find bit fields coordinates are shown.} 
 	\label{fig:vector}
 \end{figure}
-Finding the sample points is a matter of adding the correct vectors to the marker's center. To begin a start point is created 25 percent towards the direction line. From here there are three different type of vector used to reach the sample points. Two that move perpendicular to the direction, used to move "sideways", and one that moves opposite the direction to get the second row of points. Rotating a vector 90° is fortunately easy, and can be done by flipping the axis and changing a sign(- x, or -y).    
+Finding the sample points is a matter of adding the correct vectors to the marker's center. To begin a start point is created 25 percent towards the direction line. From here there are three different types of vector used to reach the sample points: Two that move perpendicular to the direction, used to move "sideways", and one that moves opposite the direction to get the second row of points. Rotating a vector 90° is fortunately easy, and can be done by flipping the axis and changing a sign(- x, or -y).    
 \begin{listing}[H]
 	\caption{Declaration of vectors used to find sample points}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -508,9 +510,9 @@ Finding the sample points is a matter of adding the correct vectors to the marke
 	\end{minted}
 	\label{listing:vectors}
 \end{listing}
-From these the sample points can be acquired. Once they have all there is left is to check whether the bit fields that they point to are dark or white. This is done by checking each color in the original image and, if they all are below a threshold, adding 2 to the power of the field to the total count. The implementation can be seen in Listing \ref{listing:sumingval}.
+From these, the sample points can be acquired and the program can check whether the bit fields that they point to are dark or white. This is done by checking each color in the original image and, if they all are below a threshold, adding 2 to the power of the field to the total count\todo{Explain what is the total count}. The implementation can be seen in Listing \ref{listing:sumingval}.
  \begin{listing}[H]
- 	\caption{After finding the sample points, this code checks the value in that pixel and, if low enough, adds it's value to the bit counter. If the bit counter is larger than 0, when all points have been checked, the bit counter is assigned to the blob's nr, allowing it to be returned to unity.}
+ 	\caption{After finding the sample points, this code checks the value in that pixel and, if low enough, adds its value to the bit counter. If the bit counter is larger than 0 when all points have been checked, the bit counter is assigned to the blob's nr variable, allowing it to be returned to Unity.}
  	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
 int bitCounter = 0;					//total marker value
 int thresh = 50;
@@ -528,16 +530,16 @@ if (bitCounter > 0) {
  	\end{minted}
  	\label{listing:sumingval}
 \end{listing}
-Finally, since we often get 0 as a false positive from different skin blobs, we do not return the object to Unity unless at least one of the bit fields are dark.
+Finally, since human skin captured by the webcam often returns a false positive marker with total count value 0, the object is not returned to Unity unless at least one of the bit fields are dark.
 So finally we can present the final image after the blobs have been analyzed. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{figure/Analysis/output.png}
-	\caption{The output after the blobs from the grassfire has been analyzed. The radius used to find points for the direction vector is drawn in purple. The direction vector after scaling it to have a length of radius is drawn in green. The sample points are drawn in either red, if they are too white, and green if they are considered dark} 
+	\caption{The output after the blobs have been analyzed. The circle whose radius is used to find points for the direction vector is drawn in magenta. The direction vector after scaling it to have a length of radius is drawn in green. The sample points are drawn in either red, if they are white, or green if they are considered dark} 
 	\label{fig:output}
 \end{figure}
 
-Returning the objects to Unity can be done very simply. 
+Returning the objects to Unity is simple. 
  \begin{listing}[H]
 	\caption{Returning all blobs that have passed the test to Unity}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -555,10 +557,13 @@ for (auto &blob : blobs) {
 	\end{minted}
 	\label{listing:return}
 \end{listing}
+
+\todo{Explain the above code}
+
 \section{Unity}
-	Continuing from Listing \ref{listing:pointer}, we now have the means to get the markers into an array of CVObjects called \codeword{_markers}. When the script starts, it makes the \codeword{Detect()} function run every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction}, clears the elements array, which is what holds the GameObjects. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. The reason for the \codeword{unsafe} is to make us able to use pointers inside C\#, and \codeword{fixed} makes sure the function stays at the same location of the memory.
+	Continuing from Listing \ref{listing:pointer},\todo{What does this mean? Rephrase.} we now have the means to add the markers to an array of CVObjects called \codeword{_markers}. When the script starts, the \codeword{Detect()} function runs every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction} clears the elements array, which is what holds the \codeword{GameObjects}. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. \codeword{unsafe} is added to enable the use of pointers inside C\#, and \codeword{fixed} ensures the function stays at the same location of the memory.
 	\begin{listing}[H]
-		\caption{C\# function that takes the out-coming markers from the DLL file.}
+		\caption{C\# function that receives the markers from the DLL file.}
 		\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
 private void Detect(){
 	if (shouldDetect) {
@@ -583,7 +588,7 @@ private void Detect(){
 \end{listing}
 Then we loop through the \codeword{_markers} array and spawn the appropriate object for each one. The type of object is determined in Listing \ref{listing:sumingval}, and rotation is calculated in Listing \ref{listing:direction}.\\
 
-The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which just means that it is a false positive and therefore useless. If the Y rotation is above 0, then we should flip the rotation, because of the way the rotation is calculated, which can only be between 0 and 180. Hence to get the full 360 rotation that is needed to fully rotate the object in virtual space, we make it go the other way.
+The spawn function in Listing \ref{listing:spawnFunction} makes a new \codeword{GameObject} from the arguments passed to it. If $x == 0$ and $z == 0$ then we default the type to be -1, which means that it is a false positive and may be discarded. If the Y rotation is above 0, the rotation should be flipped, as the rotation can only be between 0 and 180. Hence, to get the full 360 rotation needed to fully rotate the object in virtual space, it is made to rotate the other way.
 \begin{listing}[H]
 	\caption{C\# function that spawns the objects in the world, and add them to the elements array.}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
@@ -594,11 +599,14 @@ private void Spawn(int type, int x, int z, int rotation, int rotationY) {
 			rotation *= -1;
 		}
 		GameObject tempObj = Instantiate(FindObj(type), PositionGen(x, z),
-		Quaternion.Euler(0, rotation, 0)) as GameObject;
+		Quaternion.Euler(\\
+		 rotation, 0)) as GameObject;
 		elements.Add(tempObj);
 	}
 }
 	\end{minted}
 \label{listing:spawnFunction}
 \end{listing}
-The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is just required to make the objects fit in the virtual garden. To finish off we add the element to the elements array, making it so that we can clear all the objects again for the next pass which follows immediately after.
+The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is required to make the objects fit in the virtual garden. The element is added to the elements array, making it so that the objects can be cleared again for the next pass which follows immediately after.
+
+\todo{Add short section on how the Unity environment is set up}
