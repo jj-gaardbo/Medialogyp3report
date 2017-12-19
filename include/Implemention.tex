@@ -1,10 +1,17 @@
 \chapter{Implementation}
 	The system must use Image Processing to get data from patterns via a webcam, send it to Unity and \textit{"translate"} it into a Virtual Reality garden that can be explored through the HTC Vive using Steam VR. There are many considerations to be made when developing a system like this. This section explains the program implementation and some of the algorithms that went into the development process. Furthermore, some of the most essential and relevant code snippets will also be presented.
 	
-	\section{VR in Unity}
-	When discussing the initial idea at the semester workshop \todo{why does it matter where the indea was conceived?}it was suggested that we implement the design in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, which would greatly reduce development time on all the non-image processing aspects of developing the prototype.\todo{Why Unity as opposed to e.g. Unreal Engine?}
-	
-	\section{DLLs and Unity}
+	\section{Working in Unity}
+The design was implemented in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, which would greatly reduce development time on all the non-image processing aspects of developing the prototype.\todo{Why Unity as opposed to e.g. Unreal Engine?}
+
+The SteamVR Unity plugin enabled an easy implementation of VR functionality in Unity. Moving and teleporting was achieved using standard scripts and assets included in the plugin. 	
+The starting environment is simple, consisting of planes which make up the terrain and surrounding hedges. The image processing script developed for this project is attached to an invisible "Manager" object.
+	\subsection{Implications of working with VR}
+
+	Virtual Reality is computationally demanding. In 2016, graphics card manufacturer Nvidia estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{venturebeat.com : \url{https://goo.gl/URA6R4}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience\todo{Who is this group? The authors(us)? Based on what do we make this assessment?} , which still leaves the average laptop \todo{What is the average laptop? Sauce please} underpowered. At 45 fps, it has to render 2.5 times as many pixels, and twice as many frames per second compared to VR.
+	For this reason the image processing algorithm should be quick to execute, as there is going to be a significant load on the system running the VR program. Consequently, work has been put into optimizing this algorithm.
+	\todo{Any other consequences of VR? Price, development trouble?}
+	\subsection{DLLs and Unity}
  		Unity has a number of different options for performing image processing. \todo{Then why are we developing our own markers instead of using Unity's functionality?} We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
  		
 		One challenge is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and are instead used by other applications. Because they can be compiled from a number of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation of the prototype. First, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the DLL side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback. \todo{Did we try to overcome this? Could we have?} Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
@@ -15,7 +22,7 @@
 extern "C" __declspec( dllexport ) int init(int w, int h);
 \end{minted}
 \end{listing}
-\codeword{extern "C"} tells the compiler to not change the function's name, so that it can be imported into Unity. \codeword{__declspec()} tells the linker to do something \todo{Can we use more specific terminology than "do something"?}depending on the argument, which in this case is \codeword{dllexport}. This lets the compiler know that it should export a function to a DLL. So now the function will be exported under a name that we know. In Unity a corresponding \codeword{DllImport("name")} will be used to import the function in Unity. Listing \ref{listing:dllImport} shows how this looks in C\# to be used by Unity.
+\codeword{extern "C"} tells the compiler to not change the function's name, so that it can be imported into Unity. \codeword{__declspec()} tells the linker to act according to the argument, which in this case is \codeword{dllexport}. This lets the compiler know that it should export a function to a DLL. So now the function will be exported under a name that we know. In Unity a corresponding \codeword{DllImport("name")} will be used to import the function in Unity. Listing \ref{listing:dllImport} shows how this looks in C\# to be used by Unity.
 \begin{listing}[H]
 	\caption{How to declare a function for DLL import in C\#}
 	\label{listing:dllImport}
@@ -25,7 +32,7 @@ extern "C" __declspec( dllexport ) int init(int w, int h);
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given as an argument, and the function that we want to import is the "entrypoint". Unity will do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the method names match completely, or it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments) as the original. Unity can not check whether or not this is true, so it will proceed as if it is the case\todo{what are the consequences of this?}. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the position and rotational data of the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
+The name of the DLL file "unityOpencvPlugin" is given as an argument, and the function that we want to import is the "entrypoint". Unity will do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the method names match completely, or it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments) as the original. Unity can not check whether or not this is the case, so care must be taken to get it right. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the position and rotational data of the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
 \begin{listing}[H]
 	\caption{Objects in C++ and C\#}
 	\label{listing:objects}
@@ -43,7 +50,7 @@ public struct CVObject{
 	\end{minted}
 \end{listing}
 \todo{Does it make sense to have code from two different languages in the same code snippet?}
-In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. /todo{What does it mean to have data laid out sequentially and what is unmanaged memory?}We are going to be returning several objects, one for each token. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code\todo{Needs more descriptive and "correct" terminology}. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
+In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. \todo{What does it mean to have data laid out sequentially and what is unmanaged memory?} An object must be returned for each token. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code\todo{Needs more descriptive and "correct" terminology}. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
 \begin{listing}[H]
 \caption{The function call to pass a pointer to C++, which is filled with object data by the code}
 \label{listing:pointer}
@@ -57,13 +64,9 @@ unsafe{
 \end{minted}
 \end{listing}
 
-\section{Implications of working with VR}
-\todo{It might be a good idea to move this to section 5.1}
-Virtual Reality is computationally demanding. In 2016 Nvidia \todo{Who is Nvidia?}estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{www.forbes.com : \url{goo.gl/AFsBGs}}\footnote{www.pcgamesn.com : \url{https://goo.gl/5Rzy41}}. \todo{Can we really link through goo.gl?}Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience\todo{Who is this group? The authors(us)? Based on what do we make this assessment?} , which still leaves the average laptop \todo{What is the average laptop? Sauce please} underpowered. At 45 fps, it has to render 2.5 times as many pixels, and twice as many frames per second compared to VR.
-For this reason the image processing algorithm should be quick to execute, as there is going to be a significant load on the system running the VR program. Consequently, work has been put into optimizing this algorithm.
-\todo{Any other consequences of VR? Price, development trouble?}
+
 \section{BGR to RG chromaticity conversion}
-\todo{What is BGR? Define and explain}
+
 A snap shot from the prototype's webcam is shown in \autoref{fig:snapshot}, and after each of the image processing sections, the output following this input will be shown.
 \begin{figure}[H]
 \centering
@@ -71,12 +74,13 @@ A snap shot from the prototype's webcam is shown in \autoref{fig:snapshot}, and 
 \caption{A test image ready for image processing}
 \label{fig:snapshot}
 \end{figure} 
-It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized RGB, and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}. \todo{If we have extra time, find better source than wiki}
+OpenCV uses the BGR color format, which is like RGB with the order of colors changed.
+It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized , and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}. \todo{If we have extra time, find better source than wiki}
 \subsection{Theory of RG}\label{sec:theoryOfRG}
 
-The critical property of RG is that it does not record the individual channel's intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an RGB value in the following way.
+The critical property of RG is that it does not record the individual channel's intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an BGR value in the following way.
 \begin{equation} 
- RG_x = \frac{RGB_x}{RGB_1 + RGB_2 + RGB_3}
+ RG_x = \frac{BGR_x}{BGR_1 + BGR_2 + BGR_3}
 \end{equation} 
 
 Where $x$ represents which of the channels that is to be converted. This will return a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0.000 to 1.000, it operates on a range of 0 to 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
@@ -108,9 +112,9 @@ The resultant colors can be seen in \autoref{fig:conversion}. The same is true f
 In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. For this reason it is recommended to zero the values if the total sum is below a certain value. \todo{sauce}
 
 \subsection{RG chromaticity in code}
-The process described above of converting an RGB image is a matter of point processing. We have made a few changes to the process to speed up the process at runtime. The current code performs these two steps for	 each pixel in the input image.\\
+The process described above of converting a BGR image is a matter of point processing. We have made a few changes to the process to speed up the process at runtime. The current code performs these two steps for	 each pixel in the input image.\\
 \begin{enumerate}
-	\item Find the sum of the RGB channels.
+	\item Find the sum of the BGR channels.
 	\item Assign the corresponding pixel in the output to the value found in a lookup table using the sum and value in the channel\\
 \end{enumerate}
 The only big change is the decision to use a lookup table. A lookup table is useful if you are going to be performing the same operation on similar data a lot of times. 
@@ -120,7 +124,7 @@ A lookup table is a table in which the results of all possible inputs are calcul
 	\begin{figure}[H]
 	\includegraphics[width=1\linewidth]{figure/Analysis/Normalized.png}
 	\label{rgConversion}
-	\caption{Test image used to test the speed of the BGR to RG conversion. Using a lookup table halved the execution time}
+	\caption{Test image used to test the speed of the  RG conversion. Using a lookup table halved the execution time}
 	\end{figure}
 
     \columnbreak
@@ -160,7 +164,7 @@ for (int i = 0; i < 766; i++) {
 \end{minted}
 \end{listing}
 The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise it calculates the value that would result from the color \codeword{j} divided by sum \codeword{i} and multiplied by 255.
-\subsubsection{Summing RGB channels and looking up results}
+\subsubsection{Summing BGR channels and looking up results}
 To use the lookup table we have to visit each pixel once and look up the value in the pixel. This is done using a double for loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\todo{What's the benefit of changing the original data instead of just making a copy?} \\
 \begin{listing}[H]
 	\caption{RG conversion code}
@@ -189,7 +193,7 @@ To use the lookup table we have to visit each pixel once and look up the value i
 }
 	\end{minted}
 \end{listing}
-Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the lookup table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same column three times in a row, one for blue, one for green and one for red. With the pointers the program will not need to jump as far in memory every time the lookup table is used. It is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, than from codeword{lutptr[0][0] to \codeword{lutptr[sum][red]}. This can be seen in Figure \ref{fig:table}.
+Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the BGR image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the lookup table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same column three times in a row, one for blue, one for green and one for red. With the pointers the program will not need to jump as far in memory every time the lookup table is used. It is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, than from codeword{lutptr[0][0] to \codeword{lutptr[sum][red]}. This can be seen in Figure \ref{fig:table}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure/Analysis/table.png}
@@ -510,7 +514,7 @@ Finding the sample points is a matter of adding the correct vectors to the marke
 	\end{minted}
 	\label{listing:vectors}
 \end{listing}
-From these, the sample points can be acquired and the program can check whether the bit fields that they point to are dark or white. This is done by checking each color in the original image and, if they all are below a threshold, adding 2 to the power of the field to the total count\todo{Explain what is the total count}. The implementation can be seen in Listing \ref{listing:sumingval}.
+From these, the sample points can be acquired and the program can check whether the bit fields that they point to are dark or white. This is done by checking each color in the original image and, if they all are below a threshold, adding 2 to the power of the field to the total count, which is the number that identifies a marker. The implementation can be seen in Listing \ref{listing:sumingval}.
  \begin{listing}[H]
  	\caption{After finding the sample points, this code checks the value in that pixel and, if low enough, adds its value to the bit counter. If the bit counter is larger than 0 when all points have been checked, the bit counter is assigned to the blob's nr variable, allowing it to be returned to Unity.}
  	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -609,4 +613,3 @@ private void Spawn(int type, int x, int z, int rotation, int rotationY) {
 \end{listing}
 The \codeword{FindObj()} function is simply a switch case that returns the correct object from the number passed to it. The \codeword{PositionGen()} function returns the given position divided by 25, which is required to make the objects fit in the virtual garden. The element is added to the elements array, making it so that the objects can be cleared again for the next pass which follows immediately after.
 
-\todo{Add short section on how the Unity environment is set up}
