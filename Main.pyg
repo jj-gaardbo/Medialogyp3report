@@ -1,0 +1,5 @@
+unsafe{
+	fixed (CVObject* outMarkers = _markers){
+		Cap(outMarkers, _maxMarkerDetectCount, ref detectedMarkersCount);
+	}
+}
