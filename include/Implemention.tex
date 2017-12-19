@@ -176,17 +176,17 @@ To use the lookup table we have to visit each pixel once and look up the value i
 	cp = out.ptr<uchar>(i);
 	
 	for (int j = 0; j < nCols; j += 3 * GRIDSIZE) {
-	blue = p[j];
-	green = p[j+1];
-	red = p[j+2];
-	sum = blue + green + red;
-	lutptr = divLUT[sum];
-	//cp[j] = *(lutptr + blue);  not needed
-	cp[j + 1] = *(lutptr + green);
-	cp[j + 2] = *(lutptr + red);
+		blue = p[j];
+		green = p[j+1];
+		red = p[j+2];
+		sum = blue + green + red;
+		lutptr = divLUT[sum];
+		//cp[j] = *(lutptr + blue);  not needed
+		cp[j + 1] = *(lutptr + green);
+		cp[j + 2] = *(lutptr + red);
+		}
 	}
-	}
-	}
+}
 	\end{minted}
 \end{listing}
 Before the loop we instantiate three pointers so we don't have to instantiate them inside the loop. \codeword{p} is a pointer to a row in the RGB image we want to convert. \codeword{cp} is a pointer to the equivalent row in the output image. \codeword{lutptr} points to a row in the lookup table. This is useful because the sum, and therefore the column, will be the same for each color in the pixel. So we will be looking at the same column three times in a row, one for blue, one for green and one for red. With the pointers the program will not need to jump as far in memory every time the lookup table is used. It is quicker to get from \codeword{lutptr[sum][0]} to \codeword{lutptr[sum][red]}, than from codeword{lutptr[0][0] to \codeword{lutptr[sum][red]}. This can be seen in Figure \ref{fig:table}.
@@ -209,29 +209,33 @@ Because RG can be represented by two values it is possible to plot the  chromati
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{figure/Analysis/normRGB.png}
-	\caption{The entire RG color space is visible here, it can be represented in 2D due to the lack of intensity data. Image from \url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.\todo{Could we put that last bit in the footer?}}
+	\caption{The entire RG color space is visible here, it can be represented in 2D due to the lack of intensity data\protect\footnotemark}
 	\label{fig:rgbNorm}
 \end{figure}
+\footnotetext{\url{https://en.wikipedia.org/wiki/Rg\_chromaticity}, made by Vampyrium, and will be used to illustrate the results of different thresholds. Under the CC BY-SA 3.0 license.}
 There are different ways to threshold in RG. Common among all of the presented approaches is that they use the red and green values of each pixel to determine whether the pixel should be set to 255
 or 0.\\
 
 \textbf{In Range} is a method of thresholding in the HSV color space\footnote{openCV tutorial where inRange() is used: \url{https://docs.opencv.org/3.2.0/df/d9d/tutorial\_py\_colorspaces.html}}. A range is defined on each axis in which to threshold. For example between 160 to 255 in red, and 0 to 60 in green. The thresholding consists of comparing the red and green value in each pixel to the ranges. If both values are inside the designated range the pixel is set to 255, else it is set to 0. The resulting threshold can be seen in \autoref{thresholdintrange}. This will create a square segmentation in the chromaticity space because we are comparing two constants which create straight lines. With its square shape, it can be difficult to get a broad enough spectrum, without cutting into different colors. For example, under blue light from the sky the markers might be a bit bluer. It also cannot be set too wide, since doing so will cause white elements to also be segmented. There are, however, ways the provide more control over the segmentation.\\
-\begin{multicols}{2}
+
 	\begin{figure}[H]
+		\begin{minipage}[b]{0.49\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figure/Analysis/inrangethresholdcolor.png}
 		\caption{In Range threshold in RG space}
 		\label{thresholdintrange}
-	\end{figure}
-	\columnbreak
-	\begin{figure}[H]
-		\centering
+	
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.49\textwidth}
+
 		\includegraphics[width=1\linewidth]{figure/Analysis/belowlinethresholdthresholdcolor.png}
 		\caption{Below line threshold in RG space}
 		\label{fig:thresholdbelowline}
+	\end{minipage}
 	\end{figure}
 	
-\end{multicols}
+
 
 \textbf{Line threshold}. Another potential way to threshold is to use a line treshold. One creates a straight line with a formula $y = ax - b$. Where y and x each represent the two axes. $a$ determines the slope of the line and is controlled by $x$ which is one of the colors. If $x$ is red, then $b$ determines where the thresholding should start and can be found using $b =- i * a$, where $i$ is the starting point of the line. Based on the equation we can find value of green that would place it on the line for a given red value. It is then determined on which side of the line the values lie. If the values are on the right side it is set to 255, else it is set to zero. A below line threshold is seen in \autoref{fig:thresholdbelowline}\\
 \begin{multicols}{2}
