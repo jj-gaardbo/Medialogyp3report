@@ -6,7 +6,9 @@ It proved very difficult to find expert testers for the usability test. We took 
 \section{Student usability test}
 A student usability test was made to discover general usability problems. This was done by having non-members of the target group roleplay using the prototype as garden architects. Participants were gathered in groups of two, and would take turns being the architect and the "customer". Afterwards the architects would fill out a questionnaire from which the usability problems could be extracted. 
 \subsection{Data gathering}
-The main goal of the test was to find usability problems in the prototype. Speed was a factor, and for this reason we chose not to use the SUS questionnaire, unlike what we had planed to do with the architects. SUS only measures usability, but does nothing to explain the root causes of the usability problems. Often the SUS questionnaire will serve as the basis for a structured interview afterwards, where people can explain why they gave the marks they did. But this type of qualitative analysis is very time consuming to do. To get usability data fast, we devised a small questionnaire, presented in Appendix \ref{sec:appendixUsability}. The questionnaire would ask some Likert scale questions and some yes/no questions regarding if the participants had any problems using the prototype such as "were you able to do anything you and the client wanted" or "Did the program respond accurately to your actions". If they answered "no" the would be allowed to leave comments detailing why this was the case. Finally they were asked to rate the apparent advantages and disadvantages of the prototype compared to pen and paper.
+The main goal of the test was to find usability problems in the prototype. Speed was a factor, and for this reason we chose not to use the SUS questionnaire, unlike what we had planed to do with the architects. SUS only measures usability, but does nothing to explain the root causes of the usability problems. Often the SUS questionnaire will serve as the basis for a structured interview afterwards, where people can explain why they gave the marks they did. But this type of qualitative analysis is very time consuming to do. To get usability data fast, we devised a small questionnaire, presented in Appendix \ref{sec:appendixUsability}. The questionnaire would ask some Likert scale questions and some yes/no questions regarding if the participants had any problems using the prototype such as "were you able to do anything you and the client wanted" or "Did the program respond accurately to your actions". If they answered "no" the would be allowed to leave comments detailing why this was the case. Finally they were asked to rate the apparent advantages and disadvantages of the prototype compared to pen and paper.\\\
+
+As we were also starting work on the immersion test presented later in this chapter we asked the customer to rate "was the frame rate was tolerable", on a scale from 1(Strongly disagree) to 5 (strongly agree).
 \subsection{Sampling}
 Due to the nature of the test participants were found using convenience sampling on AAU CPH.
 \subsection{Test setup of the usability test.}
@@ -32,7 +34,10 @@ The test took place Thursday 7/12 2017 in our group room at Aalborg University C
 \subsection*{Test procedure}
 Before the test began, the participants was informed about the general purpose of the test, tasks and their given consent to being recorded(for AVS production). After agreeing to this, the participants were asked to take the role of the customer or the architect. They where asked to role play planning and designing a new garden and find out what the design should look like. The client would take on the VR goggles and the architect would make a design with the markers, with the feedback from the client. After the participants tried their different roles the architect was asked to fill out the questionnaire (\ref{sec:appendixUsability})\todo{remove client questionnaire}. Afterwards the participants would switch roles and do the same thing again.
 \subsection{Results}
+Here we present the results form the usability test. First the question regarding the general usability, then the more specific ones. Usability problems are extracted from the comments left by participants. Finally the results of the frame rate questionnaire is presented.
 
+\subsection*{How easy was the product to use?}
+Out of 8 participants 1 of them strongly disagreed that the product was easy to use, while 2 participants hit the middle ground and 5 participants agreed that the product was easy to use. This can be seen in \autoref{fig:boxPlotResults2}.
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
@@ -51,42 +56,13 @@ Before the test began, the participants was informed about the general purpose o
 	table[row sep=\\,y index=0] {
 		data\\ 1\\ 3\\ 3\\ 4\\ 4\\ 5\\ 5\\ 5\\
 	};
-		
+	
 	\end{axis}
 	\end{tikzpicture}
 	\caption{Box plot graph showing the results of the architect scale questions.}
 	\label{fig:boxPlotResults2}
 \end{figure}
 
-\subsection*{Was the framerate (the frequency at which the screen updates) tolerable?}
-As seen in \autoref{fig:barChartFrame}, 3 of the 8 participants didn't find the framerate very tolerable. 1 participant found it somewhat tolerable and 3 participants found it very tolerable.
-
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}[scale=0.7]
-	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,0) (2,3) (3,1) (4,1) (Strongly agree - 5,3)};
-	\end{axis}
-		
-	\end{tikzpicture}
-	\caption{Bar chart showing if the participants found the framerate tolerable.}
-	\label{fig:barChartFrame}
-\end{figure}
-
-\subsection*{How easy was the product to use?}
-Out of 8 participants 1 of them strongly disagreed that the product was easy to use, while 2 participants hit the middle ground and 5 participants agreed that the product was easy to use. This can be seen in \autoref{fig:barChartEasy}.
-
-\begin{figure}[H]
-	\centering
-	\begin{tikzpicture}[scale=0.7]
-	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
-	\addplot coordinates {(Strongly disagree - 1,1) (2,0) (3,2) (4,2) (Strongly agree - 5,3)};
-	\end{axis}
-	
-	\end{tikzpicture}
-	\caption{Bar chart showing if the product was easy to use.}
-	\label{fig:barChartEasy}
-\end{figure}
 \subsection{Usability feedback questions}
 Some of the questions in the questionnaire were yes no questions that dealt with usability very broadly, if the participant answered no to these questions they were able to leave comments explaining why. The questions and response rates can be seen in Figure \ref{fig:pie1} and \ref{fig:pie2}.
 \begin{figure}[H]
@@ -145,29 +121,39 @@ The architect had no way of knowing where the customer were in relation to the g
 	\textit{orientation is very difficult to understand\\}
 \end{quote}
  Allowing the customer to  highlighting objects in a way that could be displayed to the client would greatly reduce miscommunication. Furthermore, showing on the plate where customers was at the moment would greatly help with understanding their requests. Another way would be to introduce a "client" token that would control the clients position. This would allow architects to take the customer on a guided tour through out the garden.
-\subsection*{Were you able to do everything you and the client wanted?}
-As seen in \autoref{fig:pie1} over half of the participants answered yes to this question, and a little under half of them answered no.
 
-If the participant answered no, they had the ability to clarify further, such two comments were:\\
-
- \begin{quote}
- 	
-\textit{I had a hard time knowing where the client was on the glass plate compared to the items. Sometimes there were some consistency in where I placed the item and where it appeared, but I got the hang of it eventually}\\
-  \end{quote}
-  
+\subsection*{Predefined shapes for objects}
+Some object do not feel natural having a predefined shape, A pool for example. One participant commented on the advantages that traditional pen and paper would have over the prototype.\\
 \begin{quote}
-\textit{Orientation is very difficult to understand}\\
-\end{quote}	
- 	 
-As it can be seen from the given answers, some of the participants had a hard time figuring out where the client was in the garden, which made it difficult for them to know where to place the objects in regards to the client.
+	\textit{would be easier to decide how the pond should look like\\}
+\end{quote}
+Another tester tried to place many flower close together and commented that one of the advantages of using pen and paper was.\\
+\begin{quote}
+	\textit{placement to the last milimeter, whereas on the program you can't place them too close to each other\\}
+\end{quote}
+This one problem with the current setup. Tokens have to be a certain size for markers beneath to be recognized. Also creating something like a flower bed with many flowers would be impossible unless this was made as an object with a separate token. One potential solution could be to allow architects to draw shapes on the acrylic plate, and place markers in the shape to denote what it contained. This would allow them to create customized pools by simply drawing the shape and putting a "pool" token into it. Flower beds could be created by drawing a shape, and putting a flower token into it for each flower type they wanted in the bed. This technology could also be used to add paths and walls to the garden, making the vr more closely resemble a real garden.
+\subsection*{Matching camera and prototype dimensions}
+The top of the prototype, where the tokens were placed, is square. But the webcam's view is wide than it is high. This meant that it was impossible to fully make use either. If one looks at the snapshot in Figure \ref{fig:snapshot} it can be seen that the entirety of the plate is not being used. A problem one test complained about.\\
+\begin{quote}
+	\textit{The glass plate is bigger than the garden}\\
+\end{quote}
+At the moment there is nothing to indicate where the vr space "stops", so many testers tried to place trees at the corner of the plate, only to discover they did not get picked up by the camera. This could be solved by using a square camera, or changing the shape of the box.
 
+\subsection*{Was the framerate (the frequency at which the screen updates) tolerable?}
+As seen in \autoref{fig:barChartFrame}, 3 of the 8 participants didn't find the framerate very tolerable. 1 participant found it somewhat tolerable and 3 participants found it very tolerable.
 
-\subsection{Findings}
-A fair amount of participants answered that they were able to do what the clients wanted as seen in \ref{fig:pie1}. A common statement from the participants was that it was difficult for them to localize the client in the garden. The architect couldn't see where the client was in the garden, because the client was able to move around freely inside the VR garden.\\
-
-Over half of the participants answered that it was easy to follow the clients' instructions (see \autoref{fig:pie2}). Because we did not use a follow up question for this question we can't directly say why the last segment of participants had difficulties following the clients instructions.\\
-
-
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.7]
+	\begin{axis}[ybar,bar width=0.8cm,enlargelimits=0.1,legend style={at={(0.5,-0.2)},anchor=north,legend columns=-1},ylabel={Participants},symbolic x coords={Strongly disagree - 1,2,3,4,Strongly agree - 5},xtick=data,nodes near coords,nodes near coords align={vertical},x tick label style={rotate=35,anchor=east},]
+	\addplot coordinates {(Strongly disagree - 1,0) (2,3) (3,1) (4,1) (Strongly agree - 5,3)};
+	\end{axis}
+	
+	\end{tikzpicture}
+	\caption{Bar chart showing if the participants found the framerate tolerable.}
+	\label{fig:barChartFrame}
+\end{figure}
+In all likelihood these problems would disappear running the prototype on a more powerful system.
 
 \section{Immersion test}
 The immersion test was conducted to test how immersive our prototype was compared to two of the tools traditionally employed by garden architects, sketching and a 3D fly through. From the analysis in section \ref{sec:immersion} it was found that immersive virtual reality resulted in better spacial perception. As such, if our prototype feels more immersive it might be a better tool for presenting designs to clients.
