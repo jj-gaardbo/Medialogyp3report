@@ -78,7 +78,7 @@ A snap shot from the prototype's webcam is shown in \autoref{fig:snapshot}, and 
 \label{fig:snapshot}
 \end{figure} 
 OpenCV uses the BGR color format, which is like RGB with the order of colors changed.
-It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized , and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space\footnote{Wiki page for Chromaticity: \url{https://en.wikipedia.org/wiki/Chromaticity}}. \todo{If we have extra time, find better source than wiki}
+It was found that differences in lighting conditions made thresholding the feed from the camera suboptimal. To circumvent this, the feed is converted to RG chromaticity\footnote{Wiki page for RG Chromaticity: \url{https://en.wikipedia.org/wiki/Rg_chromaticity}}, also known as normalized , and henceforth RG. RG contains no intensity information and as such is not a color space but rather a chromaticity space.
 \subsection{Theory of RG}\label{sec:theoryOfRG}
 
 The critical property of RG is that it does not record the individual channel's intensity, but rather the color's intensity as a percentage of the total intensity. Mathematically the RG value of a channel can be derived from an BGR value in the following way.
@@ -89,12 +89,18 @@ The critical property of RG is that it does not record the individual channel's 
 Where $x$ represents which of the channels that is to be converted. This will return a value between 0 and 1 depending on how big a percentage of the total intensity comes from that particular color. Since floats are operationally slow, it is advised to scale the value to 8bits by multiplying by 255. So instead of operating on a range of 0.000 to 1.000, it operates on a range of 0 to 255. If one were to convert all three channels, with capital letter representing the RG chromaticity, the channels can be found as.
 \begin{equation} 
 RED = \frac{red}{red + blue + green} * 255
-BLUE = \frac{blue}{red + blue + green} * 255
-GREEN = \frac{green}{red + blue + green} * 255
 \end{equation} 
+
+\begin{equation}
+	BLUE = \frac{blue}{red + blue + green} * 255
+\end{equation}
+
+\begin{equation}
+	GREEN = \frac{green}{red + blue + green} * 255
+\end{equation}
 This means that in RG the sum of all channels must be 255.
 \begin{equation} 
-\frac{red}{red + green + blue} + \frac{green}{red + green + blue} +  \frac{blue}{red + green + blue} =  \frac{red + green + blue}{red + green + blue} = 1
+RED + GREEN + BLUE = 255*\frac{red + green + blue}{red + green + blue} = 255
 \end{equation} 
 In RG, the channel values are codependent. If the value of red is large, then the other channels must by definition contain small values as they all must add up to 255. A result of this is that one can find the value in one channel if the other two are known.
 \begin{equation} 
@@ -103,6 +109,8 @@ BLUE = 255 - RED - GREEN
 So it is possible to store the data using two bits, and calculate the third color if it is needed. The loss of intensity data\cite{NormRGB} means a loss of information. For example, two colors (0,10,50) and (0,50,250) will produce exactly the same values when converted to RG.
 \begin{equation} 
 BLUE = \frac{50}{50 + 10} * 255 = (int)212.5 = 212 
+\end{equation}
+\begin{equation} 
 BLUE = \frac{250}{250 + 50} * 255 = (int)212.5 = 212 
 \end{equation} 
 The resultant colors can be seen in \autoref{fig:conversion}. The same is true for any two colors that are proportionally similar.\\
@@ -324,9 +332,7 @@ All features of a blob are calculated from a list of pixels included in it. This
 
 The process of extracting a blob is as follows. A pixel is found, and is now treated as a new blob. If any pixels that it shares borders with it are white, they are added to the blob. Their neighbors are now checked for white pixels, and so the process continues recursively. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change its color. When no more connected pixels can be found, the blob is finished. A new, unconnected white pixel is then found, and the process starts again. The new color for pixels added to a blob ensures that no pixels from the first blob will be found.\\
 This process is called a grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there are no more pixels to "burn".
-It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it.  \todo{what is a call stack}
-
-Due to the relatively small blobs in our program, usually between 150 and 450 pixels in area, a stack overflow could be prevented by increasing the stack heap size to 4 MB from 1 MB. However, larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large resolutions, the stack would have to be larger to accommodate the recursive function. Sampling that many pixels would also slow down the algorithm. While the webcam used in the prototype had a small resolution, larger resolutions were considered for the final prototype during early stages of development. A variable called \codeword{gridSize} was added to alleviate the problem. It causes the algorithm to make jumps of \codeword{gridSize} pixels instead of 1. Instead of checking the pixel immediately to the right, the algorithm will check the one \codeword{gridSize} places to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, solving the problem caused by a larger camera resolution. Now the algorithm's speed and accuracy can be tailored to suit the specific need.
+It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it (the call stack keeps track of where to return to when the function has executed\footnote{Wikipedia call stack : \url{https://en.wikipedia.org/wiki/Call_stack}}). Due to the relatively small blobs in our program, usually between 150 and 450 pixels in area, a stack overflow could be prevented by increasing the stack heap size to 4 MB from 1 MB. However, larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large resolutions, the stack would have to be larger to accommodate the recursive function. Sampling that many pixels would also slow down the algorithm. While the webcam used in the prototype had a small resolution, larger resolutions were considered for the final prototype during early stages of development. A variable called \codeword{gridSize} was added to alleviate the problem. It causes the algorithm to make jumps of \codeword{gridSize} pixels instead of 1. Instead of checking the pixel immediately to the right, the algorithm will check the one \codeword{gridSize} places to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, solving the problem caused by a larger camera resolution. Now the algorithm's speed and accuracy can be tailored to suit the specific need.
 \subsection{Grassfire implementation}
 Our implementation can be seen in Listing \ref{listing:grassfireIm}. Due to its recursive nature, this method will be called many thousands of times. Note that the function does not make use of the very computationally expensive \codeword{Mat.at<uchar>(y,x)}} function. Instead pointers are used to navigate both horizontally and vertically.
 \begin{figure}[H]
@@ -407,7 +413,6 @@ The arguments for this function are a reference to a binary image, and reference
 	\label{fig:grsnapshot}
 \end{figure} 
 The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Then the program must calculate the parameters which are used to evaluate the object.
-\todo{What is the purpose of burning 50 shades of gray?}
 \section{Blob analysis}
 In this section we will describe how to calculate parameters for a given blob, and how these are used to evaluate whether the blob is one of the markers.
 \subsection{Parameter overview, and flow}
