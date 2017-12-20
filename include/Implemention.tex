@@ -53,7 +53,7 @@ The name of the DLL file "unityOpencvPlugin" is given as an argument, and the fu
 	}
 	\end{minted}
 \end{listing}
-In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. \todo{What does it mean to have data laid out sequentially and what is unmanaged memory?} An object must be returned for each token. In this case it is easier to pass a pointer to an array, and make C++ instantiate objects inside that array. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
+In Unity the structure needs to be laid out sequentially when exported to unmanaged memory. Unmanaged memory is basically memory that C\# has no idea what is in, and as such does not cleaned by the Garbage Collector (GC). An object must be returned for each token. In this case it is easier to pass a pointer to an array, and make C++ instantiate objects inside that array. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
 \begin{listing}[H]
 \caption{The function call to pass a pointer to C++, which is filled with object data by the code}
 \label{listing:pointer}
@@ -433,24 +433,8 @@ When all parameters are acquired, and if the blob passes all the tests, it is ti
 \end{figure}
 In regards to calculating the parameters, some of them are very simple to find. Finding the number of pixels of a blob is easy because \codeword{vector<type>} already contains a \codeword{.size()} method. The bounding box consists of looping through all coordinates and saving the smallest and largest x and y that the program encounters. Finding the center consists of averaging the same values for x and y respectively. Rotation, on the other hand is trickier and requires knowledge of the layout of the marker.
   
-\subsection{Rotation}
-Finding a circle's rotation is impossible if it is rotationally symmetrical. A small line was added towards the center that will be referred to as the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as illustrated in Figure \ref{fig:boundbox}.\\
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\linewidth]{figure/Analysis/boundingbox.png}
-	\caption{The difference between using the center of mass or bounding box to find the blob center. With bad thresholding the found center is closer to the actual center, resulting in a better direction vector} 
-	\label{fig:boundbox}
-\end{figure}
-We found that smaller blobs would have a more wobbly direction vector, because their direction line contains fewer pixels. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel, we average all the pixels within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
-periphery. Rotation is also calculated as a float instead of integer. These changes make the direction vector much more stable, and have been illustrated in Figure \ref{fig:lowpixel}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\linewidth]{figure/Analysis/lowpixel.png}
-	\caption{Illustration of the advantage of using mean of many pixels over using the single closest pixel to calculate the direction vector.} 
-	\label{fig:lowpixel}
-\end{figure}
- The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
- \todo{Describe here what the code actually does. Also line 10 has a comment that is missing something}
+\subsection{Rotation} 
+The code, seen in listing \ref{listing:direction}, executes inside a loop through the list of blobs, right after the bounding box and its center has been found. \codeword{i} refers to the current blob.
 \begin{listing}[H]
 	\caption{Direction vector calculation}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
@@ -461,9 +445,9 @@ if (heightWidth > (1 + discrimHW) || heightWidth <(1 - discrimHW)) { continue; }
 radiusDist = (largestX - smallestX + largestY - smallestY) / 4;
 searchDist = (float)radiusDist*0.70 * (float)radiusDist*0.70;
 int dist;
-vector<cVector> points;  //contains the pixels within 0.7 radius
+vector<cVector> points;  //Used to contain the pixels within 0.7 radius distance
 //find pixel within search dist
-for (auto &v : i.list) {	//loop through all pixels in the
+for (auto &v : i.list) {	//loop through all pixels in the blob
 	dist = (v.x - i.center.x) * (v.x - i.center.x) + (v.y - i.center.y) * (v.y - i.center.y);
 	if (dist < searchDist) {
 		points.push_back(v);
@@ -480,6 +464,22 @@ rotY = (rotY / points.size());
 	\end{minted}
 	\label{listing:direction}
 \end{listing}
+Finding a circle's rotation is impossible if it is rotationally symmetrical. A small line was added towards the center that will be referred to as the direction line(seen to the left in Fig \ref{fig:vector}). If the center's coordinates are known, one can find the pixel in the blob that is closest to it. This pixel will be in the direction line. The distance from the center to the closest pixel will give create a vector, from which the rotation can be calculated. This method of finding rotation is the primary reason why we used the bounding box center over center of mass when finding the center. The center of mass would be shifted towards the rotation line, and therefore the direction vector will be less stable, as illustrated in Figure \ref{fig:boundbox}.\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/boundingbox.png}
+	\caption{The difference between using the center of mass or bounding box to find the blob center. With bad thresholding the found center is closer to the actual center, resulting in a better direction vector} 
+	\label{fig:boundbox}
+\end{figure}
+We found that smaller blobs would have a more wobbly direction vector, because their direction line contains fewer pixels. Since it only finds one pixel it could result in a drastic snap. To combat this, instead of only using the closest pixel, we average all the pixels within 70\% of the circles radius. This allows us to average a bunch of pixels in the direction line without sampling any from the
+periphery. Rotation is also calculated as a float instead of integer. These changes make the direction vector much more stable, and have been illustrated in Figure \ref{fig:lowpixel}
+\ref{listing:direction}.\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{figure/Analysis/lowpixel.png}
+	\caption{Illustration of the advantage of using mean of many pixels over using the single closest pixel to calculate the direction vector.} 
+	\label{fig:lowpixel}
+\end{figure}
+The implementation of this can be seen on lines 10 - 15, which loops through each blob, checks if the distance between the center and the pixel is smaller than 70\% of radius (called \codeword{searchDist}). If it is the pixel is added to a list, called \codeword{points} that will be used to calculate the rotation. This happen in lines 18 - 23. Where all the coordinates are summed, and divided by the number of point in the list.
 Now that a direction vector has been found, we need to calculate the position of each bit field on the marker. This is done with vector math and knowledge of the marker layout. A legend of the important components can be seen in Figure \ref{fig:vector}.
 
 \subsection{Vectors to find sample points}
