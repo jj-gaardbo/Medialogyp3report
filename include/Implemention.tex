@@ -2,19 +2,17 @@
 	The system must use Image Processing to get data from patterns via a webcam, send it to Unity and \textit{"translate"} it into a Virtual Reality garden that can be explored through the HTC Vive using Steam VR. There are many considerations to be made when developing a system like this. This section explains the program implementation and some of the algorithms that went into the development process. Furthermore, some of the most essential and relevant code snippets will also be presented.
 	
 	\section{Working in Unity}
-The design was implemented in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, which would greatly reduce development time on all the non-image processing aspects of developing the prototype.\todo{Why Unity as opposed to e.g. Unreal Engine?}
+The design was implemented in the Unity game engine\footnote{Unity's homepage \url{https://unity3d.com/}}. Unity allows high-level management of objects in space, which would greatly reduce development time on all the non-image processing aspects of developing the prototype. The choice fell on unity as we had a small amount of instruction in using it last semester.
 
 The SteamVR Unity plugin enabled an easy implementation of VR functionality in Unity. Moving and teleporting was achieved using standard scripts and assets included in the plugin. 	
 The starting environment is simple, consisting of planes which make up the terrain and surrounding hedges. The image processing script developed for this project is attached to an invisible "Manager" object.
-	\subsection{Implications of working with VR}
+	\subsection{VR and performance}
 
-	Virtual Reality is computationally demanding. In 2016, graphics card manufacturer Nvidia estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{venturebeat.com : \url{https://goo.gl/URA6R4}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. However, this group agrees that 45 fps is closer to the minimum for a smooth experience\todo{Who is this group? The authors(us)? Based on what do we make this assessment?} , which still leaves most laptop \todo{What is the average laptop? Sauce please} underpowered. At 45 fps, it has to render 2.5 times as many pixels, and twice as many frames per second compared to VR.
-	For this reason the image processing algorithm should be quick to execute, as there is going to be a significant load on the system running the VR program. Consequently, work has been put into optimizing this algorithm.
-	\todo{Any other consequences of VR? Price, development trouble?}
+	Virtual Reality is computationally demanding. In 2016, graphics card manufacturer Nvidia estimated that an immersive VR experience was seven times more demanding than traditional PC gaming\footnote{venturebeat.com : \url{https://goo.gl/URA6R4}}. Nvidia got the number by combining the resolution needed for VR, 2 times 1680 x 1512, with the frame rate needed to avoid the adverse effect of VR, 90 fps. They compared the numbers with the same requirements for pc gaming 1920 x 1080, and 30 fps. At 30 fps, it has to render 2.45 times as many pixels, and three times as many frames per second compared to VR. For this reason the image processing algorithm should be quick to execute, as there is going to be a significant load on the system running the VR program. Consequently, work has been put into optimizing this algorithm.
 	\subsection{DLLs and Unity}
- 		Unity has a number of different options for performing image processing. \todo{Then why are we developing our own markers instead of using Unity's functionality?} We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
+ 		We would be creating the fiducial markers from scratch and could not use any preexisting software. At this point, we were already familiar with OpenCV, a fast library for image processing and computer vision, so developing using OpenCV made sense.\\
  		
-		One challenge is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and are instead used by other applications. Because they can be compiled from a number of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation of the prototype. First, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the DLL side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback. \todo{Did we try to overcome this? Could we have?} Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
+		One challenge is that Unity uses C\# but OpenCV is only developed for C++, C, Python, and Java. The method used in this project to bridge this language barrier is to compile the C++ code as a DLL, or \textit{"Dynamic-link Library"}, and import it into the C\# code. DLLs cannot be executed in the way normal applications are, and are instead used by other applications. Because they can be compiled from a number of different languages they are not limited to what C\# code can do. Another advantage is that they are compiled in machine code and are therefore very fast\footnote{How to Write Native Plugins For Unity \url{https://www.alanzucconi.com/2015/10/11/how-to-write-native-plugins-for-unity/}}. There are some drawbacks to using DLLs as well, and these brought on some challenges during the implementation of the prototype. First, passing an object between the DLL and Unity is difficult because Unity cannot understand the same code as in the plug-in. On the DLL side you do not have a terminal, which means that getting any information about what is happening inside the DLL for debugging purposes is very problematic. For the same reason, debugging crashes is tricky, and the program would often crash without any feedback. This slowed process a bit. Listing \ref{listing:dllExport} shows how to declare a function for export in C++.
 \begin{listing}[H]
 \caption{How to declare a function for DLL export in C++}
 \label{listing:dllExport}
@@ -32,25 +30,30 @@ extern "C" __declspec( dllexport ) int init(int w, int h);
 public static extern int Init(ref int outCameraWidth, ref int outCameraHeight);
 	\end{minted}
 \end{listing}
-The name of the DLL file "unityOpencvPlugin" is given as an argument, and the function that we want to import is the "entrypoint". Unity will do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the method names match completely, or it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments) as the original. Unity can not check whether or not this is the case, so care must be taken to get it right. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the position and rotational data of the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects}. 
+The name of the DLL file "unityOpencvPlugin" is given as an argument, and the function that we want to import is the "entrypoint". Unity will do a search for a function called \codeword{init} in the DLL "unityOpencvPlugin". Here it is important that the method names match completely, or it will not be found. In line 2, a function is declared that will call the imported method. Note that this function must have the same signature (return type and arguments) as the original. Unity can not check whether or not this is the case, so care must be taken to get it right. Signature compatibility is sensible for primitive types like \codeword{int}, but for objects it becomes a bit trickier. To do so requires declaration of similar objects in both languages, with variables in the same order, otherwise the data will not make sense when returned. In our case we need to return the position and rotational data of the markers found after image processing. They are represented in a structure like shown in Listing \ref{listing:objects1}, and \ref{listing:objects2}. 
 \begin{listing}[H]
-	\caption{Objects in C++ and C\#}
-	\label{listing:objects}
+	\caption{Objects in C++}
+	\label{listing:objects1}
 	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{c++}
-//in C++
-struct ObjectData {
-   int X, Y, Type, RotationX, RotationY, Rotation;
-};
-
-//in C#	
-[StructLayout(LayoutKind.Sequential, Size = 16)]
-public struct CVObject{
-   public int X, Y, Type, RotationX, RotationY, Rotation;
-}
+	//in C++
+	struct ObjectData {
+	   int X, Y, Type, RotationX, RotationY, Rotation;
+	};
 	\end{minted}
 \end{listing}
-\todo{Does it make sense to have code from two different languages in the same code snippet?}
-In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. \todo{What does it mean to have data laid out sequentially and what is unmanaged memory?} An object must be returned for each token. In this case it is easier to pass a pointer to an array, and make C++ fill it out from the code\todo{Needs more descriptive and "correct" terminology}. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
+
+\begin{listing}[H]
+	\caption{Object in C\#}
+	\label{listing:objects2}
+	\begin{minted}[frame=lines, framesep=2mm,baselinestretch=1.1,fontsize=\footnotesize,linenos]{csharp}
+	//in C#	
+	[StructLayout(LayoutKind.Sequential, Size = 24)]
+	public struct CVObject{
+	   public int X, Y, Type, RotationX, RotationY, Rotation;
+	}
+	\end{minted}
+\end{listing}
+In Unity the structure needs to be laid out sequentially when exported to unmanaged memory\footnote{Unity layout \url{https://msdn.microsoft.com/en-us/library/system.runtime.interopservices.layoutkind(v=vs.110).aspx}}. \todo{What does it mean to have data laid out sequentially and what is unmanaged memory?} An object must be returned for each token. In this case it is easier to pass a pointer to an array, and make C++ instantiate objects inside that array. A few things are needed for this to work. The function needs to take a reference as an argument and the size of the array must be passed as an argument. Otherwise the function might try to access data outside of the array. The memory being referenced must also remain static or the pointer would no longer point to the right data. In C\# the keyword \codeword{Fixed} prevents data from being moved in memory, and \codeword{unsafe} enables working with pointers. In Listing \ref{listing:pointer} below there is an example from our implementation in the project where we pass a pointer to C++. %be careful with "unsafe" though. It oftentimes leads to children. 
 \begin{listing}[H]
 \caption{The function call to pass a pointer to C++, which is filled with object data by the code}
 \label{listing:pointer}
@@ -109,7 +112,7 @@ The resultant colors can be seen in \autoref{fig:conversion}. The same is true f
 	\caption{Two colors of very different intensity are identical when converted to RG because they have the same percentages of the different colors. This make the RG color space more resistant to different lighting conditions}
 	\label{fig:conversion}
 \end{figure} 
-In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. For this reason it is recommended to zero the values if the total sum is below a certain value. \todo{sauce}
+In relation to image processing one has to be aware that noise, particularly in shadows, interfere with the RG space. It was recomended to us by \href{http://personprofil.aau.dk/109196}{Lars Reng at AAU},  to zero the pixel if the sum it if below a certain value.
 
 \subsection{RG chromaticity in code}
 The process described above of converting a BGR image is a matter of point processing. We have made a few changes to the process to speed up the process at runtime. The current code performs these two steps for	 each pixel in the input image.\\
@@ -141,9 +144,6 @@ A lookup table is a table in which the results of all possible inputs are calcul
 	\label{table:rgConvSpeed}
 	\end{table}
 \end{multicols}
-
-\todo{Why did we run the lookup table test on a random picture instead of a picture of markers, which would give a more accurate result?}
-
 \subsection{Creating a lookup table}
 To create a lookup table, the operation results for the full range of possible inputs are saved. We know from the theory section(See \autoref{sec:theoryOfRG}) that a color can be assigned by $RGcolor = 255 * \frac{color}{sumOfColor}$. There are two variables at play here. \textit{sumOfColor} which can vary between 0(all colors are 0), and 765(all colors are 255), and \textit{color} which can vary between 0, and 255. To compute a lookup table  that includes all possible combinations of variables, we need an array of size 766 * 256. The values are assigned when creating the table using a double for loop, shown in Listing \ref{listing:lutTable}.
 \begin{listing}[H]
@@ -165,7 +165,7 @@ for (int i = 0; i < 766; i++) {
 \end{listing}
 The first thing the loop does is to check if the arguments are below the threshold where they should be zeroed (to prevent noise in dark areas from messing with the image). In that case it sets the index to zero. Otherwise it calculates the value that would result from the color \codeword{j} divided by sum \codeword{i} and multiplied by 255.
 \subsubsection{Summing BGR channels and looking up results}
-To use the lookup table we have to visit each pixel once and look up the value in the pixel. This is done using a double for loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This allows for changes to the original data to be made. If not included we would be making changes to copies instead.\todo{What's the benefit of changing the original data instead of just making a copy?} \\
+To use the lookup table we have to visit each pixel once and look up the value in the pixel. This is done using a double for loop. Our implementation, seen in Listing \ref{listing:sum}, takes an input image assumed to be BGR, an output image also assumed to be BGR, and a reference to the table. The ampersand \codeword{&} in the function signature indicates that the argument should be passed by reference. This saves the program having to make a copy of the original data, and greatly speeds up the code.
 \begin{listing}[H]
 	\caption{RG conversion code}
 	\label{listing:sum}
@@ -257,14 +257,12 @@ or 0.\\
 		\label{fig:threshold}
 	\end{figure}	
 \end{multicols}
-\todo{These figures should have full color}
 \textbf{Distance threshold} Distance tresholding is based on finding the chromaticity distance from a pixel's color to a reference value in RG. If the distance is below a threshold the set it to 255, else 0. In two dimensions, the distance between two points $p_0$ and $p_1$ can be found as $d = \sqrt{(p_1x - p_0x)^2 +(p_1y - p_0y)^2}$. In our implementation we used a distance threshold with a red value of 180 and a green value of 40 for our reference color. The threshold distance was set to 60. This produces the threshold observed in \autoref{fig:threshold}. This works well for the purposes of the project, but doesn't allow for the tresholding of extremely red color, as a circle of that size and position does not cover the lower right corner of the RG space. \\
 
 \textbf{Combined Threshold}. It is possible to combine these different approaches to thresholding. Combining and subtracting the thresholds allows shaping the treshold to suit any need. Following the problems with segmenting extreme reds, we decided to add an In Range to the Distance Threshold to ensure that we could capture all the shades of red. The resulting threshold can be seen in \autoref{fig:threshold}. This produces the most consistent threshold for the prototype, as it is very resistant to lighting changes.
 
 \subsection{Thresholding implementation}
-Like the RG conversion, this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. A lookup table is used here. First, the distance is found. If it is smaller than the threshold, the pixel is set to 255, else, set it to 0. Listing \ref{listing:thresholdDist} shows how we initialized our table.
-
+Like the RG conversion, this operation involves visiting each pixel once and performing an operation that uses its color values as inputs. A lookup table is used here. First, the distance is found. If it is smaller than the threshold, the pixel is set to 255, else, set it to 0. Listing \ref{listing:thresholdDist} shows how we initialized our table. Since we are dealing with values between 0 - 255, we can contain all the value range in uchars.
 \begin{listing}[H]
 	\caption{Instantiating the Distance threshold lookup table}
 	\label{listing:thresholdDist}
@@ -284,8 +282,6 @@ for (int i = 0; i < 256; i++) {
 }
 \end{minted}
 \end{listing}
-
-\todo{Explain why we use uchar}
 Inside the double for loop there are two if statements that each perform a different thresholding operation. The first is an In Range where it checks if the red color is larger than 180. The second is checks the distance from the inputs $f(j,i)$ to a reference point $p(r,g)$. Rather than comparing it to the distance, it compares to the distance squared. This removes the need to calculate the square root, which is a computationally expensive operation. A check is made for whether the distance is smaller than 60. If either of these if statements are true, the index is made white, otherwise it is made black.
 In terms of implementation using the lookup table, it is very similar to the RG conversion. The output after thresholding the normalized test image, can be seen in \autoref{fig:thsnapshot}\\
 \begin{figure}[H]
@@ -328,14 +324,8 @@ All features of a blob are calculated from a list of pixels included in it. This
 
 The process of extracting a blob is as follows. A pixel is found, and is now treated as a new blob. If any pixels that it shares borders with it are white, they are added to the blob. Their neighbors are now checked for white pixels, and so the process continues recursively. To ensure that each pixel is added to the blob only once, adding a pixel to the blob should change its color. When no more connected pixels can be found, the blob is finished. A new, unconnected white pixel is then found, and the process starts again. The new color for pixels added to a blob ensures that no pixels from the first blob will be found.\\
 This process is called a grassfire algorithm, because it starts at a point, spreads like a fire in all directions, and dies when there are no more pixels to "burn".
-It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it, a concept illustrated metaphorically in \autoref{fig:firefighter}.  \todo{what is a call stack}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\linewidth]{figure/Analysis/firefighter.jpg}
-	\caption{What happens inside your call stack during a grassfire algorithm. The fire spreads adding calls onto the stack, raging out of control, putting our call stack, the old man, in danger. Until the fire is done spreading the stack cannot resolve. When done spreading the call stack is resolved, represented by the old man, can out the fire.}
-	\label{fig:firefighter}
-\end{figure} 
-\todo{If the fire is literally out of control, why is the man fighting it? The fire stops itself when there is no more to burn}
+It is a recursive algorithm. This recursive function call is simple to implement but means that the program's call stack might fill up and crash it.  \todo{what is a call stack}
+
 Due to the relatively small blobs in our program, usually between 150 and 450 pixels in area, a stack overflow could be prevented by increasing the stack heap size to 4 MB from 1 MB. However, larger resolutions would cause significantly bigger issues. If we double the number of pixel in each axis, we get a four times larger blob. At large resolutions, the stack would have to be larger to accommodate the recursive function. Sampling that many pixels would also slow down the algorithm. While the webcam used in the prototype had a small resolution, larger resolutions were considered for the final prototype during early stages of development. A variable called \codeword{gridSize} was added to alleviate the problem. It causes the algorithm to make jumps of \codeword{gridSize} pixels instead of 1. Instead of checking the pixel immediately to the right, the algorithm will check the one \codeword{gridSize} places to the right. Setting \codeword{gridSize} to 2 will cause the blobs to be four times as small, solving the problem caused by a larger camera resolution. Now the algorithm's speed and accuracy can be tailored to suit the specific need.
 \subsection{Grassfire implementation}
 Our implementation can be seen in Listing \ref{listing:grassfireIm}. Due to its recursive nature, this method will be called many thousands of times. Note that the function does not make use of the very computationally expensive \codeword{Mat.at<uchar>(y,x)}} function. Instead pointers are used to navigate both horizontally and vertically.
@@ -409,11 +399,11 @@ void grassFireBlobDetection(Mat &biImg, vector<glyphObj> &blobs) {
 	\end{minted}
 	\label{listing:grassfire}
 \end{listing}
-The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data from the grass fire. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob), vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. Finally the fire's color is set to be 245 in line 9 since it should not be white(255). Inside the double for loop (line 10 to 24) it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
+The arguments for this function are a reference to a binary image, and references to a vector of blobs that will be filled with the data from the grass fire. The \codeword{dropFire} function in Listing \ref{listing:grassfireIm} needs to get the images' width, and a variable for this is instantiated on line 4. A temporary blob object(currentBlob), vector(assigner), and uchar pointer(passer) is created to avoid instantiating these objects in the recursive function. A reference to these will be passed instead. To make the output easier for human eyes to understand the blobs will be burnt with different colors. This is accomplished by setting the fire's color different for each fire, starting with 245 in line 9 since it should not be white(255). Inside the double for loop (line 10 to 24) it checks if the current pixel is completely white. If it is, a new blob is added to the vector of glyphObject that contains the blobs, its color is set to the value of col, and the fire starts. To make it easier to display which pixels that belong to which blob, the color is made darker. This means that different fire will "burn" different colors into the image. To prevent the color from becoming negative it is reset when it becomes too dark in line 20 to 23.\\
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{figure/Analysis/grassfire.png}
-	\caption{The test image after the grassfire algorithm has been run. Each blob is made slightly darker than the last one, until a threshold where the color is made white again}
+	\caption{The test image after the grassfire algorithm has been run. Each blob is made slightly darker than the last one, until a threshold where the color is made white again. This color difference is only to make it easier for humans to understand the output, and might as well be black for all the computer cares.}
 	\label{fig:grsnapshot}
 \end{figure} 
 The results of the image before and after this algorithm has been run can be seen in \autoref{fig:grsnapshot}. It can be seen that each blob has been segmented from the difference in colors between them. As the color of the fire is changed each time a new fire is started. Then the program must calculate the parameters which are used to evaluate the object.
