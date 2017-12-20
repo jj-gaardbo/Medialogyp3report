@@ -596,8 +596,7 @@ private void Spawn(int type, int x, int z, int rotation, int rotationY) {
 			rotation *= -1;
 		}
 		GameObject tempObj = Instantiate(FindObj(type), PositionGen(x, z),
-		Quaternion.Euler(\\
-		 rotation, 0)) as GameObject;
+		Quaternion.Euler(rotation, 0)) as GameObject;
 		elements.Add(tempObj);
 	}
 }
