@@ -556,9 +556,7 @@ for (auto &blob : blobs) {
 	\end{minted}
 	\label{listing:return}
 \end{listing}
-
-\todo{Explain the above code}
-
+It is important to remember that at this point, all C++ has to work with is a pointer to an array, and the size of that array. The code, seen in Listing \ref{listing:return} Loops through each blob. It start by checking if it has already written enough objects to unity, and if it has, it breaks out of the loop. Otherwise, on line 3 checks if the current blob has been flagged to be returned, if it has not, continue to the next blob. This point we know that the blob has been flagged to be returned. The rotation in radians is calculated from the direction vector in line on line 5. We instantiate a new Object inside the array in unity on line 7. This new object is the object data found from the blob, that unity now has access to.  At last the current number of sent object is incremented, so we can be sure that we don't write outside of the array.\\ 
 \section{Unity}
  Inside unity, we now have the means to add the markers to an array of CVObjects called \codeword{_markers}. When the script starts, the \codeword{Detect()} function runs every second, using \codeword{InvokeRepeating()}. The detect function in Listing \ref{listing:detectFunction} clears the elements array, which is what holds the \codeword{GameObjects}. By making the pointer \codeword{outMarkers} we can directly change the contents of \codeword{_markers} to be whatever markers the image processing function finds. When declaring the pointer to \codeword{_markers}, we also use that pointer at line 10 in Listing \ref{listing:detectFunction}, passing the newly made pointer into C++. \codeword{unsafe} is added to enable the use of pointers inside C\#, and \codeword{fixed} ensures the function stays at the same location of the memory.
 	\begin{listing}[H]
